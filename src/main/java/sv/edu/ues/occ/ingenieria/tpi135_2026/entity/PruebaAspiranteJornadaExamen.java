@@ -3,14 +3,7 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "prueba_aspirante_jornada_examen")
@@ -21,7 +14,7 @@ public class PruebaAspiranteJornadaExamen implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idPruebaAspiranteJornadaExamen;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_prueba_aspirante_jornada")    
     private PruebaAspiranteJornada idPruebaAspiranteJornada;
 

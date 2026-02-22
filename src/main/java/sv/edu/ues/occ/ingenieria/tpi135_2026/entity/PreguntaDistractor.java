@@ -30,7 +30,7 @@ public class PreguntaDistractor implements Serializable{
     private Distractor idDistractor;
 
     @Column(name = "correcto")
-    private Boolean idCorrecto;
+    private Boolean correcto;
 
     public PreguntaDistractor(Long idPreguntaDistractor) {
         this.idPreguntaDistractor = idPreguntaDistractor;
@@ -62,12 +62,12 @@ public class PreguntaDistractor implements Serializable{
         this.idDistractor = idDistractor;
     }
 
-    public Boolean getIdCorrecto() {
-        return idCorrecto;
+    public Boolean getCorrecto() {
+        return correcto;
     }
 
-    public void setIdCorrecto(Boolean idCorrecto) {
-        this.idCorrecto = idCorrecto;
+    public void setCorrecto(Boolean correcto) {
+        this.correcto = correcto;
     }
 
     

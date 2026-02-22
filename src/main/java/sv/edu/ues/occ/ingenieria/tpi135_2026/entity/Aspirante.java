@@ -2,8 +2,8 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.entity;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.UUID;
 import java.util.List;
+import java.util.UUID;
 
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
@@ -20,8 +20,8 @@ public class Aspirante implements Serializable{
     @Column(name = "id_aspirante")
     private UUID idAspirante;
 
-    @Column(name = "nombre")
-    private String nombre;
+    @Column(name = "nombres")
+    private String nombres;
 
     @Column(name = "apellidos")
     private String apellidos;
@@ -55,12 +55,12 @@ public class Aspirante implements Serializable{
         this.idAspirante = idAspirante;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getNombres() {
+        return nombres;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setNombres(String nombres) {
+        this.nombres = nombres;
     }
 
     public String getApellidos() {

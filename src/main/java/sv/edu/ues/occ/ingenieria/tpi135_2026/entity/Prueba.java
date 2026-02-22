@@ -6,13 +6,10 @@ import java.util.UUID;
 import java.math.BigDecimal;
 
 import jakarta.json.bind.annotation.JsonbTransient;
-import jakarta.persistence.Column;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "prueba")
 public class Prueba implements Serializable{
 
     @Id

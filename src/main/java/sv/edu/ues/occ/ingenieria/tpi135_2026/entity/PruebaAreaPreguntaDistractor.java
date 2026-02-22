@@ -25,7 +25,7 @@ public class PruebaAreaPreguntaDistractor implements Serializable{
     @JoinColumn(name = "id_prueba_area_pregunta")
     private PruebaAreaPregunta idPruebaAreaPregunta;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_distractor")
     private Distractor idDistractor;
 

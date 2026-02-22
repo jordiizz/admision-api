@@ -29,7 +29,7 @@ public class PruebaArea implements Serializable{
     @JoinColumn(name = "id_prueba")
     private Prueba idPrueba;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_area")
     private Area idArea;
 

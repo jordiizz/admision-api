@@ -28,7 +28,7 @@ public class PruebaAspiranteJornada implements Serializable{
     @JoinColumn(name = "id_aspirante_jornada")
     private AspiranteJornada idAspiranteJornada;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_prueba")
     private Prueba idPrueba;
 
