@@ -4,4 +4,5 @@ public interface DAOInterface<T> {
 
     public void crear(T entity);
 
+    public void eliminar(T entity);
 }

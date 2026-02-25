@@ -23,5 +23,22 @@ public class AreaDAOTest {
         //fail("Esta prueba falló");
         System.out.println("AreaDAOTest.crearTest");
     }
-    
+    @Test
+    public void eliminarTest() {
+        System.out.println("AreaDAOTest.eliminarTest");
+        EntityManager mockEM = Mockito.mock(EntityManager.class);
+        Area eliminado = new Area(1);
+        AreaDAO cut = new AreaDAO();
+        assertThrows(IllegalArgumentException.class, ()->cut.eliminar(null));
+        assertThrows(IllegalStateException.class, ()->cut.eliminar(eliminado));
+        Mockito.when(mockEM.contains(eliminado)).thenReturn(true);
+        cut.em = mockEM;
+        cut.eliminar(eliminado);
+        Mockito.verify(mockEM, Mockito.times(1)).remove(eliminado);
+        Mockito.when(mockEM.contains(eliminado)).thenReturn(false);
+        Mockito.when(mockEM.merge(eliminado)).thenReturn(eliminado);
+        cut.em = mockEM;
+        cut.eliminar(eliminado);
+        System.out.println("AreaDAOTest.eliminarTest");
+    }
 }

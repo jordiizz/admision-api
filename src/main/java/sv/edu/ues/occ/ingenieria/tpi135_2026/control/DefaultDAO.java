@@ -36,4 +36,23 @@ public abstract class DefaultDAO<T> implements DAOInterface<T> {
         throw new IllegalArgumentException("entity no puede ser nulo");
     }
 
+    public void eliminar(T entity){
+        if (entity != null){
+            try {
+                EntityManager em = this.getEntityManager();
+                if (em == null){
+                    throw new NullPointerException("El repositorio es nulo");
+                }
+                if (em.contains(entity)){
+                    em.remove(entity);
+                }else {
+                    em.remove(em.merge(entity));
+                }
+            } catch (Exception ex) {
+                throw new IllegalStateException(ex);
+            }
+        } else {
+            throw new IllegalArgumentException("entity no puede ser nulo");
+        }
+    }
 }
