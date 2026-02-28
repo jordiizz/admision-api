@@ -3,7 +3,9 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.boundary.rest;
 import java.io.Serializable;
 
 import jakarta.inject.Inject;
+import jakarta.websocket.server.PathParam;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -12,6 +14,8 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriInfo;
+
+import static sv.edu.ues.occ.ingenieria.tpi135_2026.boundary.rest.ResponseHeaders.NOT_FOUND;
 import static sv.edu.ues.occ.ingenieria.tpi135_2026.boundary.rest.ResponseHeaders.PROCESS_ERROR;
 import static sv.edu.ues.occ.ingenieria.tpi135_2026.boundary.rest.ResponseHeaders.WRONG_PARAMETER;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.control.AreaDAO;
@@ -42,5 +46,23 @@ public class AreaResource  implements Serializable {
             }
         }
         return Response.status(422).header(WRONG_PARAMETER.toString(), "El recurso no puede ser nulo y no debe tener un ID asignado").build();
+    }
+
+    @DELETE
+    @Path("{id}")
+    public Response eliminar(@PathParam("id") Integer id) {
+        if (id != null) {
+            try {
+                Area area = areaDAO.buscarPorId(id);
+                if (area != null) {
+                    areaDAO.eliminar(area);
+                    return Response.noContent().build();
+                }
+                return Response.status(404).header(NOT_FOUND.toString(), "Recurso no encontrado").build();
+            } catch (Exception e) {
+                return Response.status(500).header(PROCESS_ERROR.toString(), e.getMessage()).build();
+            }
+        }
+        return Response.status(422).header(WRONG_PARAMETER.toString(), "El ID no puede ser nulo").build();
     }
 }

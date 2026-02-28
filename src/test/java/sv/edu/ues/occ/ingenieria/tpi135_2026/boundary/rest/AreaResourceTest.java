@@ -2,7 +2,9 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.boundary.rest;
 
 import java.net.URI;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -16,14 +18,13 @@ import sv.edu.ues.occ.ingenieria.tpi135_2026.entity.Area;
 public class AreaResourceTest {
 
     private UriInfo mockUriInfo;
-    private UriBuilder mockUriBuilder;
     private AreaDAO mockAD;
     private AreaResource cut; // Class Under Test
 
     @BeforeEach
-    void setup() {
+    public void setup() {
         mockUriInfo = Mockito.mock(UriInfo.class);
-        mockUriBuilder = Mockito.mock(UriBuilder.class);
+        UriBuilder mockUriBuilder = Mockito.mock(UriBuilder.class);
         mockAD = Mockito.mock(AreaDAO.class);
 
         Mockito.when(mockUriInfo.getAbsolutePathBuilder())
@@ -38,7 +39,8 @@ public class AreaResourceTest {
     }
 
     @Test
-    void crearExitoso() {
+    public void crearExitoso() {
+        System.out.println("Ejecutando test: crearExitoso");
         Area nuevo = new Area();
 
         Mockito.doAnswer(invocation -> {
@@ -58,7 +60,8 @@ public class AreaResourceTest {
     }
 
     @Test
-    void crearFallaSinId() {
+    public void crearFallaSinId() {
+        System.out.println("Ejecutando test: crearFallaSinId");
         Area nuevo = new Area();
 
         Mockito.doNothing().when(mockAD).crear(nuevo);
@@ -70,7 +73,8 @@ public class AreaResourceTest {
     }
 
     @Test
-    void crearConExcepcion() {
+    public void crearConExcepcion() {
+        System.out.println("Ejecutando test: crearConExcepcion");
         Area nuevo = new Area();
 
         Mockito.doThrow(new RuntimeException("Error en base de datos"))
@@ -83,7 +87,8 @@ public class AreaResourceTest {
     }
 
     @Test
-    void crearAreaNull() {
+    public void crearAreaNull() {
+        System.out.println("Ejecutando test: crearAreaNull");
         Response resultado = cut.crear(null, mockUriInfo);
 
         assertEquals(422, resultado.getStatus());
@@ -91,12 +96,63 @@ public class AreaResourceTest {
     }
 
     @Test
-    void crearAreaConId() {
+    public void crearAreaConId() {
+        System.out.println("Ejecutando test: crearAreaConId");
         Area areaConId = new Area();
         areaConId.setIdArea(100);
 
         Response resultado = cut.crear(areaConId, mockUriInfo);
 
+        assertEquals(422, resultado.getStatus());
+        Mockito.verifyNoInteractions(mockAD);
+    }
+
+    @Test
+    public void eliminarExitoso() {
+        System.out.println("Ejecutando test: eliminarExitoso");
+        Integer id = 1;
+        Area areaExistente = new Area(id);
+
+        Mockito.when(mockAD.buscarPorId(id)).thenReturn(areaExistente);
+        Mockito.doNothing().when(mockAD).eliminar(areaExistente);
+
+        Response resultado = cut.eliminar(id);
+
+        assertEquals(204, resultado.getStatus());
+        Mockito.verify(mockAD).buscarPorId(id);
+        Mockito.verify(mockAD).eliminar(areaExistente);
+    }
+
+    @Test
+    public void eliminarNoEncontrado() {
+        System.out.println("Ejecutando test: eliminarNoEncontrado");
+        Integer id = 999;
+        Mockito.when(mockAD.buscarPorId(id)).thenReturn(null);
+        Response resultado = cut.eliminar(id);
+
+        assertEquals(404, resultado.getStatus());
+        Mockito.verify(mockAD).buscarPorId(id);
+        Mockito.verify(mockAD, Mockito.never()).eliminar(Mockito.any());
+    }
+
+    @Test
+    public void eliminarConExcepcion() {
+        System.out.println("Ejecutando test: eliminarConExcepcion");
+        Integer id = 1;
+        Area areaExistente = new Area(id);
+        Mockito.when(mockAD.buscarPorId(id)).thenReturn(areaExistente);
+        Mockito.doThrow(new RuntimeException("Error en base de datos"))
+                .when(mockAD).eliminar(areaExistente);
+        Response resultado = cut.eliminar(id);
+        assertEquals(500, resultado.getStatus());
+        Mockito.verify(mockAD).buscarPorId(id);
+        Mockito.verify(mockAD).eliminar(areaExistente);
+    }
+
+    @Test
+    public void eliminarIdNull(){
+        System.out.println("Ejecutando test: eliminarIdNull");
+        Response resultado = cut.eliminar(null);
         assertEquals(422, resultado.getStatus());
         Mockito.verifyNoInteractions(mockAD);
     }
