@@ -145,4 +145,19 @@ public abstract class DefaultDAO<T> implements DAOInterface<T> {
             throw new IllegalArgumentException("entity no puede ser nulo");
         }
     }
+
+    public T buscarPorId(Object id){
+        if (id!=null){
+            try {
+                EntityManager em = this.getEntityManager();
+                if (em != null){
+                    return (T) em.find(entityClass, id);
+                }
+                throw new NullPointerException("El repositorio es nulo");
+            } catch (Exception ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+        throw new IllegalArgumentException("id no puede ser nulo");
+    }
 }

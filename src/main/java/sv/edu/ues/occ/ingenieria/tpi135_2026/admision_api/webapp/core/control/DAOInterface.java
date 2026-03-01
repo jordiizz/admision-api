@@ -13,4 +13,6 @@ public interface DAOInterface<T> {
     public Long contar();
 
     public T actualizar(T entity);
+
+    public T buscarPorId(Object id);
 }

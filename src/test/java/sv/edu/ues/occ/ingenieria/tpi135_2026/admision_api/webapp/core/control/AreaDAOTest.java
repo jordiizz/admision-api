@@ -2,10 +2,13 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -124,5 +127,27 @@ public class AreaDAOTest {
         Area resultado = cut.actualizar(modificado);
         assertNotNull(resultado);
         assertEquals(modificado, resultado);
+    }
+
+    @Test
+    public void testFindById(){
+        System.out.println("findById");
+        UUID id=UUID.randomUUID();
+        EntityManager mockEM = Mockito.mock(EntityManager.class);
+        AreaDAO cut = new AreaDAO();
+        assertThrows(IllegalStateException.class,()->cut.buscarPorId(id));
+
+        cut.em=mockEM;
+        Area resultado = cut.buscarPorId(id);
+        assertNull(resultado);
+
+        assertThrows(IllegalArgumentException.class,()->cut.buscarPorId(null));
+        try {
+            cut.buscarPorId(null);
+        }catch (Exception e){
+            assertTrue(e instanceof IllegalArgumentException);
+        }
+
+        // fail("Esta prueba no pasa")
     }
 }
