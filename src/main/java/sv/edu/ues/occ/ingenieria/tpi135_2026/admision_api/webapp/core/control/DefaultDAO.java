@@ -101,4 +101,32 @@ public abstract class DefaultDAO<T> implements DAOInterface<T> {
         }
     }
 
+    /**
+     * Cuenta el número total de registros en el repositorio. Si el repositorio es nulo se lanzará una NullPointerException. Cualquier otra excepción se encapsulará en una IllegalStateException.
+     * @return el número total de registros en el repositorio
+     * @throws NullPointerException si el repositorio es nulo
+     * @throws IllegalStateException si ocurre cualquier otra excepción
+     */
+    public Long contar() throws IllegalStateException {
+        EntityManager em = null;
+
+        try {
+            em = getEntityManager();
+
+            if (em == null) {
+                throw new IllegalStateException("Error al acceder al repositorio");
+            }
+
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<Long> cq = cb.createQuery(Long.class); // Definir que queremos un resultado de tipo Long
+            Root<T> raiz = cq.from(entityClass);
+            cq.select(cb.count(raiz)); // Utilizar el método count
+
+            TypedQuery<Long> query = em.createQuery(cq);
+            return query.getSingleResult(); // Obtener el resultado único de la consulta
+
+        } catch (Exception e) {
+            throw new IllegalStateException("Error al acceder al repositorio", e);
+        }
+    }
 }

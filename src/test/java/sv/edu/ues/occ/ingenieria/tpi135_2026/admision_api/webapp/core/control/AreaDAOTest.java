@@ -83,4 +83,27 @@ public class AreaDAOTest {
         assertEquals(findResult.size(), encontrados.size());
         //fail("Esta prueba falló");
     }
+
+    @Test
+    void contarTest() {
+        System.out.println("AreaDAOTest.count");
+        AreaDAO cut = new AreaDAO();
+        Exception exception = assertThrows(IllegalStateException.class, () -> {
+            cut.contar();
+        });
+        EntityManager emMock = Mockito.mock(EntityManager.class);
+        CriteriaBuilder cbMock = Mockito.mock(CriteriaBuilder.class);
+        CriteriaQuery<Long> cqMock = Mockito.mock(CriteriaQuery.class);
+        Root<Area> rootMock = Mockito.mock(Root.class);
+        jakarta.persistence.criteria.Expression<Long> exMock = Mockito.mock(jakarta.persistence.criteria.Expression.class);
+        Mockito.when(cqMock.from(Area.class)).thenReturn(rootMock);
+        Mockito.when(cbMock.count(rootMock)).thenReturn(exMock);
+        Mockito.when(cbMock.createQuery(Long.class)).thenReturn(cqMock);
+        TypedQuery<Long> tqMock = Mockito.mock(TypedQuery.class);
+        Mockito.when(tqMock.getSingleResult()).thenReturn(2L);
+        Mockito.when(emMock.createQuery(cqMock)).thenReturn(tqMock);
+        Mockito.when(emMock.getCriteriaBuilder()).thenReturn(cbMock);
+        cut.em = emMock;
+        cut.contar();
+    }
 }
