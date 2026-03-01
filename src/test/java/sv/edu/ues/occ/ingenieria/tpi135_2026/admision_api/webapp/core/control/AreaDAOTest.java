@@ -106,4 +106,23 @@ public class AreaDAOTest {
         cut.em = emMock;
         cut.contar();
     }
+
+    @Test
+    void update() {
+        System.out.println("AreaDAOTest.update");
+        AreaDAO cut = new AreaDAO();
+        Area modificado = new Area(1);
+        assertThrows(IllegalArgumentException.class, () -> {
+            cut.actualizar(null);
+        });
+        assertThrows(IllegalStateException.class, () -> {
+            cut.actualizar(modificado);
+        });
+        EntityManager emMock = Mockito.mock(EntityManager.class);
+        Mockito.when(emMock.merge(modificado)).thenReturn(modificado);
+        cut.em = emMock;
+        Area resultado = cut.actualizar(modificado);
+        assertNotNull(resultado);
+        assertEquals(modificado, resultado);
+    }
 }

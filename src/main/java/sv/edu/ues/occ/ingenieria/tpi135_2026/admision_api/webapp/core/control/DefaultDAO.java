@@ -129,4 +129,20 @@ public abstract class DefaultDAO<T> implements DAOInterface<T> {
             throw new IllegalStateException("Error al acceder al repositorio", e);
         }
     }
+
+    public T actualizar(T entity) throws IllegalStateException, IllegalArgumentException {
+        if (entity != null){
+            try {
+                EntityManager em = this.getEntityManager();
+                if (em != null){
+                    return em.merge(entity);
+                }
+                throw new NullPointerException("El repositorio es nulo");
+            } catch (Exception ex) {
+                throw new IllegalStateException(ex);
+            }
+        } else {
+            throw new IllegalArgumentException("entity no puede ser nulo");
+        }
+    }
 }

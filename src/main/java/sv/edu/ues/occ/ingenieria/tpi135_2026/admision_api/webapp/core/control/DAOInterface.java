@@ -11,4 +11,6 @@ public interface DAOInterface<T> {
     public List<T> buscarPorRango(int first, int max);
     
     public Long contar();
+
+    public T actualizar(T entity);
 }
