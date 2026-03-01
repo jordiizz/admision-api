@@ -1,6 +1,7 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 
 import java.io.Serializable;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import jakarta.json.bind.annotation.JsonbTransient;
@@ -37,6 +38,9 @@ public class AspiranteJornada implements Serializable{
 
     @Column(name = "id_aula")
     private String idAula;
+
+    @Column(name = "fecha_creacion")
+    private OffsetDateTime fechaCreacion;
 
     @OneToMany(mappedBy = "idAspiranteJornada")
     private List<PruebaAspiranteJornada> listPruebaAspiranteJornada;
@@ -87,6 +91,14 @@ public class AspiranteJornada implements Serializable{
         this.idAula = idAula;
     }
 
+    public OffsetDateTime getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(OffsetDateTime fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+
     @JsonbTransient
     public List<PruebaAspiranteJornada> getListPruebaAspiranteJornada() {
         return listPruebaAspiranteJornada;
@@ -94,8 +106,36 @@ public class AspiranteJornada implements Serializable{
 
     public void setListPruebaAspiranteJornada(List<PruebaAspiranteJornada> listPruebaAspiranteJornada) {
         this.listPruebaAspiranteJornada = listPruebaAspiranteJornada;
-    }    
+    }
 
-    
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((idAspiranteJornada == null) ? 0 : idAspiranteJornada.hashCode());
+        return result;
+    }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        AspiranteJornada other = (AspiranteJornada) obj;
+        if (idAspiranteJornada == null) {
+            if (other.idAspiranteJornada != null)
+                return false;
+        } else if (!idAspiranteJornada.equals(other.idAspiranteJornada))
+            return false;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "AspiranteJornada [idAspiranteJornada=" + idAspiranteJornada + ", idFacultad=" + idFacultad + 
+               ", idAula=" + idAula + ", fechaCreacion=" + fechaCreacion + "]";
+    }
 }

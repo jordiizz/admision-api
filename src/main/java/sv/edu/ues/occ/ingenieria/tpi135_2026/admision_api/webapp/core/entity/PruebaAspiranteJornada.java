@@ -1,6 +1,7 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 
 import java.io.Serializable;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import jakarta.json.bind.annotation.JsonbTransient;
@@ -25,12 +26,15 @@ public class PruebaAspiranteJornada implements Serializable{
     private Long idPruebaAspiranteJornada;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_aspirante_jornada")
+    @JoinColumn(name = "id_aspirante_jornada", nullable = false)
     private AspiranteJornada idAspiranteJornada;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_prueba")
-    private Prueba idPrueba;
+    @JoinColumn(name = "id_prueba_clave")
+    private PruebaClave idPruebaClave;
+
+    @Column(name = "fecha_creacion")
+    private OffsetDateTime fechaCreacion;
 
     @OneToMany(mappedBy = "idPruebaAspiranteJornada")
     private List<PruebaAspiranteJornadaExamen> listPruebaAspiranteJornadaExamen;
@@ -49,6 +53,7 @@ public class PruebaAspiranteJornada implements Serializable{
         this.idPruebaAspiranteJornada = idPruebaAspiranteJornada;
     }
 
+    @JsonbTransient
     public AspiranteJornada getIdAspiranteJornada() {
         return idAspiranteJornada;
     }
@@ -57,12 +62,21 @@ public class PruebaAspiranteJornada implements Serializable{
         this.idAspiranteJornada = idAspiranteJornada;
     }
 
-    public Prueba getIdPrueba() {
-        return idPrueba;
+    @JsonbTransient
+    public PruebaClave getIdPruebaClave() {
+        return idPruebaClave;
     }
 
-    public void setIdPrueba(Prueba idPrueba) {
-        this.idPrueba = idPrueba;
+    public void setIdPruebaClave(PruebaClave idPruebaClave) {
+        this.idPruebaClave = idPruebaClave;
+    }
+
+    public OffsetDateTime getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(OffsetDateTime fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
     }
 
     @JsonbTransient
@@ -74,6 +88,34 @@ public class PruebaAspiranteJornada implements Serializable{
         this.listPruebaAspiranteJornadaExamen = listPruebaAspiranteJornadaExamen;
     }
 
-    
-    
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((idPruebaAspiranteJornada == null) ? 0 : idPruebaAspiranteJornada.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PruebaAspiranteJornada other = (PruebaAspiranteJornada) obj;
+        if (idPruebaAspiranteJornada == null) {
+            if (other.idPruebaAspiranteJornada != null)
+                return false;
+        } else if (!idPruebaAspiranteJornada.equals(other.idPruebaAspiranteJornada))
+            return false;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "PruebaAspiranteJornada [idPruebaAspiranteJornada=" + idPruebaAspiranteJornada + 
+               ", fechaCreacion=" + fechaCreacion + "]";
+    }
 }

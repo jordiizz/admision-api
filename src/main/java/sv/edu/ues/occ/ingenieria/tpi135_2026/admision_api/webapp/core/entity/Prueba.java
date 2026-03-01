@@ -2,6 +2,7 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,9 +27,6 @@ public class Prueba implements Serializable{
     @Column(name = "nombre")
     private String nombre;
 
-    @Column(name = "clave")
-    private char clave;
-
     @Column(name = "indicaciones")
     private String indicaciones;
 
@@ -41,15 +39,15 @@ public class Prueba implements Serializable{
     @Column(name = "duracion")
     private Integer duracion;
 
+    @Column(name = "fecha_creacion")
+    private OffsetDateTime fechaCreacion;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_tipo_prueba")
+    @JoinColumn(name = "id_tipo_prueba", nullable = false)
     private TipoPrueba idTipoPrueba;
 
     @OneToMany(mappedBy = "idPrueba")
-    private List<PruebaAspiranteJornada> listPruebaAspiranteJornada;
-
-    @OneToMany(mappedBy = "idPrueba")
-    private List<PruebaArea> listPruebaArea;
+    private List<PruebaClave> listPruebaClave;
 
     public Prueba(UUID idPrueba) {
         this.idPrueba = idPrueba;
@@ -71,14 +69,6 @@ public class Prueba implements Serializable{
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    public char getClave() {
-        return clave;
-    }
-
-    public void setClave(char clave) {
-        this.clave = clave;
     }
 
     public String getIndicaciones() {
@@ -113,6 +103,15 @@ public class Prueba implements Serializable{
         this.duracion = duracion;
     }
 
+    public OffsetDateTime getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(OffsetDateTime fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+
+    @JsonbTransient
     public TipoPrueba getIdTipoPrueba() {
         return idTipoPrueba;
     }
@@ -122,24 +121,43 @@ public class Prueba implements Serializable{
     }
 
     @JsonbTransient
-    public List<PruebaAspiranteJornada> getListPruebaAspiranteJornada() {
-        return listPruebaAspiranteJornada;
+    public List<PruebaClave> getListPruebaClave() {
+        return listPruebaClave;
     }
 
-    public void setListPruebaAspiranteJornada(List<PruebaAspiranteJornada> listPruebaAspiranteJornada) {
-        this.listPruebaAspiranteJornada = listPruebaAspiranteJornada;
+    public void setListPruebaClave(List<PruebaClave> listPruebaClave) {
+        this.listPruebaClave = listPruebaClave;
     }
 
-    @JsonbTransient
-    public List<PruebaArea> getListPruebaArea() {
-        return listPruebaArea;
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((idPrueba == null) ? 0 : idPrueba.hashCode());
+        return result;
     }
 
-    public void setListPruebaArea(List<PruebaArea> listPruebaArea) {
-        this.listPruebaArea = listPruebaArea;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Prueba other = (Prueba) obj;
+        if (idPrueba == null) {
+            if (other.idPrueba != null)
+                return false;
+        } else if (!idPrueba.equals(other.idPrueba))
+            return false;
+        return true;
     }
 
-
-    
-
+    @Override
+    public String toString() {
+        return "Prueba [idPrueba=" + idPrueba + ", nombre=" + nombre + ", indicaciones=" + indicaciones + 
+               ", puntajeMaximo=" + puntajeMaximo + ", notaAprobacion=" + notaAprobacion + 
+               ", duracion=" + duracion + ", fechaCreacion=" + fechaCreacion + "]";
+    }
 }

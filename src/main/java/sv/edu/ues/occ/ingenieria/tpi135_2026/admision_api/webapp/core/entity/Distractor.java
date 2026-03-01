@@ -28,7 +28,7 @@ public class Distractor implements Serializable{
     private Boolean activo;
 
     @OneToMany(mappedBy = "idDistractor")
-    private List<PruebaAreaPreguntaDistractor> listPruebaAreaPreguntaDistractor;
+    private List<PruebaClaveAreaPreguntaDistractor> listPruebaClaveAreaPreguntaDistractor;
 
     @OneToMany(mappedBy = "idDistractor")
     private List<PreguntaDistractor> listPreguntaDistractor;
@@ -67,12 +67,12 @@ public class Distractor implements Serializable{
     }
 
     @JsonbTransient
-    public List<PruebaAreaPreguntaDistractor> getListPruebaAreaPreguntaDistractor() {
-        return listPruebaAreaPreguntaDistractor;
+    public List<PruebaClaveAreaPreguntaDistractor> getListPruebaClaveAreaPreguntaDistractor() {
+        return listPruebaClaveAreaPreguntaDistractor;
     }
 
-    public void setListPruebaAreaPreguntaDistractor(List<PruebaAreaPreguntaDistractor> listPruebaAreaPreguntaDistractor) {
-        this.listPruebaAreaPreguntaDistractor = listPruebaAreaPreguntaDistractor;
+    public void setListPruebaClaveAreaPreguntaDistractor(List<PruebaClaveAreaPreguntaDistractor> listPruebaClaveAreaPreguntaDistractor) {
+        this.listPruebaClaveAreaPreguntaDistractor = listPruebaClaveAreaPreguntaDistractor;
     }
 
     @JsonbTransient

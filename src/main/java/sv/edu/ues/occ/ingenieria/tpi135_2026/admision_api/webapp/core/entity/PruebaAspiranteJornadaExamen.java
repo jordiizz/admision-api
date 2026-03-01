@@ -2,7 +2,9 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -23,7 +25,7 @@ public class PruebaAspiranteJornadaExamen implements Serializable{
     private Integer idPruebaAspiranteJornadaExamen;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_prueba_aspirante_jornada")    
+    @JoinColumn(name = "id_prueba_aspirante_jornada")
     private PruebaAspiranteJornada idPruebaAspiranteJornada;
 
     @Column(name = "se_presento")
@@ -34,6 +36,9 @@ public class PruebaAspiranteJornadaExamen implements Serializable{
 
     @Column(name = "puntaje_total", precision = 5, scale = 2)
     private BigDecimal puntajeTotal;
+
+    @Column(name = "fecha_creacion")
+    private OffsetDateTime fechaCreacion;
 
     public PruebaAspiranteJornadaExamen(Integer idPruebaAspiranteJornadaExamen) {
         this.idPruebaAspiranteJornadaExamen = idPruebaAspiranteJornadaExamen;
@@ -49,6 +54,7 @@ public class PruebaAspiranteJornadaExamen implements Serializable{
         this.idPruebaAspiranteJornadaExamen = idPruebaAspiranteJornadaExamen;
     }
 
+    @JsonbTransient
     public PruebaAspiranteJornada getIdPruebaAspiranteJornada() {
         return idPruebaAspiranteJornada;
     }
@@ -81,5 +87,43 @@ public class PruebaAspiranteJornadaExamen implements Serializable{
         this.puntajeTotal = puntajeTotal;
     }
 
-    
+    public OffsetDateTime getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(OffsetDateTime fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((idPruebaAspiranteJornadaExamen == null) ? 0 : idPruebaAspiranteJornadaExamen.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PruebaAspiranteJornadaExamen other = (PruebaAspiranteJornadaExamen) obj;
+        if (idPruebaAspiranteJornadaExamen == null) {
+            if (other.idPruebaAspiranteJornadaExamen != null)
+                return false;
+        } else if (!idPruebaAspiranteJornadaExamen.equals(other.idPruebaAspiranteJornadaExamen))
+            return false;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "PruebaAspiranteJornadaExamen [idPruebaAspiranteJornadaExamen=" + idPruebaAspiranteJornadaExamen + 
+               ", sePresento=" + sePresento + ", ubicacionPrueba=" + ubicacionPrueba + 
+               ", puntajeTotal=" + puntajeTotal + ", fechaCreacion=" + fechaCreacion + "]";
+    }
 }

@@ -41,7 +41,7 @@ public class Area implements Serializable{
     private List<Area> listAreas;
 
     @OneToMany(mappedBy = "idArea")
-    private List<PruebaArea> listPruebaArea;
+    private List<PruebaClaveArea> listPruebaClaveArea;
 
     @OneToMany(mappedBy = "idArea")
     private List<PreguntaArea> listPreguntaArea;
@@ -105,12 +105,12 @@ public class Area implements Serializable{
     }
 
     @JsonbTransient
-    public List<PruebaArea> getListPruebaArea() {
-        return listPruebaArea;
+    public List<PruebaClaveArea> getListPruebaClaveArea() {
+        return listPruebaClaveArea;
     }
 
-    public void setListPruebaArea(List<PruebaArea> listPruebaArea) {
-        this.listPruebaArea = listPruebaArea;
+    public void setListPruebaClaveArea(List<PruebaClaveArea> listPruebaClaveArea) {
+        this.listPruebaClaveArea = listPruebaClaveArea;
     }
 
     @JsonbTransient
@@ -131,6 +131,34 @@ public class Area implements Serializable{
         this.listDistractorArea = listDistractorArea;
     }
 
-    
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((idArea == null) ? 0 : idArea.hashCode());
+        return result;
+    }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Area other = (Area) obj;
+        if (idArea == null) {
+            if (other.idArea != null)
+                return false;
+        } else if (!idArea.equals(other.idArea))
+            return false;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Area [idArea=" + idArea + ", nombre=" + nombre + ", descripcion=" + descripcion + 
+               ", activo=" + activo + "]";
+    }
 }

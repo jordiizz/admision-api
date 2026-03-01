@@ -31,7 +31,7 @@ public class Pregunta implements Serializable{
     private String imagenUrl;
 
     @OneToMany(mappedBy = "idPregunta")
-    private List<PruebaAreaPregunta> listPruebaAreaPregunta;
+    private List<PruebaClaveAreaPregunta> listPruebaClaveAreaPregunta;
 
     @OneToMany(mappedBy = "idPregunta")
     private List<PreguntaDistractor> listPreguntaDistractor;
@@ -78,12 +78,12 @@ public class Pregunta implements Serializable{
     }
 
     @JsonbTransient
-    public List<PruebaAreaPregunta> getListPruebaAreaPregunta() {
-        return listPruebaAreaPregunta;
+    public List<PruebaClaveAreaPregunta> getListPruebaClaveAreaPregunta() {
+        return listPruebaClaveAreaPregunta;
     }
 
-    public void setListPruebaAreaPregunta(List<PruebaAreaPregunta> listPruebaAreaPregunta) {
-        this.listPruebaAreaPregunta = listPruebaAreaPregunta;
+    public void setListPruebaClaveAreaPregunta(List<PruebaClaveAreaPregunta> listPruebaClaveAreaPregunta) {
+        this.listPruebaClaveAreaPregunta = listPruebaClaveAreaPregunta;
     }
 
     @JsonbTransient

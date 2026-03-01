@@ -142,12 +142,6 @@ public class AreaDAOTest {
         assertNull(resultado);
 
         assertThrows(IllegalArgumentException.class,()->cut.buscarPorId(null));
-        try {
-            cut.buscarPorId(null);
-        }catch (Exception e){
-            assertTrue(e instanceof IllegalArgumentException);
-        }
-
         // fail("Esta prueba no pasa")
     }
 }

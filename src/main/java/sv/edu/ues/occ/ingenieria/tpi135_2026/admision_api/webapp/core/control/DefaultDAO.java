@@ -130,6 +130,14 @@ public abstract class DefaultDAO<T> implements DAOInterface<T> {
         }
     }
 
+    /**
+     * Actualiza un registro en el repositorio, el objeto a actualizar no puede ser nulo, de lo contrario se lanzará una IllegalArgumentException. Si el repositorio es nulo se lanzará una NullPointerException. Cualquier otra excepción se encapsulará en una IllegalStateException.
+     * @param entity el objeto a actualizar
+     * @return el objeto actualizado
+     * @throws IllegalArgumentException si el objeto a actualizar es nulo
+     * @throws NullPointerException si el repositorio es nulo
+     * @throws IllegalStateException si ocurre cualquier otra excepción
+     */
     public T actualizar(T entity) throws IllegalStateException, IllegalArgumentException {
         if (entity != null){
             try {
@@ -146,6 +154,14 @@ public abstract class DefaultDAO<T> implements DAOInterface<T> {
         }
     }
 
+    /**
+     * Busca un registro por su identificador, el identificador no puede ser nulo, de lo contrario se lanzará una IllegalArgumentException. Si el repositorio es nulo se lanzará una NullPointerException. Cualquier otra excepción se encapsulará en una IllegalStateException.
+     * @param id el identificador del registro a buscar
+     * @return el registro encontrado o null si no se encuentra
+     * @throws IllegalArgumentException si el identificador es nulo
+     * @throws NullPointerException si el repositorio es nulo
+     * @throws IllegalStateException si ocurre cualquier otra excepción
+     */
     public T buscarPorId(Object id){
         if (id!=null){
             try {
