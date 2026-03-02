@@ -1,0 +1,22 @@
+package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control;
+
+import java.io.Serializable;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.AspiranteOpcion;
+
+public class AspiranteOpcionDAO extends DefaultDAO<AspiranteOpcion> implements Serializable {
+
+    @PersistenceContext(unitName = "AdmisionPU")
+    EntityManager em;
+
+    public AspiranteOpcionDAO() {
+        super(AspiranteOpcion.class);
+    }
+
+    @Override
+    public EntityManager getEntityManager() {
+        return em;
+    }
+}
