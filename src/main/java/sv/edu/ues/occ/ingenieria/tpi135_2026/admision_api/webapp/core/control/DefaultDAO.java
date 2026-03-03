@@ -167,7 +167,7 @@ public abstract class DefaultDAO<T> implements DAOInterface<T> {
             try {
                 EntityManager em = this.getEntityManager();
                 if (em != null){
-                    return (T) em.find(entityClass, id);
+                    return em.find(entityClass, id);
                 }
                 throw new NullPointerException("El repositorio es nulo");
             } catch (Exception ex) {

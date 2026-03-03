@@ -1,13 +1,14 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <persistence xmlns="https://jakarta.ee/xml/ns/persistence"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
              version="3.0">
-    <persistence-unit name="AdmisionPU" transaction-type="JTA">
-        <jta-data-source>jdbc/admision</jta-data-source>
+    <persistence-unit name="AdmisionPUIT" transaction-type="RESOURCE_LOCAL">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Area</class>
         <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Aspirante</class>
         <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.AspiranteJornada</class>
+        <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.AspiranteOpcion</class>
         <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Distractor</class>
         <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.DistractorArea</class>
         <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Jornada</class>
@@ -17,6 +18,21 @@
         <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Prueba</class>
         <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaAspiranteJornada</class>
         <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaAspiranteJornadaExamen</class>
+        <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClave</class>
+        <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveArea</class>
+        <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveAreaPregunta</class>
+        <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveAreaPreguntaDistractor</class>
         <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.TipoPrueba</class>
+        <exclude-unlisted-classes>false</exclude-unlisted-classes>
+
+        <properties>
+            <property name="jakarta.persistence.jdbc.hostname" value="localhost"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/tpi135"/>
+            <property name="jakarta.persistence.jdbc.user" value="postgres"/>
+            <property name="jakarta.persistence.jdbc.password" value="abc123"/>
+            <property name="jakarta.persistence.jdbc.port" value="5432"/>
+            <property name="jakarta.persistence.jdbc.database" value="tpi135"/>
+            <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+        </properties>
     </persistence-unit>
 </persistence>
