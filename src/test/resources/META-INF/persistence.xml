@@ -26,12 +26,9 @@
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
 
         <properties>
-            <property name="jakarta.persistence.jdbc.hostname" value="localhost"/>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/tpi135"/>
             <property name="jakarta.persistence.jdbc.user" value="postgres"/>
             <property name="jakarta.persistence.jdbc.password" value="abc123"/>
-            <property name="jakarta.persistence.jdbc.port" value="5432"/>
-            <property name="jakarta.persistence.jdbc.database" value="tpi135"/>
             <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
         </properties>
     </persistence-unit>

@@ -7,11 +7,15 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Area;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author everg
  */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Testcontainers
 public class AreaDAOIT {
 
@@ -30,18 +36,68 @@ public class AreaDAOIT {
             .withUsername("postgres")
             .withExposedPorts(5432)
             ;
+
+    public AreaDAOIT() {}
+
+    @BeforeAll // Una vez para todas las pruebas
+    public void inicicializar(){
+
+    }
+
+    @BeforeEach // una antes de cada prueba
+    public void antesdecadaprueba(){
+
+    }
+
+    @Order(1)
     @Test
     public void testCount() {
         System.out.println("count");
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("AdmisionPUIT");
+        assertTrue(postgres.isRunning());
+        Integer puertoPostgresql = postgres.getMappedPort(5432);
+
+        Map<String, Object> propiedades = new HashMap<>();
+        propiedades.put("jakarta.persistence.jdbc.url", String.format("jdbc:postgresql://localhost:%d/tpi135", puertoPostgresql));
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("AdmisionPUIT", propiedades);
         EntityManager em = emf.createEntityManager();
         AreaDAO cut = new AreaDAO();
         cut.em = em;
+
         assertTrue(postgres.isRunning());
-        Integer puertoPostgresql = postgres.getMappedPort(5432);
         Long resultado = cut.contar();
         assertTrue(resultado == 0);
-        fail("The test case is a propotype");
+        System.out.println("Resultado: " + resultado);
+        //fail("The test case is a propotype");
     }
-    
+
+    @Order(2)
+    @Test
+    public void testCrear() {
+        System.out.println("crear");
+        Area nuevo = new Area(1);
+        nuevo.setNombre("registro prueba 1");
+
+        assertTrue(postgres.isRunning());
+        Integer puertoPostgresql = postgres.getMappedPort(5432);
+        Map<String, Object> propiedades = new HashMap<>();
+        propiedades.put("jakarta.persistence.jdbc.url", String.format("jdbc:postgresql://localhost:%d/tpi135", puertoPostgresql));
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("AdmisionPUIT", propiedades);
+        EntityManager em = emf.createEntityManager();
+
+        AreaDAO cut = new AreaDAO();
+        cut.em = em;
+        cut.em.getTransaction().begin();
+
+        // nuevo.setIdAreaPadre(cut.buscarPorRango(0, 1).getFirst());
+        cut.crear(nuevo);
+
+        cut.em.getTransaction().commit();
+
+        Long resultado = cut.contar();
+        assertEquals(resultado, 1);
+        System.out.println("Resultado: " + resultado);
+        //fail("The test case is a propotype");
+    }
 }

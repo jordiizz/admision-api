@@ -132,6 +132,36 @@
                 </plugins>
             </build>
         </profile>
+
+        <profile>
+            <id>sistem</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>3.5.3</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>
+                                        sistem-test
+                                    </goal>
+                                    <goal>
+                                        verify
+                                    </goal>
+                                </goals>
+                                <configuration>
+                                    <includes>
+                                        <include>**/*SistemIT.java</include>
+                                    </includes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
     <build>
