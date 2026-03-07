@@ -2,12 +2,11 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -18,14 +17,16 @@ public class Distractor implements Serializable{
 
     @Id
     @Column(name = "id_distractor")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idDistractor;
+    private UUID idDistractor;
 
-    @Column(name = "valor")
+    @Column(name = "valor", nullable = false)
     private String valor;
 
     @Column(name = "activo")
     private Boolean activo;
+
+    @Column(name = "imagen_url")
+    private String imagenUrl;
 
     @OneToMany(mappedBy = "idDistractor")
     private List<PruebaClaveAreaPreguntaDistractor> listPruebaClaveAreaPreguntaDistractor;
@@ -36,17 +37,17 @@ public class Distractor implements Serializable{
     @OneToMany(mappedBy = "idDistractor")
     private List<DistractorArea> listDistractorAreas;
 
-    public Distractor(Long idDistractor) {
+    public Distractor(UUID idDistractor) {
         this.idDistractor = idDistractor;
     }
 
     public Distractor(){}
 
-    public Long getIdDistractor() {
+    public UUID getIdDistractor() {
         return idDistractor;
     }
 
-    public void setIdDistractor(Long idDistractor) {
+    public void setIdDistractor(UUID idDistractor) {
         this.idDistractor = idDistractor;
     }
 
@@ -64,6 +65,14 @@ public class Distractor implements Serializable{
 
     public void setActivo(Boolean activo) {
         this.activo = activo;
+    }
+
+    public String getImagenUrl() {
+        return imagenUrl;
+    }
+
+    public void setImagenUrl(String imagenUrl) {
+        this.imagenUrl = imagenUrl;
     }
 
     @JsonbTransient
@@ -93,9 +102,33 @@ public class Distractor implements Serializable{
         this.listDistractorAreas = listDistractorAreas;
     }
 
-    
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((idDistractor == null) ? 0 : idDistractor.hashCode());
+        return result;
+    }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Distractor other = (Distractor) obj;
+        if (idDistractor == null) {
+            if (other.idDistractor != null)
+                return false;
+        } else if (!idDistractor.equals(other.idDistractor))
+            return false;
+        return true;
+    }
 
-
-
+    @Override
+    public String toString() {
+        return "Distractor [idDistractor=" + idDistractor + ", valor=" + valor + ", activo=" + activo + "]";
+    }
 }

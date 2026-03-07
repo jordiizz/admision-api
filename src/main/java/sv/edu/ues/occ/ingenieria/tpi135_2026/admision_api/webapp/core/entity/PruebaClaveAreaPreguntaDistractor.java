@@ -1,13 +1,12 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -18,9 +17,8 @@ import jakarta.persistence.Table;
 public class PruebaClaveAreaPreguntaDistractor implements Serializable{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_prueba_clave_area_pregunta_distractor")
-    private Long idPruebaClaveAreaPreguntaDistractor;
+    private UUID idPruebaClaveAreaPreguntaDistractor;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_prueba_clave_area_pregunta", nullable = false)
@@ -30,17 +28,17 @@ public class PruebaClaveAreaPreguntaDistractor implements Serializable{
     @JoinColumn(name = "id_distractor", nullable = false)
     private Distractor idDistractor;
 
-    public PruebaClaveAreaPreguntaDistractor(Long idPruebaClaveAreaPreguntaDistractor) {
+    public PruebaClaveAreaPreguntaDistractor(UUID idPruebaClaveAreaPreguntaDistractor) {
         this.idPruebaClaveAreaPreguntaDistractor = idPruebaClaveAreaPreguntaDistractor;
     }
 
     public PruebaClaveAreaPreguntaDistractor(){}
 
-    public Long getIdPruebaClaveAreaPreguntaDistractor() {
+    public UUID getIdPruebaClaveAreaPreguntaDistractor() {
         return idPruebaClaveAreaPreguntaDistractor;
     }
 
-    public void setIdPruebaClaveAreaPreguntaDistractor(Long idPruebaClaveAreaPreguntaDistractor) {
+    public void setIdPruebaClaveAreaPreguntaDistractor(UUID idPruebaClaveAreaPreguntaDistractor) {
         this.idPruebaClaveAreaPreguntaDistractor = idPruebaClaveAreaPreguntaDistractor;
     }
 

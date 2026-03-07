@@ -5,23 +5,25 @@
              version="3.0">
     <persistence-unit name="AdmisionPUIT" transaction-type="RESOURCE_LOCAL">
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.UUIDConverter</class>
         <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Area</class>
         <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Aspirante</class>
-        <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.AspiranteJornada</class>
         <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.AspiranteOpcion</class>
         <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Distractor</class>
         <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.DistractorArea</class>
         <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Jornada</class>
+        <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.JornadaAula</class>
         <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Pregunta</class>
         <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PreguntaArea</class>
         <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PreguntaDistractor</class>
         <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Prueba</class>
-        <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaAspiranteJornada</class>
-        <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaAspiranteJornadaExamen</class>
         <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClave</class>
         <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveArea</class>
         <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveAreaPregunta</class>
         <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveAreaPreguntaDistractor</class>
+        <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornada</class>
+        <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornadaAulaAspiranteOpcion</class>
+        <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornadaAulaAspiranteOpcionExamen</class>
         <class>sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.TipoPrueba</class>
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
 

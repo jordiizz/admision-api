@@ -3,13 +3,12 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -22,8 +21,7 @@ public class PruebaClaveArea implements Serializable{
 
     @Id
     @Column(name = "id_prueba_clave_area")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idPruebaClaveArea;
+    private UUID idPruebaClaveArea;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_prueba_clave", nullable = false)
@@ -33,7 +31,7 @@ public class PruebaClaveArea implements Serializable{
     @JoinColumn(name = "id_area", nullable = false)
     private Area idArea;
 
-    @Column(name = "cantidad", nullable = false)
+    @Column(name = "cantidad")
     private Integer cantidad;
 
     @Column(name = "porcentaje", precision = 5, scale = 2)
@@ -42,17 +40,17 @@ public class PruebaClaveArea implements Serializable{
     @OneToMany(mappedBy = "idPruebaClaveArea")
     private List<PruebaClaveAreaPregunta> listPruebaClaveAreaPregunta;
 
-    public PruebaClaveArea(Long idPruebaClaveArea) {
+    public PruebaClaveArea(UUID idPruebaClaveArea) {
         this.idPruebaClaveArea = idPruebaClaveArea;
     }
 
     public PruebaClaveArea(){}
 
-    public Long getIdPruebaClaveArea() {
+    public UUID getIdPruebaClaveArea() {
         return idPruebaClaveArea;
     }
 
-    public void setIdPruebaClaveArea(Long idPruebaClaveArea) {
+    public void setIdPruebaClaveArea(UUID idPruebaClaveArea) {
         this.idPruebaClaveArea = idPruebaClaveArea;
     }
 

@@ -8,24 +8,24 @@ import org.mockito.Mockito;
 
 import jakarta.persistence.EntityManager;
 
-public class AspiranteJornadaDAOTest {
+public class PruebaJornadaDAOTest {
 
     @Test
     public void constructorTest() {
-        System.out.println("AspiranteJornadaDAOTest.constructorTest");
-        AspiranteJornadaDAO cut = new AspiranteJornadaDAO();
+        System.out.println("PruebaJornadaDAOTest.constructorTest");
+        PruebaJornadaDAO cut = new PruebaJornadaDAO();
         assertNotNull(cut);
-        System.out.println("AspiranteJornadaDAOTest.constructorTest - finalizado");
+        System.out.println("PruebaJornadaDAOTest.constructorTest - finalizado");
     }
 
     @Test
     public void getEntityManagerTest() {
-        System.out.println("AspiranteJornadaDAOTest.getEntityManagerTest");
-        AspiranteJornadaDAO cut = new AspiranteJornadaDAO();
+        System.out.println("PruebaJornadaDAOTest.getEntityManagerTest");
+        PruebaJornadaDAO cut = new PruebaJornadaDAO();
         assertNull(cut.getEntityManager());
         EntityManager mockEM = Mockito.mock(EntityManager.class);
         cut.em = mockEM;
         assertEquals(mockEM, cut.getEntityManager());
-        System.out.println("AspiranteJornadaDAOTest.getEntityManagerTest - finalizado");
+        System.out.println("PruebaJornadaDAOTest.getEntityManagerTest - finalizado");
     }
 }

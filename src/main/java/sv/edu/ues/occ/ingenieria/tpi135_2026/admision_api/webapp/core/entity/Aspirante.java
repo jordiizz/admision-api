@@ -21,26 +21,23 @@ public class Aspirante implements Serializable{
     @Column(name = "id_aspirante")
     private UUID idAspirante;
 
-    @Column(name = "nombres")
+    @Column(name = "nombres", nullable = false)
     private String nombres;
 
-    @Column(name = "apellidos")
+    @Column(name = "apellidos", nullable = false)
     private String apellidos;
 
-    @Column(name = "fecha_nacimiento")
+    @Column(name = "fecha_nacimiento", nullable = false)
     private LocalDate fechaNacimiento;
 
     @Column(name = "documento_identidad")
     private String documentoIdentidad;
 
-    @Column(name = "correo")
+    @Column(name = "correo", nullable = false)
     private String correo;
 
-    @Column(name = "fecha_creacion")
+    @Column(name = "fecha_creacion", nullable = false)
     private OffsetDateTime fechaCreacion;
-
-    @OneToMany(mappedBy = "idAspirante")
-    private List<AspiranteJornada> listAspiranteJornada;
 
     @OneToMany(mappedBy = "idAspirante")
     private List<AspiranteOpcion> listAspiranteOpcion;
@@ -105,15 +102,6 @@ public class Aspirante implements Serializable{
 
     public void setFechaCreacion(OffsetDateTime fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
-    }
-
-    @JsonbTransient
-    public List<AspiranteJornada> getListAspiranteJornada() {
-        return listAspiranteJornada;
-    }
-
-    public void setListAspiranteJornada(List<AspiranteJornada> listAspiranteJornada) {
-        this.listAspiranteJornada = listAspiranteJornada;
     }
 
     @JsonbTransient

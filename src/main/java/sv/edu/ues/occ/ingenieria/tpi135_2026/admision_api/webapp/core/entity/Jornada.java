@@ -3,12 +3,11 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -18,33 +17,35 @@ import jakarta.persistence.Table;
 public class Jornada implements Serializable{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_jornada")
-    private Integer idJornada;
+    private UUID idJornada;
 
-    @Column(name = "nombre")
+    @Column(name = "nombre", nullable = false)
     private String nombre;
 
-    @Column(name = "fecha_inicio")
+    @Column(name = "fecha_inicio", nullable = false)
     private OffsetDateTime fechaInicio;
 
-    @Column(name = "fecha_fin")
+    @Column(name = "fecha_fin", nullable = false)
     private OffsetDateTime fechaFin;
 
     @OneToMany(mappedBy = "idJornada")
-    private List<AspiranteJornada> listAspiranteJornada;
+    private List<JornadaAula> listJornadaAula;
 
-    public Jornada(Integer idJornada) {
+    @OneToMany(mappedBy = "idJornada")
+    private List<PruebaJornada> listPruebaJornada;
+
+    public Jornada(UUID idJornada) {
         this.idJornada = idJornada;
     }
     
     public Jornada(){}
 
-    public Integer getIdJornada() {
+    public UUID getIdJornada() {
         return idJornada;
     }
 
-    public void setIdJornada(Integer idJornada) {
+    public void setIdJornada(UUID idJornada) {
         this.idJornada = idJornada;
     }
 
@@ -73,14 +74,50 @@ public class Jornada implements Serializable{
     }
 
     @JsonbTransient
-    public List<AspiranteJornada> getListAspiranteJornada() {
-        return listAspiranteJornada;
+    public List<JornadaAula> getListJornadaAula() {
+        return listJornadaAula;
     }
 
-    public void setListAspiranteJornada(List<AspiranteJornada> listAspiranteJornada) {
-        this.listAspiranteJornada = listAspiranteJornada;
+    public void setListJornadaAula(List<JornadaAula> listJornadaAula) {
+        this.listJornadaAula = listJornadaAula;
     }
 
-    
+    @JsonbTransient
+    public List<PruebaJornada> getListPruebaJornada() {
+        return listPruebaJornada;
+    }
 
+    public void setListPruebaJornada(List<PruebaJornada> listPruebaJornada) {
+        this.listPruebaJornada = listPruebaJornada;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((idJornada == null) ? 0 : idJornada.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Jornada other = (Jornada) obj;
+        if (idJornada == null) {
+            if (other.idJornada != null)
+                return false;
+        } else if (!idJornada.equals(other.idJornada))
+            return false;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Jornada [idJornada=" + idJornada + ", nombre=" + nombre + ", fechaInicio=" + fechaInicio + ", fechaFin=" + fechaFin + "]";
+    }
 }

@@ -2,16 +2,13 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -21,23 +18,22 @@ public class Area implements Serializable{
 
     @Id
     @Column(name = "id_area", nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idArea;
+    private UUID idArea;
 
-    @Column(name = "nombre")
+    @Column(name = "nombre", nullable = false, length = 50)
     private String nombre;
 
-    @Column(name = "descripcion")
+    @Column(name = "descripcion", columnDefinition = "text")
     private String descripcion;
 
     @Column(name = "activo")
     private Boolean activo;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_area_padre")
-    private Area idAreaPadre;
+    @Column(name = "id_area_padre")
+    private UUID idAreaPadre;
 
-    @OneToMany(mappedBy = "idAreaPadre")
+    @OneToMany
+    @JoinColumn(name = "id_area_padre")
     private List<Area> listAreas;
 
     @OneToMany(mappedBy = "idArea")
@@ -49,17 +45,17 @@ public class Area implements Serializable{
     @OneToMany(mappedBy = "idArea")
     private List<DistractorArea> listDistractorArea;
 
-    public Area(Integer idArea) {
+    public Area(UUID idArea) {
         this.idArea = idArea;
     }
 
     public Area(){}
 
-    public Integer getIdArea() {
+    public UUID getIdArea() {
         return idArea;
     }
 
-    public void setIdArea(Integer idArea) {
+    public void setIdArea(UUID idArea) {
         this.idArea = idArea;
     }
 
@@ -87,12 +83,16 @@ public class Area implements Serializable{
         this.activo = activo;
     }
 
-    public Area getIdAreaPadre() {
+    public UUID getIdAreaPadre() {
         return idAreaPadre;
     }
 
-    public void setIdAreaPadre(Area idAreaPadre) {
+    public void setIdAreaPadre(UUID idAreaPadre) {
         this.idAreaPadre = idAreaPadre;
+    }
+
+    public void setIdAreaPadre(Area area) {
+        this.idAreaPadre = area != null ? area.getIdArea() : null;
     }
 
     @JsonbTransient

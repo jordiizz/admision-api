@@ -2,12 +2,11 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -18,10 +17,9 @@ public class Pregunta implements Serializable{
 
     @Id
     @Column(name = "id_pregunta")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idPregunta;
+    private UUID idPregunta;
 
-    @Column(name = "valor")
+    @Column(name = "valor", nullable = false)
     private String valor;
 
     @Column(name = "activo")
@@ -39,17 +37,17 @@ public class Pregunta implements Serializable{
     @OneToMany(mappedBy = "idPregunta")
     private List<PreguntaArea> listPreguntaArea;
 
-    public Pregunta(Long idPregunta) {
+    public Pregunta(UUID idPregunta) {
         this.idPregunta = idPregunta;
     }
 
     public Pregunta(){}
 
-    public Long getIdPregunta() {
+    public UUID getIdPregunta() {
         return idPregunta;
     }
 
-    public void setIdPregunta(Long idPregunta) {
+    public void setIdPregunta(UUID idPregunta) {
         this.idPregunta = idPregunta;
     }
 
@@ -104,5 +102,33 @@ public class Pregunta implements Serializable{
         this.listPreguntaArea = listPreguntaArea;
     }
 
-    
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((idPregunta == null) ? 0 : idPregunta.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Pregunta other = (Pregunta) obj;
+        if (idPregunta == null) {
+            if (other.idPregunta != null)
+                return false;
+        } else if (!idPregunta.equals(other.idPregunta))
+            return false;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Pregunta [idPregunta=" + idPregunta + ", valor=" + valor + ", activo=" + activo + "]";
+    }
 }

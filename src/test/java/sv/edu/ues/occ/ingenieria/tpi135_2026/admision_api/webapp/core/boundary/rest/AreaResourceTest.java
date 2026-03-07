@@ -2,6 +2,7 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.boundary.
 
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,7 +47,7 @@ public class AreaResourceTest {
 
         Mockito.doAnswer(invocation -> {
             Area area = invocation.getArgument(0);
-            area.setIdArea(1);
+            area.setIdArea(UUID.randomUUID()); 
             return null;
         }).when(mockAD).crear(nuevo);
 
@@ -100,7 +101,7 @@ public class AreaResourceTest {
     public void crearAreaConIdTest() {
         System.out.println("Ejecutando test: crearAreaConIdTest");
         Area areaConId = new Area();
-        areaConId.setIdArea(100);
+        areaConId.setIdArea(UUID.randomUUID());
 
         Response resultado = cut.crear(areaConId, mockUriInfo);
 
@@ -111,7 +112,7 @@ public class AreaResourceTest {
     @Test
     public void eliminarExitosoTest() {
         System.out.println("Ejecutando test: eliminarExitosoTest");
-        Integer id = 1;
+        UUID id = UUID.randomUUID();
         Area areaExistente = new Area(id);
 
         Mockito.when(mockAD.buscarPorId(id)).thenReturn(areaExistente);
@@ -127,7 +128,7 @@ public class AreaResourceTest {
     @Test
     public void eliminarNoEncontradoTest() {
         System.out.println("Ejecutando test: eliminarNoEncontradoTest");
-        Integer id = 999;
+        UUID id = UUID.randomUUID();
         Mockito.when(mockAD.buscarPorId(id)).thenReturn(null);
         Response resultado = cut.eliminar(id);
 
@@ -139,7 +140,7 @@ public class AreaResourceTest {
     @Test
     public void eliminarConExcepcionTest() {
         System.out.println("Ejecutando test: eliminarConExcepcionTest");
-        Integer id = 1;
+        UUID id = UUID.randomUUID();
         Area areaExistente = new Area(id);
         Mockito.when(mockAD.buscarPorId(id)).thenReturn(areaExistente);
         Mockito.doThrow(new RuntimeException("Error en base de datos"))
@@ -161,7 +162,7 @@ public class AreaResourceTest {
     @Test
     public void buscarPorRangoExitosoTest() {
         System.out.println("Ejecutando test: buscarPorRangoExitosoTest");
-        Mockito.when(mockAD.buscarPorRango(0, 50)).thenReturn(List.of(new Area(1), new Area(2)));
+        Mockito.when(mockAD.buscarPorRango(0, 50)).thenReturn(List.of(new Area(UUID.randomUUID()), new Area(UUID.randomUUID())));
         Mockito.when(mockAD.contar()).thenReturn(2L);
         Response resultado = cut.buscarPorRango(0, 50);
         assertEquals(200, resultado.getStatus());

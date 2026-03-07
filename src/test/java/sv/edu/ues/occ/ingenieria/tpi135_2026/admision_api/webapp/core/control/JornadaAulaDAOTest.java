@@ -8,24 +8,24 @@ import org.mockito.Mockito;
 
 import jakarta.persistence.EntityManager;
 
-public class PruebaAspiranteJornadaExamenDAOTest {
+public class JornadaAulaDAOTest {
 
     @Test
     public void constructorTest() {
-        System.out.println("PruebaAspiranteJornadaExamenDAOTest.constructorTest");
-        PruebaAspiranteJornadaExamenDAO cut = new PruebaAspiranteJornadaExamenDAO();
+        System.out.println("JornadaAulaDAOTest.constructorTest");
+        JornadaAulaDAO cut = new JornadaAulaDAO();
         assertNotNull(cut);
-        System.out.println("PruebaAspiranteJornadaExamenDAOTest.constructorTest - finalizado");
+        System.out.println("JornadaAulaDAOTest.constructorTest - finalizado");
     }
 
     @Test
     public void getEntityManagerTest() {
-        System.out.println("PruebaAspiranteJornadaExamenDAOTest.getEntityManagerTest");
-        PruebaAspiranteJornadaExamenDAO cut = new PruebaAspiranteJornadaExamenDAO();
+        System.out.println("JornadaAulaDAOTest.getEntityManagerTest");
+        JornadaAulaDAO cut = new JornadaAulaDAO();
         assertNull(cut.getEntityManager());
         EntityManager mockEM = Mockito.mock(EntityManager.class);
         cut.em = mockEM;
         assertEquals(mockEM, cut.getEntityManager());
-        System.out.println("PruebaAspiranteJornadaExamenDAOTest.getEntityManagerTest - finalizado");
+        System.out.println("JornadaAulaDAOTest.getEntityManagerTest - finalizado");
     }
 }

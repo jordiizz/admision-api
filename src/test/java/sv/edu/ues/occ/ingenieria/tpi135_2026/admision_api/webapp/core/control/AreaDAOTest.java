@@ -24,7 +24,7 @@ public class AreaDAOTest {
 
     public AreaDAOTest() {
         findResult = Arrays.asList(new Area[]{
-                new Area(1), new Area(2), new Area(3)
+                new Area(UUID.randomUUID()), new Area(UUID.randomUUID()), new Area(UUID.randomUUID())
         });
     }
 
@@ -45,7 +45,7 @@ public class AreaDAOTest {
     public void eliminarTest() {
         System.out.println("AreaDAOTest.eliminarTest");
         EntityManager mockEM = Mockito.mock(EntityManager.class);
-        Area eliminado = new Area(1);
+        Area eliminado = new Area(UUID.randomUUID());
         AreaDAO cut = new AreaDAO();
         assertThrows(IllegalArgumentException.class, ()->cut.eliminar(null));
         assertThrows(IllegalStateException.class, ()->cut.eliminar(eliminado));
@@ -113,7 +113,7 @@ public class AreaDAOTest {
     void update() {
         System.out.println("AreaDAOTest.update");
         AreaDAO cut = new AreaDAO();
-        Area modificado = new Area(1);
+        Area modificado = new Area(UUID.randomUUID());
         assertThrows(IllegalArgumentException.class, () -> {
             cut.actualizar(null);
         });

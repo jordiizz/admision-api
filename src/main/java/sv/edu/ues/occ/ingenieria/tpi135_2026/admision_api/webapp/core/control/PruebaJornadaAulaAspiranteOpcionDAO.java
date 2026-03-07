@@ -6,17 +6,18 @@ import jakarta.ejb.LocalBean;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Distractor;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornadaAulaAspiranteOpcion;
 
 @Stateless
 @LocalBean
-public class DistractorDAO extends DefaultDAO<Distractor> implements Serializable {
+public class PruebaJornadaAulaAspiranteOpcionDAO extends DefaultDAO<PruebaJornadaAulaAspiranteOpcion>
+        implements Serializable {
 
     @PersistenceContext(unitName = "AdmisionPU")
     EntityManager em;
 
-    public DistractorDAO() {
-        super(Distractor.class);
+    public PruebaJornadaAulaAspiranteOpcionDAO() {
+        super(PruebaJornadaAulaAspiranteOpcion.class);
     }
 
     @Override

@@ -2,13 +2,12 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -21,8 +20,7 @@ public class PruebaClave implements Serializable {
 
     @Id
     @Column(name = "id_prueba_clave", nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idPruebaClave;
+    private UUID idPruebaClave;
 
     @Column(name = "nombre_clave", nullable = false)
     private String nombreClave;
@@ -34,20 +32,17 @@ public class PruebaClave implements Serializable {
     @OneToMany(mappedBy = "idPruebaClave")
     private List<PruebaClaveArea> listPruebaClaveArea;
 
-    @OneToMany(mappedBy = "idPruebaClave")
-    private List<PruebaAspiranteJornada> listPruebaAspiranteJornada;
-
     public PruebaClave() {}
 
-    public PruebaClave(Long idPruebaClave) {
+    public PruebaClave(UUID idPruebaClave) {
         this.idPruebaClave = idPruebaClave;
     }
 
-    public Long getIdPruebaClave() {
+    public UUID getIdPruebaClave() {
         return idPruebaClave;
     }
 
-    public void setIdPruebaClave(Long idPruebaClave) {
+    public void setIdPruebaClave(UUID idPruebaClave) {
         this.idPruebaClave = idPruebaClave;
     }
 
@@ -75,15 +70,6 @@ public class PruebaClave implements Serializable {
 
     public void setListPruebaClaveArea(List<PruebaClaveArea> listPruebaClaveArea) {
         this.listPruebaClaveArea = listPruebaClaveArea;
-    }
-
-    @JsonbTransient
-    public List<PruebaAspiranteJornada> getListPruebaAspiranteJornada() {
-        return listPruebaAspiranteJornada;
-    }
-
-    public void setListPruebaAspiranteJornada(List<PruebaAspiranteJornada> listPruebaAspiranteJornada) {
-        this.listPruebaAspiranteJornada = listPruebaAspiranteJornada;
     }
 
     @Override

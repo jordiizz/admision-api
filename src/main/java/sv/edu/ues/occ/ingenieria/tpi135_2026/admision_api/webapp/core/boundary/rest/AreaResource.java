@@ -2,6 +2,7 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.boundary.
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
@@ -50,7 +51,7 @@ public class AreaResource  implements Serializable {
 
     @DELETE
     @Path("{id}")
-    public Response eliminar(@PathParam("id") Integer id) {
+    public Response eliminar(@PathParam("id") UUID id) {
         if (id != null) {
             try {
                 Area area = areaDAO.buscarPorId(id);

@@ -5,77 +5,77 @@ BEGIN;
 
 CREATE TABLE IF NOT EXISTS public.area
 (
-    id_area serial NOT NULL,
-    id_area_padre integer,
+    id_area uuid NOT NULL,
+    id_area_padre uuid,
     nombre character varying(50) COLLATE pg_catalog."default" NOT NULL,
     descripcion text COLLATE pg_catalog."default",
     activo boolean,
-    CONSTRAINT area_pkey PRIMARY KEY (id_area)
+    CONSTRAINT area_pkey PRIMARY KEY (id_area),
+    CONSTRAINT uq_area_padre_nombre UNIQUE (id_area_padre, nombre)
 );
 
 CREATE TABLE IF NOT EXISTS public.aspirante
 (
     id_aspirante uuid NOT NULL,
-    nombres character varying(100) COLLATE pg_catalog."default" NOT NULL,
-    apellidos character varying(100) COLLATE pg_catalog."default" NOT NULL,
-    fecha_nacimiento date,
+    nombres character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    apellidos character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    fecha_nacimiento date NOT NULL,
     documento_identidad character varying(50) COLLATE pg_catalog."default",
     correo character varying(150) COLLATE pg_catalog."default" NOT NULL,
-    fecha_creacion timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT aspirante_pkey PRIMARY KEY (id_aspirante)
-);
-
-CREATE TABLE IF NOT EXISTS public.aspirante_jornada
-(
-    id_aspirante_jornada bigserial NOT NULL,
-    id_jornada integer,
-    id_aspirante uuid,
-    id_facultad character varying(100) COLLATE pg_catalog."default",
-    id_aula character varying(100) COLLATE pg_catalog."default",
-    fecha_creacion timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT aspirante_jornada_pkey PRIMARY KEY (id_aspirante_jornada),
-    CONSTRAINT uk_aspirante_jornada UNIQUE (id_aspirante, id_jornada)
+    fecha_creacion timestamp with time zone NOT NULL,
+    CONSTRAINT aspirante_pkey PRIMARY KEY (id_aspirante),
+    CONSTRAINT uq_aspirante_correo UNIQUE (correo)
 );
 
 CREATE TABLE IF NOT EXISTS public.aspirante_opcion
 (
-    id_aspirante_opcion bigserial NOT NULL,
+    id_aspirante_opcion uuid NOT NULL,
     id_aspirante uuid NOT NULL,
-    id_carrera character varying(100) COLLATE pg_catalog."default" NOT NULL,
-    prioridad integer NOT NULL,
-    fecha_creacion timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT aspirante_opcion_pkey PRIMARY KEY (id_aspirante_opcion),
-    CONSTRAINT uk_aspirante_prioridad UNIQUE (id_aspirante, prioridad)
+    id_opcion character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    prioridad integer,
+    fecha_creacion timestamp with time zone NOT NULL,
+    CONSTRAINT aspirante_opcion_pkey PRIMARY KEY (id_aspirante_opcion)
 );
 
 CREATE TABLE IF NOT EXISTS public.distractor
 (
-    id_distractor bigserial NOT NULL,
+    id_distractor uuid NOT NULL,
     valor text COLLATE pg_catalog."default" NOT NULL,
     activo boolean,
+    imagen_url character varying(50) COLLATE pg_catalog."default",
     CONSTRAINT distractor_pkey PRIMARY KEY (id_distractor)
 );
 
 CREATE TABLE IF NOT EXISTS public.distractor_area
 (
-    id_distractor_area bigserial NOT NULL,
-    id_distractor bigint,
-    id_area integer,
-    CONSTRAINT distractor_area_pkey PRIMARY KEY (id_distractor_area)
+    id_distractor_area uuid NOT NULL,
+    id_distractor uuid NOT NULL,
+    id_area uuid NOT NULL,
+    CONSTRAINT distractor_area_pkey PRIMARY KEY (id_distractor_area),
+    CONSTRAINT uq_distractor_area UNIQUE (id_distractor, id_area)
 );
 
 CREATE TABLE IF NOT EXISTS public.jornada
 (
-    id_jornada serial NOT NULL,
+    id_jornada uuid NOT NULL,
     nombre character varying(100) COLLATE pg_catalog."default" NOT NULL,
     fecha_inicio timestamp with time zone NOT NULL,
     fecha_fin timestamp with time zone NOT NULL,
     CONSTRAINT jornada_pkey PRIMARY KEY (id_jornada)
 );
 
+CREATE TABLE IF NOT EXISTS public.jornada_aula
+(
+    id_jornada_aula uuid NOT NULL,
+    id_jornada uuid NOT NULL,
+    id_aula character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT jornada_aula_pkey PRIMARY KEY (id_jornada_aula),
+    CONSTRAINT uq_jornada_aula UNIQUE (id_jornada, id_aula)
+);
+
 CREATE TABLE IF NOT EXISTS public.pregunta
 (
-    id_pregunta bigserial NOT NULL,
+    id_pregunta uuid NOT NULL,
     valor text COLLATE pg_catalog."default" NOT NULL,
     activo boolean,
     imagen_url character varying(50) COLLATE pg_catalog."default",
@@ -84,245 +84,284 @@ CREATE TABLE IF NOT EXISTS public.pregunta
 
 CREATE TABLE IF NOT EXISTS public.pregunta_area
 (
-    id_pregunta_area bigserial NOT NULL,
-    id_pregunta bigint,
-    id_area integer,
-    CONSTRAINT pregunta_area_pkey PRIMARY KEY (id_pregunta_area)
+    id_pregunta_area uuid NOT NULL,
+    id_pregunta uuid NOT NULL,
+    id_area uuid NOT NULL,
+    CONSTRAINT pregunta_area_pkey PRIMARY KEY (id_pregunta_area),
+    CONSTRAINT uq_pregunta_area UNIQUE (id_pregunta, id_area)
 );
 
 CREATE TABLE IF NOT EXISTS public.pregunta_distractor
 (
-    id_pregunta_distractor bigserial NOT NULL,
-    id_pregunta bigint,
-    id_distractor bigint,
+    id_pregunta_distractor uuid NOT NULL,
+    id_pregunta uuid NOT NULL,
+    id_distractor uuid NOT NULL,
     correcto boolean NOT NULL,
-    CONSTRAINT pregunta_distractor_pkey PRIMARY KEY (id_pregunta_distractor)
+    CONSTRAINT pregunta_distractor_pkey PRIMARY KEY (id_pregunta_distractor),
+    CONSTRAINT uq_pregunta_distractor UNIQUE (id_pregunta, id_distractor)
 );
 
 CREATE TABLE IF NOT EXISTS public.prueba
 (
     id_prueba uuid NOT NULL,
-    nombre character varying(50) COLLATE pg_catalog."default",
+    nombre character varying(100) COLLATE pg_catalog."default" NOT NULL,
     indicaciones text COLLATE pg_catalog."default",
-    id_tipo_prueba integer NOT NULL,
+    id_tipo_prueba uuid NOT NULL,
     puntaje_maximo numeric(5, 2) NOT NULL,
     nota_aprobacion numeric(5, 2) NOT NULL,
     duracion integer,
-    fecha_creacion timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    fecha_creacion timestamp with time zone NOT NULL,
     CONSTRAINT prueba_pkey PRIMARY KEY (id_prueba)
-);
-
-CREATE TABLE IF NOT EXISTS public.prueba_aspirante_jornada
-(
-    id_prueba_aspirante_jornada bigserial NOT NULL,
-    id_prueba_clave bigint,
-    id_aspirante_jornada bigint NOT NULL,
-    fecha_creacion timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT prueba_aspirante_jornada_pkey PRIMARY KEY (id_prueba_aspirante_jornada),
-    CONSTRAINT uk_cita_prueba UNIQUE (id_aspirante_jornada, id_prueba_clave)
-);
-
-CREATE TABLE IF NOT EXISTS public.prueba_aspirante_jornada_examen
-(
-    id_prueba_aspirante_jornada_examen serial NOT NULL,
-    id_prueba_aspirante_jornada bigint,
-    se_presento boolean,
-    ubicacion_prueba character varying(255) COLLATE pg_catalog."default",
-    puntaje_total numeric(5, 2),
-    fecha_creacion timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT prueba_aspirante_jornada_examen_pkey PRIMARY KEY (id_prueba_aspirante_jornada_examen),
-    CONSTRAINT uk_examen_unico UNIQUE (id_prueba_aspirante_jornada)
 );
 
 CREATE TABLE IF NOT EXISTS public.prueba_clave
 (
-    id_prueba_clave bigserial NOT NULL,
-    id_prueba uuid NOT NULL,
+    id_prueba_clave uuid NOT NULL,
     nombre_clave character varying(50) COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT prueba_clave_pkey PRIMARY KEY (id_prueba_clave),
-    CONSTRAINT uk_prueba_clave UNIQUE (id_prueba, nombre_clave)
+    id_prueba uuid NOT NULL,
+    CONSTRAINT prueba_clave_pkey PRIMARY KEY (id_prueba_clave)
 );
 
 CREATE TABLE IF NOT EXISTS public.prueba_clave_area
 (
-    id_prueba_clave_area bigserial NOT NULL,
-    id_prueba_clave bigint NOT NULL,
-    id_area integer NOT NULL,
-    cantidad integer NOT NULL,
+    id_prueba_clave_area uuid NOT NULL,
+    id_prueba_clave uuid NOT NULL,
+    id_area uuid NOT NULL,
+    cantidad integer,
     porcentaje numeric(5, 2),
-    CONSTRAINT prueba_clave_area_pkey PRIMARY KEY (id_prueba_clave_area)
+    CONSTRAINT prueba_clave_area_pkey PRIMARY KEY (id_prueba_clave_area),
+    CONSTRAINT uq_prueba_clave_area UNIQUE (id_prueba_clave, id_area)
 );
 
 CREATE TABLE IF NOT EXISTS public.prueba_clave_area_pregunta
 (
-    id_prueba_clave_area_pregunta bigserial NOT NULL,
-    id_prueba_clave_area bigint NOT NULL,
-    id_pregunta bigint NOT NULL,
+    id_prueba_clave_area_pregunta uuid NOT NULL,
+    id_prueba_clave_area uuid NOT NULL,
+    id_pregunta uuid NOT NULL,
     porcentaje numeric(5, 2) NOT NULL,
-    CONSTRAINT prueba_clave_area_pregunta_pkey PRIMARY KEY (id_prueba_clave_area_pregunta)
+    CONSTRAINT prueba_clave_area_pregunta_pkey PRIMARY KEY (id_prueba_clave_area_pregunta),
+    CONSTRAINT uq_prueba_clave_area_pregunta UNIQUE (id_prueba_clave_area, id_pregunta)
 );
 
 CREATE TABLE IF NOT EXISTS public.prueba_clave_area_pregunta_distractor
 (
-    id_prueba_clave_area_pregunta_distractor bigserial NOT NULL,
-    id_prueba_clave_area_pregunta bigint NOT NULL,
-    id_distractor bigint NOT NULL,
-    CONSTRAINT pk_pc_area_preg_dist PRIMARY KEY (id_prueba_clave_area_pregunta_distractor)
+    id_prueba_clave_area_pregunta_distractor uuid NOT NULL,
+    id_prueba_clave_area_pregunta uuid NOT NULL,
+    id_distractor uuid NOT NULL,
+    CONSTRAINT prueba_clave_area_pregunta_distractor_pkey PRIMARY KEY (id_prueba_clave_area_pregunta_distractor),
+    CONSTRAINT uq_prueba_clave_area_pregunta_distractor UNIQUE (id_prueba_clave_area_pregunta, id_distractor)
+);
+
+CREATE TABLE IF NOT EXISTS public.prueba_jornada
+(
+    id_prueba_jornada uuid NOT NULL,
+    id_prueba uuid NOT NULL,
+    id_jornada uuid NOT NULL,
+    CONSTRAINT prueba_jornada_pkey PRIMARY KEY (id_prueba_jornada),
+    CONSTRAINT uq_prueba_jornada UNIQUE (id_prueba, id_jornada)
+);
+
+CREATE TABLE IF NOT EXISTS public.prueba_jornada_aula_aspirante_opcion
+(
+    id_prueba_jornada_aula_aspirante_opcion uuid NOT NULL,
+    id_prueba_jornada uuid NOT NULL,
+    id_aspirante_opcion uuid NOT NULL,
+    id_aula character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    fecha timestamp with time zone,
+    activo boolean,
+    CONSTRAINT prueba_jornada_aula_aspirante_opcion_pkey PRIMARY KEY (id_prueba_jornada_aula_aspirante_opcion)
+);
+
+CREATE TABLE IF NOT EXISTS public.prueba_jornada_aula_aspirante_opcion_examen
+(
+    id_prueba_jornada_aula_aspirante_opcion_examen uuid NOT NULL,
+    id_prueba_jornada_aula_aspirante_opcion uuid NOT NULL,
+    resultado numeric(5, 2) NOT NULL,
+    fecha_resultado timestamp with time zone,
+    CONSTRAINT prueba_jornada_aula_aspirante_opcion_examen_pkey PRIMARY KEY (id_prueba_jornada_aula_aspirante_opcion_examen)
 );
 
 CREATE TABLE IF NOT EXISTS public.tipo_prueba
 (
-    id_tipo_prueba serial NOT NULL,
+    id_tipo_prueba uuid NOT NULL,
     valor text COLLATE pg_catalog."default" NOT NULL,
+    activo boolean,
     CONSTRAINT tipo_prueba_pkey PRIMARY KEY (id_tipo_prueba)
 );
 
 ALTER TABLE IF EXISTS public.area
-    ADD CONSTRAINT area_id_area_padre_fkey FOREIGN KEY (id_area_padre)
-        REFERENCES public.area (id_area) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE RESTRICT;
-
-
-ALTER TABLE IF EXISTS public.aspirante_jornada
-    ADD CONSTRAINT aspirante_jornada_id_aspirante_fkey FOREIGN KEY (id_aspirante)
-        REFERENCES public.aspirante (id_aspirante) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE CASCADE;
-
-
-ALTER TABLE IF EXISTS public.aspirante_jornada
-    ADD CONSTRAINT aspirante_jornada_id_jornada_fkey FOREIGN KEY (id_jornada)
-        REFERENCES public.jornada (id_jornada) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE RESTRICT;
+    ADD CONSTRAINT id_area_padre FOREIGN KEY (id_area_padre)
+    REFERENCES public.area (id_area) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
 
 
 ALTER TABLE IF EXISTS public.aspirante_opcion
-    ADD CONSTRAINT aspirante_opcion_id_aspirante_fkey FOREIGN KEY (id_aspirante)
-        REFERENCES public.aspirante (id_aspirante) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE CASCADE;
+    ADD CONSTRAINT id_aspirante FOREIGN KEY (id_aspirante)
+    REFERENCES public.aspirante (id_aspirante) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
 
 
 ALTER TABLE IF EXISTS public.distractor_area
-    ADD CONSTRAINT distractor_area_id_area_fkey FOREIGN KEY (id_area)
-        REFERENCES public.area (id_area) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE RESTRICT;
+    ADD CONSTRAINT id_area FOREIGN KEY (id_area)
+    REFERENCES public.area (id_area) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
 
 
 ALTER TABLE IF EXISTS public.distractor_area
-    ADD CONSTRAINT distractor_area_id_distractor_fkey FOREIGN KEY (id_distractor)
-        REFERENCES public.distractor (id_distractor) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE CASCADE;
+    ADD CONSTRAINT id_distractor FOREIGN KEY (id_distractor)
+    REFERENCES public.distractor (id_distractor) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.jornada_aula
+    ADD CONSTRAINT id_jornada FOREIGN KEY (id_jornada)
+    REFERENCES public.jornada (id_jornada) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
 
 
 ALTER TABLE IF EXISTS public.pregunta_area
-    ADD CONSTRAINT pregunta_area_id_area_fkey FOREIGN KEY (id_area)
-        REFERENCES public.area (id_area) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE RESTRICT;
+    ADD CONSTRAINT id_area FOREIGN KEY (id_area)
+    REFERENCES public.area (id_area) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
 
 
 ALTER TABLE IF EXISTS public.pregunta_area
-    ADD CONSTRAINT pregunta_area_id_pregunta_fkey FOREIGN KEY (id_pregunta)
-        REFERENCES public.pregunta (id_pregunta) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE CASCADE;
+    ADD CONSTRAINT id_pregunta FOREIGN KEY (id_pregunta)
+    REFERENCES public.pregunta (id_pregunta) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
 
 
 ALTER TABLE IF EXISTS public.pregunta_distractor
-    ADD CONSTRAINT pregunta_distractor_id_distractor_fkey FOREIGN KEY (id_distractor)
-        REFERENCES public.distractor (id_distractor) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE RESTRICT;
+    ADD CONSTRAINT id_distractor FOREIGN KEY (id_distractor)
+    REFERENCES public.distractor (id_distractor) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
 
 
 ALTER TABLE IF EXISTS public.pregunta_distractor
-    ADD CONSTRAINT pregunta_distractor_id_pregunta_fkey FOREIGN KEY (id_pregunta)
-        REFERENCES public.pregunta (id_pregunta) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE CASCADE;
+    ADD CONSTRAINT id_pregunta FOREIGN KEY (id_pregunta)
+    REFERENCES public.pregunta (id_pregunta) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
 
 
 ALTER TABLE IF EXISTS public.prueba
-    ADD CONSTRAINT prueba_id_tipo_prueba_fkey FOREIGN KEY (id_tipo_prueba)
-        REFERENCES public.tipo_prueba (id_tipo_prueba) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE RESTRICT;
-
-
-ALTER TABLE IF EXISTS public.prueba_aspirante_jornada
-    ADD CONSTRAINT prueba_aspirante_jornada_id_aspirante_jornada_fkey FOREIGN KEY (id_aspirante_jornada)
-        REFERENCES public.aspirante_jornada (id_aspirante_jornada) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE CASCADE;
-
-
-ALTER TABLE IF EXISTS public.prueba_aspirante_jornada
-    ADD CONSTRAINT prueba_aspirante_jornada_id_prueba_clave_fkey FOREIGN KEY (id_prueba_clave)
-        REFERENCES public.prueba_clave (id_prueba_clave) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE RESTRICT;
-
-
-ALTER TABLE IF EXISTS public.prueba_aspirante_jornada_examen
-    ADD CONSTRAINT prueba_aspirante_jorn_exam_id_prueba_aspirante_jornada_fkey FOREIGN KEY (id_prueba_aspirante_jornada)
-        REFERENCES public.prueba_aspirante_jornada (id_prueba_aspirante_jornada) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE CASCADE;
-CREATE INDEX IF NOT EXISTS uk_examen_unico
-    ON public.prueba_aspirante_jornada_examen(id_prueba_aspirante_jornada);
+    ADD CONSTRAINT id_tipo_prueba FOREIGN KEY (id_tipo_prueba)
+    REFERENCES public.tipo_prueba (id_tipo_prueba) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
 
 
 ALTER TABLE IF EXISTS public.prueba_clave
-    ADD CONSTRAINT prueba_clave_id_prueba_fkey FOREIGN KEY (id_prueba)
-        REFERENCES public.prueba (id_prueba) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE CASCADE;
+    ADD CONSTRAINT id_prueba FOREIGN KEY (id_prueba)
+    REFERENCES public.prueba (id_prueba) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
 
 
 ALTER TABLE IF EXISTS public.prueba_clave_area
-    ADD CONSTRAINT fk_pca_area FOREIGN KEY (id_area)
-        REFERENCES public.area (id_area) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE RESTRICT;
+    ADD CONSTRAINT id_area FOREIGN KEY (id_area)
+    REFERENCES public.area (id_area) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
 
 
 ALTER TABLE IF EXISTS public.prueba_clave_area
-    ADD CONSTRAINT fk_pca_prueba_clave FOREIGN KEY (id_prueba_clave)
-        REFERENCES public.prueba_clave (id_prueba_clave) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE CASCADE;
+    ADD CONSTRAINT id_prueba_clave FOREIGN KEY (id_prueba_clave)
+    REFERENCES public.prueba_clave (id_prueba_clave) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
 
 
 ALTER TABLE IF EXISTS public.prueba_clave_area_pregunta
-    ADD CONSTRAINT fk_pcap_pregunta FOREIGN KEY (id_pregunta)
-        REFERENCES public.pregunta (id_pregunta) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE RESTRICT;
+    ADD CONSTRAINT id_pregunta FOREIGN KEY (id_pregunta)
+    REFERENCES public.pregunta (id_pregunta) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
 
 
 ALTER TABLE IF EXISTS public.prueba_clave_area_pregunta
-    ADD CONSTRAINT fk_pcap_prueba_clave_area FOREIGN KEY (id_prueba_clave_area)
-        REFERENCES public.prueba_clave_area (id_prueba_clave_area) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE CASCADE;
+    ADD CONSTRAINT id_prueba_clave_area FOREIGN KEY (id_prueba_clave_area)
+    REFERENCES public.prueba_clave_area (id_prueba_clave_area) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
 
 
 ALTER TABLE IF EXISTS public.prueba_clave_area_pregunta_distractor
-    ADD CONSTRAINT fk_pcapd_distractor FOREIGN KEY (id_distractor)
-        REFERENCES public.distractor (id_distractor) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE RESTRICT;
+    ADD CONSTRAINT id_distractor FOREIGN KEY (id_distractor)
+    REFERENCES public.distractor (id_distractor) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
 
 
 ALTER TABLE IF EXISTS public.prueba_clave_area_pregunta_distractor
-    ADD CONSTRAINT fk_pcapd_prueba_clave_area_preg FOREIGN KEY (id_prueba_clave_area_pregunta)
-        REFERENCES public.prueba_clave_area_pregunta (id_prueba_clave_area_pregunta) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE CASCADE;
+    ADD CONSTRAINT id_prueba_clave_area_pregunta FOREIGN KEY (id_prueba_clave_area_pregunta)
+    REFERENCES public.prueba_clave_area_pregunta (id_prueba_clave_area_pregunta) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.prueba_jornada
+    ADD CONSTRAINT id_jornada FOREIGN KEY (id_jornada)
+    REFERENCES public.jornada (id_jornada) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.prueba_jornada
+    ADD CONSTRAINT id_prueba FOREIGN KEY (id_prueba)
+    REFERENCES public.prueba (id_prueba) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.prueba_jornada_aula_aspirante_opcion
+    ADD CONSTRAINT id_aspirante_opcion FOREIGN KEY (id_aspirante_opcion)
+    REFERENCES public.aspirante_opcion (id_aspirante_opcion) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.prueba_jornada_aula_aspirante_opcion
+    ADD CONSTRAINT id_prueba_jornada FOREIGN KEY (id_prueba_jornada)
+    REFERENCES public.prueba_jornada (id_prueba_jornada) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.prueba_jornada_aula_aspirante_opcion_examen
+    ADD CONSTRAINT id_prueba_jornada_aula_aspirante_opcion FOREIGN KEY (id_prueba_jornada_aula_aspirante_opcion)
+    REFERENCES public.prueba_jornada_aula_aspirante_opcion (id_prueba_jornada_aula_aspirante_opcion) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
 
 END;

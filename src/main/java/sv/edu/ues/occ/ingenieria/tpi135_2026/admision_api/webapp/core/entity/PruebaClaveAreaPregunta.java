@@ -3,13 +3,12 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -21,9 +20,8 @@ import jakarta.persistence.Table;
 public class PruebaClaveAreaPregunta implements Serializable{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_prueba_clave_area_pregunta")
-    private Long idPruebaClaveAreaPregunta;
+    private UUID idPruebaClaveAreaPregunta;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_prueba_clave_area", nullable = false)
@@ -39,17 +37,17 @@ public class PruebaClaveAreaPregunta implements Serializable{
     @OneToMany(mappedBy = "idPruebaClaveAreaPregunta")
     private List<PruebaClaveAreaPreguntaDistractor> listPruebaClaveAreaPreguntaDistractor;
 
-    public PruebaClaveAreaPregunta(Long idPruebaClaveAreaPregunta) {
+    public PruebaClaveAreaPregunta(UUID idPruebaClaveAreaPregunta) {
         this.idPruebaClaveAreaPregunta = idPruebaClaveAreaPregunta;
     }
 
     public PruebaClaveAreaPregunta(){}
 
-    public Long getIdPruebaClaveAreaPregunta() {
+    public UUID getIdPruebaClaveAreaPregunta() {
         return idPruebaClaveAreaPregunta;
     }
 
-    public void setIdPruebaClaveAreaPregunta(Long idPruebaClaveAreaPregunta) {
+    public void setIdPruebaClaveAreaPregunta(UUID idPruebaClaveAreaPregunta) {
         this.idPruebaClaveAreaPregunta = idPruebaClaveAreaPregunta;
     }
 

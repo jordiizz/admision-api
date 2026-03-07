@@ -24,22 +24,22 @@ public class Prueba implements Serializable{
     @Column(name = "id_prueba")
     private UUID idPrueba;
 
-    @Column(name = "nombre")
+    @Column(name = "nombre", nullable = false)
     private String nombre;
 
     @Column(name = "indicaciones")
     private String indicaciones;
 
-    @Column(name = "puntaje_maximo", precision = 5, scale = 2)
+    @Column(name = "puntaje_maximo", precision = 5, scale = 2, nullable = false)
     private BigDecimal puntajeMaximo;
 
-    @Column(name = "nota_aprobacion", precision = 5, scale = 2)
+    @Column(name = "nota_aprobacion", precision = 5, scale = 2, nullable = false)
     private BigDecimal notaAprobacion;
 
     @Column(name = "duracion")
     private Integer duracion;
 
-    @Column(name = "fecha_creacion")
+    @Column(name = "fecha_creacion", nullable = false)
     private OffsetDateTime fechaCreacion;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -48,6 +48,9 @@ public class Prueba implements Serializable{
 
     @OneToMany(mappedBy = "idPrueba")
     private List<PruebaClave> listPruebaClave;
+
+    @OneToMany(mappedBy = "idPrueba")
+    private List<PruebaJornada> listPruebaJornada;
 
     public Prueba(UUID idPrueba) {
         this.idPrueba = idPrueba;
@@ -127,6 +130,15 @@ public class Prueba implements Serializable{
 
     public void setListPruebaClave(List<PruebaClave> listPruebaClave) {
         this.listPruebaClave = listPruebaClave;
+    }
+
+    @JsonbTransient
+    public List<PruebaJornada> getListPruebaJornada() {
+        return listPruebaJornada;
+    }
+
+    public void setListPruebaJornada(List<PruebaJornada> listPruebaJornada) {
+        this.listPruebaJornada = listPruebaJornada;
     }
 
     @Override
