@@ -45,11 +45,7 @@ public class AreaResourceTest {
         System.out.println("Ejecutando test: crearExitosoTest");
         Area nuevo = new Area();
 
-        Mockito.doAnswer(invocation -> {
-            Area area = invocation.getArgument(0);
-            area.setIdArea(UUID.randomUUID()); 
-            return null;
-        }).when(mockAD).crear(nuevo);
+        Mockito.doNothing().when(mockAD).crear(nuevo);
 
         Response resultado = cut.crear(nuevo, mockUriInfo);
 
@@ -58,19 +54,6 @@ public class AreaResourceTest {
                 () -> assertNotNull(resultado.getEntity())
         );
 
-        Mockito.verify(mockAD).crear(nuevo);
-    }
-
-    @Test
-    public void crearFallaSinIdTest() {
-        System.out.println("Ejecutando test: crearFallaSinIdTest");
-        Area nuevo = new Area();
-
-        Mockito.doNothing().when(mockAD).crear(nuevo);
-
-        Response resultado = cut.crear(nuevo, mockUriInfo);
-
-        assertEquals(500, resultado.getStatus());
         Mockito.verify(mockAD).crear(nuevo);
     }
 

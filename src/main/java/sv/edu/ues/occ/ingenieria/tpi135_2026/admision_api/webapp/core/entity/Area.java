@@ -6,9 +6,12 @@ import java.util.UUID;
 
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -17,7 +20,8 @@ import jakarta.persistence.Table;
 public class Area implements Serializable{
 
     @Id
-    @Column(name = "id_area", nullable = false)
+    @Column(name = "id_area", nullable = false, columnDefinition = "uuid")
+    @Convert(converter = UUIDConverter.class)
     private UUID idArea;
 
     @Column(name = "nombre", nullable = false, length = 50)
@@ -29,12 +33,9 @@ public class Area implements Serializable{
     @Column(name = "activo")
     private Boolean activo;
 
-    @Column(name = "id_area_padre")
-    private UUID idAreaPadre;
-
-    @OneToMany
-    @JoinColumn(name = "id_area_padre")
-    private List<Area> listAreas;
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "id_area_padre", columnDefinition= "uuid")
+    private Area idAreaPadre;
 
     @OneToMany(mappedBy = "idArea")
     private List<PruebaClaveArea> listPruebaClaveArea;
@@ -67,6 +68,14 @@ public class Area implements Serializable{
         this.nombre = nombre;
     }
 
+    public Area getIdAreaPadre() {
+        return idAreaPadre;
+    }
+
+    public void setIdAreaPadre(Area idAreaPadre) {
+        this.idAreaPadre = idAreaPadre;
+    }
+
     public String getDescripcion() {
         return descripcion;
     }
@@ -81,27 +90,6 @@ public class Area implements Serializable{
 
     public void setActivo(Boolean activo) {
         this.activo = activo;
-    }
-
-    public UUID getIdAreaPadre() {
-        return idAreaPadre;
-    }
-
-    public void setIdAreaPadre(UUID idAreaPadre) {
-        this.idAreaPadre = idAreaPadre;
-    }
-
-    public void setIdAreaPadre(Area area) {
-        this.idAreaPadre = area != null ? area.getIdArea() : null;
-    }
-
-    @JsonbTransient
-    public List<Area> getListAreas() {
-        return listAreas;
-    }
-
-    public void setListAreas(List<Area> listAreas) {
-        this.listAreas = listAreas;
     }
 
     @JsonbTransient
@@ -158,7 +146,7 @@ public class Area implements Serializable{
 
     @Override
     public String toString() {
-        return "Area [idArea=" + idArea + ", nombre=" + nombre + ", descripcion=" + descripcion + 
+        return "Area [idArea=" + idArea + ", nombre=" + nombre + ", descripcion=" + descripcion +
                ", activo=" + activo + "]";
     }
 }

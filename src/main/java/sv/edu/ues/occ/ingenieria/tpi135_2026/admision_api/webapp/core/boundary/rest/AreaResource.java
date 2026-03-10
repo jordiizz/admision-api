@@ -35,13 +35,11 @@ public class AreaResource  implements Serializable {
 
         if (area != null && area.getIdArea() == null) {
             try {
+                area.setIdArea(UUID.randomUUID());
                 areaDAO.crear(area);
-                if (area.getIdArea() != null) {
-                    UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
-                    uriBuilder.path(area.getIdArea().toString());
-                    return Response.created(uriBuilder.build()).entity(area).build();
-                }
-                return Response.status(500).header(ResponseHeaders.PROCESS_ERROR.toString(), "No se pudo crear el recurso").build();
+                UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
+                uriBuilder.path(area.getIdArea().toString());
+                return Response.created(uriBuilder.build()).entity(area).build();
             } catch (Exception e) {
                 return Response.status(500).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
             }

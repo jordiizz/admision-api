@@ -97,12 +97,9 @@ public class AreaDAOIT {
         AreaDAO cut = new AreaDAO();
         cut.em = em;
         cut.em.getTransaction().begin();
-
-        // nuevo.setIdAreaPadre(cut.buscarPorRango(0, 1).getFirst());
         cut.crear(nuevo);
 
         cut.em.getTransaction().commit();
-
         Long resultado = cut.contar();
         assertEquals(resultado, 1);
         System.out.println("Resultado: " + resultado);
