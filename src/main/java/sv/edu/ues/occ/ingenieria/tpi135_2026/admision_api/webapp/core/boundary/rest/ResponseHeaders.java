@@ -7,7 +7,8 @@ public enum ResponseHeaders {
     
     PROCESS_ERROR("Process-Error"),
     WRONG_PARAMETER("Wrong-Parameter"),
-    NOT_FOUND("Not-Found");
+    NOT_FOUND("Not-Found"),
+    TOTAL_RECORDS("Total-Records");
     
     private final String headerName;
     

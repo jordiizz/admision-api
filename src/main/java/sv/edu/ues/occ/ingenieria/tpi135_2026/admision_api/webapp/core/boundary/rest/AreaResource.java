@@ -79,7 +79,7 @@ public class AreaResource  implements Serializable {
                 List<Area> areas = areaDAO.buscarPorRango(firstResult, maxResults);
                 Long total = areaDAO.contar();
                 Response.ResponseBuilder responseBuilder = Response.ok(areas)
-                        .header("Total_Records", total)
+                        .header(ResponseHeaders.TOTAL_RECORDS.toString(), total)
                         .type(MediaType.APPLICATION_JSON);
                 return responseBuilder.build();
             } else {

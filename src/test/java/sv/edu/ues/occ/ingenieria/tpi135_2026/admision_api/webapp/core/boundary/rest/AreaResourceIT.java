@@ -80,8 +80,8 @@ public class AreaResourceIT {
                 .get();
         Assertions.assertNotNull(respuesta);
         Assertions.assertEquals(esperado, respuesta.getStatus());
-        Assertions.assertTrue(respuesta.getHeaders().containsKey("Total_Records"));
-        Assertions.assertEquals(total_esperado, Integer.parseInt(respuesta.getHeaderString("Total_Records")));
+        Assertions.assertTrue(respuesta.getHeaders().containsKey(ResponseHeaders.TOTAL_RECORDS.toString()));
+        Assertions.assertEquals(total_esperado, Integer.parseInt(respuesta.getHeaderString(ResponseHeaders.TOTAL_RECORDS.toString())));
         List<Area> registros = respuesta.readEntity(new GenericType<List<Area>>() {});
         for(Area registro : registros) {
             System.out.printf(registro.getNombre());
@@ -98,9 +98,9 @@ public class AreaResourceIT {
         Response respuesta = target.request(MediaType.APPLICATION_JSON)
                 .post(Entity.json(nuevo));
         Assertions.assertEquals(esperado, respuesta.getStatus());
-        // Assertions.assertTrue(respuesta.getHeaders().containsKey("Location"));
-        // UUID id= UUID.fromString(respuesta.getHeaderString("Location").split("area/")[1]);
-        //Assertions.assertNotNull(id);
-        //System.out.print("ID: "+ id);
+        Assertions.assertTrue(respuesta.getHeaders().containsKey("Location"));
+        UUID id = UUID.fromString(respuesta.getHeaderString("Location").split("area/")[1]);
+        Assertions.assertNotNull(id);
+        System.out.print("ID: " + id);
     }
 }
