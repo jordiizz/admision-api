@@ -65,7 +65,7 @@ public class AreaDAOIT {
         Integer puertoPostgresql = postgres.getMappedPort(5432);
 
         Map<String, Object> propiedades = new HashMap<>();
-        propiedades.put("jakarta.persistence.jdbc.url", String.format("jdbc:postgresql://localhost:%d/tpi135", puertoPostgresql));
+        propiedades.put("jakarta.persistence.jdbc.url", String.format("jdbc:postgresql://localhost:%d/tpi135?stringtype=unspecified", puertoPostgresql));
 
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("AdmisionPUIT", propiedades);
         EntityManager em = emf.createEntityManager();
@@ -89,7 +89,7 @@ public class AreaDAOIT {
         assertTrue(postgres.isRunning());
         Integer puertoPostgresql = postgres.getMappedPort(5432);
         Map<String, Object> propiedades = new HashMap<>();
-        propiedades.put("jakarta.persistence.jdbc.url", String.format("jdbc:postgresql://localhost:%d/tpi135", puertoPostgresql));
+        propiedades.put("jakarta.persistence.jdbc.url", String.format("jdbc:postgresql://localhost:%d/tpi135?stringtype=unspecified", puertoPostgresql));
 
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("AdmisionPUIT", propiedades);
         EntityManager em = emf.createEntityManager();
