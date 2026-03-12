@@ -31,8 +31,9 @@ public class PruebaJornadaAulaAspiranteOpcion implements Serializable {
     @JoinColumn(name = "id_aspirante_opcion", nullable = false)
     private AspiranteOpcion idAspiranteOpcion;
 
-    @Column(name = "id_aula", nullable = false, length = 100)
-    private String idAula;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_jornada_aula")
+    private JornadaAula idJornadaAula;
 
     @Column(name = "fecha")
     private OffsetDateTime fecha;
@@ -73,14 +74,6 @@ public class PruebaJornadaAulaAspiranteOpcion implements Serializable {
 
     public void setIdAspiranteOpcion(AspiranteOpcion idAspiranteOpcion) {
         this.idAspiranteOpcion = idAspiranteOpcion;
-    }
-
-    public String getIdAula() {
-        return idAula;
-    }
-
-    public void setIdAula(String idAula) {
-        this.idAula = idAula;
     }
 
     public OffsetDateTime getFecha() {
@@ -138,7 +131,15 @@ public class PruebaJornadaAulaAspiranteOpcion implements Serializable {
     @Override
     public String toString() {
         return "PruebaJornadaAulaAspiranteOpcion [idPruebaJornadaAulaAspiranteOpcion="
-                + idPruebaJornadaAulaAspiranteOpcion + ", idAula=" + idAula + ", fecha=" + fecha
+                + idPruebaJornadaAulaAspiranteOpcion + ", fecha=" + fecha
                 + ", activo=" + activo + "]";
+    }
+
+    public JornadaAula getIdJornadaAula() {
+        return idJornadaAula;
+    }
+
+    public void setIdJornadaAula(JornadaAula idJornadaAula) {
+        this.idJornadaAula = idJornadaAula;
     }
 }
