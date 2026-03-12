@@ -35,7 +35,7 @@ public class AreaResourceIT {
     static MountableFile war = MountableFile.forHostPath(Paths.get("target/admision-api.war").toAbsolutePath());
 
     @Container
-    static GenericContainer postgres = new PostgreSQLContainer("postgres:latest")
+    static GenericContainer postgres = new PostgreSQLContainer("postgres:16")
             .withDatabaseName("tpi135")
             .withInitScript("database.sql")
             .withPassword("abc123")
@@ -46,7 +46,7 @@ public class AreaResourceIT {
             ;
 
     @Container
-    static GenericContainer liberty = new GenericContainer("openliberty-pg:10.24.0.0.8")
+    static GenericContainer liberty = new GenericContainer("openliberty-pg:10.26.0.0.2")
             .withEnv("PGSERVER", "db")
             .withEnv("PGPORT", "5432")
             .withEnv("PGDBNAME", "tpi135")

@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -20,8 +19,7 @@ import jakarta.persistence.Table;
 public class Area implements Serializable{
 
     @Id
-    @Column(name = "id_area", nullable = false, columnDefinition = "uuid")
-    @Convert(converter = UUIDConverter.class)
+    @Column(name = "id_area", nullable = false)
     private UUID idArea;
 
     @Column(name = "nombre", nullable = false, length = 50)
@@ -34,7 +32,7 @@ public class Area implements Serializable{
     private Boolean activo;
 
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name = "id_area_padre", columnDefinition= "uuid")
+    @JoinColumn(name = "id_area_padre")
     private Area idAreaPadre;
 
     @OneToMany(mappedBy = "idArea")

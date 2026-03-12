@@ -166,7 +166,7 @@ CREATE TABLE IF NOT EXISTS public.prueba_jornada_aula_aspirante_opcion
     id_prueba_jornada_aula_aspirante_opcion uuid NOT NULL,
     id_prueba_jornada uuid NOT NULL,
     id_aspirante_opcion uuid NOT NULL,
-    id_aula character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    id_jornada_aula uuid NOT NULL,
     fecha timestamp with time zone,
     activo boolean,
     CONSTRAINT prueba_jornada_aula_aspirante_opcion_pkey PRIMARY KEY (id_prueba_jornada_aula_aspirante_opcion)
@@ -336,6 +336,14 @@ ALTER TABLE IF EXISTS public.prueba_jornada
 ALTER TABLE IF EXISTS public.prueba_jornada
     ADD CONSTRAINT id_prueba FOREIGN KEY (id_prueba)
     REFERENCES public.prueba (id_prueba) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.prueba_jornada_aula_aspirante_opcion
+    ADD CONSTRAINT fk_id_jornada_aula FOREIGN KEY (id_jornada_aula)
+    REFERENCES public.jornada_aula (id_jornada_aula) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;

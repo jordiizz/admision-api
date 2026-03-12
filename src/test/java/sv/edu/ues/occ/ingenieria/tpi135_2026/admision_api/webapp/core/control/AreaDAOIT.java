@@ -37,7 +37,7 @@ import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Are
 public class AreaDAOIT {
 
     @Container
-    GenericContainer postgres = new PostgreSQLContainer("postgres:latest")
+    GenericContainer postgres = new PostgreSQLContainer("postgres:16")
             .withDatabaseName("tpi135")
             .withInitScript("database.sql")
             .withPassword("abc123")

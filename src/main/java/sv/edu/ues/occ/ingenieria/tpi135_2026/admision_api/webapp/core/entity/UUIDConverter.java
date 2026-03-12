@@ -1,6 +1,7 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 
 import java.util.UUID;
+
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
