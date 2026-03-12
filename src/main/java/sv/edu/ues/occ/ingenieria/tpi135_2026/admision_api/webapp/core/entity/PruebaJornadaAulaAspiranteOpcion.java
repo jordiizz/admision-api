@@ -57,7 +57,7 @@ public class PruebaJornadaAulaAspiranteOpcion implements Serializable {
         this.idPruebaJornadaAulaAspiranteOpcion = idPruebaJornadaAulaAspiranteOpcion;
     }
 
-    @JsonbTransient
+    
     public PruebaJornada getIdPruebaJornada() {
         return idPruebaJornada;
     }
@@ -66,7 +66,7 @@ public class PruebaJornadaAulaAspiranteOpcion implements Serializable {
         this.idPruebaJornada = idPruebaJornada;
     }
 
-    @JsonbTransient
+    
     public AspiranteOpcion getIdAspiranteOpcion() {
         return idAspiranteOpcion;
     }

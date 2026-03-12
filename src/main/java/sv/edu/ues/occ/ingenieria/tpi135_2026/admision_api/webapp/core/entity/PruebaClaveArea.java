@@ -54,7 +54,7 @@ public class PruebaClaveArea implements Serializable{
         this.idPruebaClaveArea = idPruebaClaveArea;
     }
 
-    @JsonbTransient
+    
     public PruebaClave getIdPruebaClave() {
         return idPruebaClave;
     }
@@ -63,7 +63,7 @@ public class PruebaClaveArea implements Serializable{
         this.idPruebaClave = idPruebaClave;
     }
 
-    @JsonbTransient
+    
     public Area getIdArea() {
         return idArea;
     }

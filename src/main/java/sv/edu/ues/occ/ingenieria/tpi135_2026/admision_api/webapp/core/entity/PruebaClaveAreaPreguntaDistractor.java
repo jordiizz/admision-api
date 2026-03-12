@@ -3,7 +3,6 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 import java.io.Serializable;
 import java.util.UUID;
 
-import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -42,7 +41,7 @@ public class PruebaClaveAreaPreguntaDistractor implements Serializable{
         this.idPruebaClaveAreaPreguntaDistractor = idPruebaClaveAreaPreguntaDistractor;
     }
 
-    @JsonbTransient
+    
     public PruebaClaveAreaPregunta getIdPruebaClaveAreaPregunta() {
         return idPruebaClaveAreaPregunta;
     }
@@ -51,7 +50,7 @@ public class PruebaClaveAreaPreguntaDistractor implements Serializable{
         this.idPruebaClaveAreaPregunta = idPruebaClaveAreaPregunta;
     }
 
-    @JsonbTransient
+    
     public Distractor getIdDistractor() {
         return idDistractor;
     }

@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -46,7 +45,7 @@ public class PruebaJornadaAulaAspiranteOpcionExamen implements Serializable {
         this.idPruebaJornadaAulaAspiranteOpcionExamen = idPruebaJornadaAulaAspiranteOpcionExamen;
     }
 
-    @JsonbTransient
+    
     public PruebaJornadaAulaAspiranteOpcion getIdPruebaJornadaAulaAspiranteOpcion() {
         return idPruebaJornadaAulaAspiranteOpcion;
     }

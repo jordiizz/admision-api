@@ -3,7 +3,6 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 import java.io.Serializable;
 import java.util.UUID;
 
-import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -41,7 +40,7 @@ public class JornadaAula implements Serializable {
         this.idJornadaAula = idJornadaAula;
     }
 
-    @JsonbTransient
+    
     public Jornada getIdJornada() {
         return idJornada;
     }

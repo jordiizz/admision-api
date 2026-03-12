@@ -77,7 +77,7 @@ public class AspiranteOpcion implements Serializable {
         this.fechaCreacion = fechaCreacion;
     }
 
-    @JsonbTransient
+    
     public Aspirante getIdAspirante() {
         return idAspirante;
     }

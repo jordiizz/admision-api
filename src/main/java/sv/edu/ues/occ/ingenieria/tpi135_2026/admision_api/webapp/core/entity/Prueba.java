@@ -114,7 +114,7 @@ public class Prueba implements Serializable{
         this.fechaCreacion = fechaCreacion;
     }
 
-    @JsonbTransient
+    
     public TipoPrueba getIdTipoPrueba() {
         return idTipoPrueba;
     }
