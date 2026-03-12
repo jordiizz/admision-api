@@ -30,7 +30,7 @@ public class JornadaAula implements Serializable {
     private String idAula;
 
     @OneToMany(mappedBy = "idJornadaAula")
-    private List<PruebaJornadaAulaAspiranteOpcionExamen> listPruebaJornadaAulaAspiranteOpcionExamen;
+    private List<PruebaJornadaAulaAspiranteOpcion> listPruebaJornadaAulaAspiranteOpcion;
 
     public JornadaAula() {}
 
@@ -94,13 +94,13 @@ public class JornadaAula implements Serializable {
     }
 
     @JsonbTransient
-    public List<PruebaJornadaAulaAspiranteOpcionExamen> getListPruebaJornadaAulaAspiranteOpcionExamen() {
-        return listPruebaJornadaAulaAspiranteOpcionExamen;
+    public List<PruebaJornadaAulaAspiranteOpcion> getListPruebaJornadaAulaAspiranteOpcion() {
+        return listPruebaJornadaAulaAspiranteOpcion;
     }
 
-    public void setListPruebaJornadaAulaAspiranteOpcionExamen(
-            List<PruebaJornadaAulaAspiranteOpcionExamen> listPruebaJornadaAulaAspiranteOpcionExamen) {
-        this.listPruebaJornadaAulaAspiranteOpcionExamen = listPruebaJornadaAulaAspiranteOpcionExamen;
+    public void setListPruebaJornadaAulaAspiranteOpcion(
+            List<PruebaJornadaAulaAspiranteOpcion> listPruebaJornadaAulaAspiranteOpcion) {
+        this.listPruebaJornadaAulaAspiranteOpcion = listPruebaJornadaAulaAspiranteOpcion;
     }
 
     
