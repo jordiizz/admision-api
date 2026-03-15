@@ -1,68 +1,29 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.boundary.rest;
 
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
-import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
-import jakarta.ws.rs.client.WebTarget;
-import jakarta.ws.rs.core.GenericEntity;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.junit.jupiter.api.*;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.Network;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.MethodOrderer;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.MountableFile;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Area;
 
 @Testcontainers
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class AreaResourceIT {
+public class AreaResourceIT extends AbstractIntegrationTest{
 
-    static Client cliente;
-
-    static WebTarget target;
-
-    static Network red = Network.newNetwork();
-
-    static MountableFile war = MountableFile.forHostPath(Paths.get("target/admision-api.war").toAbsolutePath());
-
-    @Container
-    static GenericContainer postgres = new PostgreSQLContainer("postgres:16")
-            .withDatabaseName("tpi135")
-            .withInitScript("database.sql")
-            .withPassword("abc123")
-            .withUsername("postgres")
-            .withNetwork(red)
-            .withNetworkAliases("db")
-            .withExposedPorts(5432)
-            ;
-
-    @Container
-    static GenericContainer liberty = new GenericContainer("openliberty-pg:10.26.0.0.2")
-            .withEnv("PGSERVER", "db")
-            .withEnv("PGPORT", "5432")
-            .withEnv("PGDBNAME", "tpi135")
-            .withEnv("PGUSER", "postgres")
-            .withEnv("PGPASSWORD", "abc123")
-            .dependsOn(postgres) // que no arranque si no ha arrancado la base de datos
-            .withNetwork(red)
-            .withCopyFileToContainer(war, "/home/usuario/wlp/usr/servers/app/dropins/nuevoingreso.war")
-            .withExposedPorts(9080)
-            ;
-
-    @BeforeAll
-    public void inicializar(){
-        Assertions.assertTrue(liberty.isRunning());
-        cliente = ClientBuilder.newClient();
-        target = cliente.target(String.format("http://localhost:%d/nuevoingreso/v1/area", liberty.getMappedPort(9080)));
+    @Override
+    public String getResourceName(){
+        return "area";
     }
 
     @Order(1)
