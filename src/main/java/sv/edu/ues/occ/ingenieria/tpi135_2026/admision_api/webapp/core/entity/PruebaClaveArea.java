@@ -12,9 +12,25 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+@NamedQueries({
+    @NamedQuery(
+        name = "PruebaClaveArea.buscarPorPruebaClave",
+        query = "SELECT p FROM PruebaClaveArea p WHERE p.idPruebaClave.idPruebaClave = :idPruebaClave ORDER BY p.idPruebaClaveArea"
+    ),
+    @NamedQuery(
+        name = "PruebaClaveArea.contarPorPruebaClave",
+        query = "SELECT COUNT(p) FROM PruebaClaveArea p WHERE p.idPruebaClave.idPruebaClave = :idPruebaClave"
+    ),
+    @NamedQuery(
+        name = "PruebaClaveArea.buscarPorIdYPruebaClave",
+        query = "SELECT p FROM PruebaClaveArea p WHERE p.idPruebaClaveArea = :idPruebaClaveArea AND p.idPruebaClave.idPruebaClave = :idPruebaClave"
+    )
+})
 @Entity
 @Table(name = "prueba_clave_area")
 public class PruebaClaveArea implements Serializable{

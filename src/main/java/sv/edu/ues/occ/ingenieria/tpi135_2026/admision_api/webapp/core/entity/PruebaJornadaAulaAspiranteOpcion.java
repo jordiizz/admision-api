@@ -12,9 +12,25 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+@NamedQueries({
+    @NamedQuery(
+        name = "PruebaJornadaAulaAspiranteOpcion.buscarPorPruebaJornadaYJornadaAula",
+        query = "SELECT p FROM PruebaJornadaAulaAspiranteOpcion p WHERE p.idPruebaJornada.idPruebaJornada = :idPruebaJornada AND p.idJornadaAula.idJornadaAula = :idJornadaAula ORDER BY p.idPruebaJornadaAulaAspiranteOpcion"
+    ),
+    @NamedQuery(
+        name = "PruebaJornadaAulaAspiranteOpcion.contarPorPruebaJornadaYJornadaAula",
+        query = "SELECT COUNT(p) FROM PruebaJornadaAulaAspiranteOpcion p WHERE p.idPruebaJornada.idPruebaJornada = :idPruebaJornada AND p.idJornadaAula.idJornadaAula = :idJornadaAula"
+    ),
+    @NamedQuery(
+        name = "PruebaJornadaAulaAspiranteOpcion.buscarPorIdYPruebaJornadaYJornadaAula",
+        query = "SELECT p FROM PruebaJornadaAulaAspiranteOpcion p WHERE p.idPruebaJornadaAulaAspiranteOpcion = :idPruebaJornadaAulaAspiranteOpcion AND p.idPruebaJornada.idPruebaJornada = :idPruebaJornada AND p.idJornadaAula.idJornadaAula = :idJornadaAula"
+    )
+})
 @Entity
 @Table(name = "prueba_jornada_aula_aspirante_opcion")
 public class PruebaJornadaAulaAspiranteOpcion implements Serializable {
@@ -32,7 +48,7 @@ public class PruebaJornadaAulaAspiranteOpcion implements Serializable {
     private AspiranteOpcion idAspiranteOpcion;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_jornada_aula")
+    @JoinColumn(name = "id_jornada_aula", nullable = false)
     private JornadaAula idJornadaAula;
 
     @Column(name = "fecha")
