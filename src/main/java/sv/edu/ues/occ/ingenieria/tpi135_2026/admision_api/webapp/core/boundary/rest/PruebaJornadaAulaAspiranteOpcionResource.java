@@ -98,6 +98,13 @@ public class PruebaJornadaAulaAspiranteOpcionResource implements Serializable {
                         .header(ResponseHeaders.NOT_FOUND.toString(), "JornadaAula no encontrada")
                         .build();
             }
+            if (jornadaAula.getIdJornada() == null || pruebaJornada.getIdJornada() == null ||
+                !jornadaAula.getIdJornada().getIdJornada().equals(pruebaJornada.getIdJornada().getIdJornada())) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .header(ResponseHeaders.WRONG_PARAMETER.toString(),
+                                "La JornadaAula no pertenece a la misma jornada que la PruebaJornada indicada")
+                        .build();
+            }
             AspiranteOpcion aspiranteOpcion = aspiranteOpcionDAO
                     .buscarPorId(entity.getIdAspiranteOpcion().getIdAspiranteOpcion());
             if (aspiranteOpcion == null) {

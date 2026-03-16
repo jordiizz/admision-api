@@ -11,8 +11,24 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 
+@NamedQueries({
+    @NamedQuery(
+        name = "PruebaJornadaAulaAspiranteOpcionExamen.buscarPorPadre",
+        query = "SELECT p FROM PruebaJornadaAulaAspiranteOpcionExamen p WHERE p.idPruebaJornadaAulaAspiranteOpcion.idPruebaJornadaAulaAspiranteOpcion = :idPruebaJornadaAulaAspiranteOpcion ORDER BY p.idPruebaJornadaAulaAspiranteOpcionExamen"
+    ),
+    @NamedQuery(
+        name = "PruebaJornadaAulaAspiranteOpcionExamen.contarPorPadre",
+        query = "SELECT COUNT(p) FROM PruebaJornadaAulaAspiranteOpcionExamen p WHERE p.idPruebaJornadaAulaAspiranteOpcion.idPruebaJornadaAulaAspiranteOpcion = :idPruebaJornadaAulaAspiranteOpcion"
+    ),
+    @NamedQuery(
+        name = "PruebaJornadaAulaAspiranteOpcionExamen.buscarPorIdYPadre",
+        query = "SELECT p FROM PruebaJornadaAulaAspiranteOpcionExamen p WHERE p.idPruebaJornadaAulaAspiranteOpcionExamen = :idPruebaJornadaAulaAspiranteOpcionExamen AND p.idPruebaJornadaAulaAspiranteOpcion.idPruebaJornadaAulaAspiranteOpcion = :idPruebaJornadaAulaAspiranteOpcion"
+    )
+})
 @Entity
 @Table(name = "prueba_jornada_aula_aspirante_opcion_examen")
 public class PruebaJornadaAulaAspiranteOpcionExamen implements Serializable {
