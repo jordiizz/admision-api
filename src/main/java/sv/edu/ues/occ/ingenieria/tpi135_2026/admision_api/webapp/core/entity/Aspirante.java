@@ -6,6 +6,8 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.json.bind.annotation.JsonbDateFormat;
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,6 +30,7 @@ public class Aspirante implements Serializable{
     private String apellidos;
 
     @Column(name = "fecha_nacimiento", nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate fechaNacimiento;
 
     @Column(name = "documento_identidad")
@@ -37,6 +40,7 @@ public class Aspirante implements Serializable{
     private String correo;
 
     @Column(name = "fecha_creacion", nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
     private OffsetDateTime fechaCreacion;
 
     @OneToMany(mappedBy = "idAspirante")

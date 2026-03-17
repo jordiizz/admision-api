@@ -69,7 +69,7 @@ public class AspiranteResourceTest {
 
     @Test
     public void crearNullTest() {
-        System.out.println("Ejecutando test: crearAreaNullTest en AspiranteResource");
+        System.out.println("Ejecutando test: crearNullTest en AspiranteResource");
         Response resultado = cut.crear(null, mockUriInfo);
 
         assertEquals(422, resultado.getStatus());
@@ -87,7 +87,7 @@ public class AspiranteResourceTest {
 
     @Test
     public void eliminarExitosoTest() {
-        System.out.println("Ejecutando test: eliminarExitosoTest en Apirante Resource");
+        System.out.println("Ejecutando test: eliminarExitosoTest en AspiranteResource");
         UUID id = UUID.randomUUID();
         Aspirante aspiranteExistente = new Aspirante(id);
 
@@ -103,7 +103,7 @@ public class AspiranteResourceTest {
 
     @Test
     public void eliminarNoEncontradoTest() {
-        System.out.println("Ejecutando test: eliminarNoEncontradoTest en Apirante Resource");
+        System.out.println("Ejecutando test: eliminarNoEncontradoTest en AspiranteResource");
         UUID id = UUID.randomUUID();
         Mockito.when(mockAD.buscarPorId(id)).thenReturn(null);
         Response resultado = cut.eliminar(id);
@@ -115,7 +115,7 @@ public class AspiranteResourceTest {
 
     @Test
     public void eliminarConExcepcionTest() {
-        System.out.println("Ejecutando test: eliminarConExcepcionTest en Apirante Resource");
+        System.out.println("Ejecutando test: eliminarConExcepcionTest en AspiranteResource");
         UUID id = UUID.randomUUID();
         Aspirante areaExistente = new Aspirante(id);
         Mockito.when(mockAD.buscarPorId(id)).thenReturn(areaExistente);
@@ -129,7 +129,7 @@ public class AspiranteResourceTest {
 
     @Test
     public void eliminarIdNullTest(){
-        System.out.println("Ejecutando test: eliminarIdNullTest en Apirante Resource");
+        System.out.println("Ejecutando test: eliminarIdNullTest en AspiranteResource");
         Response resultado = cut.eliminar(null);
         assertEquals(422, resultado.getStatus());
         Mockito.verifyNoInteractions(mockAD);
@@ -137,7 +137,7 @@ public class AspiranteResourceTest {
 
     @Test
     public void buscarPorRangoExitosoTest() {
-        System.out.println("Ejecutando test: buscarPorRangoExitosoTest en Apirante Resource");
+        System.out.println("Ejecutando test: buscarPorRangoExitosoTest en AspiranteResource");
         Mockito.when(mockAD.buscarPorRango(0, 50)).thenReturn(List.of(new Aspirante(UUID.randomUUID()), new Aspirante(UUID.randomUUID())));
         Mockito.when(mockAD.contar()).thenReturn(2L);
         Response resultado = cut.buscarPorRango(0, 50);
@@ -149,7 +149,7 @@ public class AspiranteResourceTest {
 
     @Test
     public void buscarPorRangoParametrosInvalidosTest() {
-        System.out.println("Ejecutando test: buscarPorRangoParametrosInvalidosTest en Apirante Resource");
+        System.out.println("Ejecutando test: buscarPorRangoParametrosInvalidosTest en AspiranteResource");
         Response resultado = cut.buscarPorRango(-1, 0);
         assertEquals(422, resultado.getStatus());
         Mockito.verifyNoInteractions(mockAD);
@@ -157,7 +157,7 @@ public class AspiranteResourceTest {
 
     @Test
     public void buscarPorRangoMaxCeroTest() {
-        System.out.println("Ejecutando test: buscarPorRangoMaxCeroTest en Apirante Resource");
+        System.out.println("Ejecutando test: buscarPorRangoMaxCeroTest en AspiranteResource");
         Response resultado = cut.buscarPorRango(0, 0);
         assertEquals(422, resultado.getStatus());
         Mockito.verifyNoInteractions(mockAD);
@@ -165,7 +165,7 @@ public class AspiranteResourceTest {
 
     @Test
     public void buscarPorRangoMaxMayorACincuentaTest() {
-        System.out.println("Ejecutando test: buscarPorRangoMaxMayorACincuentaTest en Apirante Resource");
+        System.out.println("Ejecutando test: buscarPorRangoMaxMayorACincuentaTest en AspiranteResource");
         Response resultado = cut.buscarPorRango(0, 51);
         assertEquals(422, resultado.getStatus());
         Mockito.verifyNoInteractions(mockAD);
@@ -173,7 +173,7 @@ public class AspiranteResourceTest {
 
     @Test
     public void buscarPorRangoConExcepcionTest(){
-        System.out.println("Ejecutando test: buscarPorRangoConExcepcionTest en Apirante Resource");
+        System.out.println("Ejecutando test: buscarPorRangoConExcepcionTest en AspiranteResource");
         Mockito.when(mockAD.buscarPorRango(0, 50)).thenThrow(new RuntimeException("Error en base de datos"));
         Response resultado = cut.buscarPorRango(0, 50);
         assertEquals(500, resultado.getStatus());
@@ -181,8 +181,8 @@ public class AspiranteResourceTest {
     }
 
     @Test
-    public void buscarPorIdExitoso(){
-        System.out.println("Ejecutando test: buscarPorIdExitosoTest en Apirante Resource");
+    public void buscarPorIdExitosoTest(){
+        System.out.println("Ejecutando test: buscarPorIdExitosoTest en AspiranteResource");
         Aspirante encontrado = new Aspirante(UUID.randomUUID());
         Mockito.when(mockAD.buscarPorId(Mockito.any())).thenReturn(encontrado);
         Response resultado = cut.buscarPorId(UUID.randomUUID());
@@ -193,7 +193,7 @@ public class AspiranteResourceTest {
 
     @Test
     public void buscarPorIdNoEncontradoTest() {
-        System.out.println("Ejecutando test: buscarPorIdNoEncontradoTest en Aspirante Resource");
+        System.out.println("Ejecutando test: buscarPorIdNoEncontradoTest en AspiranteResource");
         UUID id = UUID.randomUUID();
         Mockito.when(mockAD.buscarPorId(id)).thenReturn(null);
         Response resultado = cut.buscarPorId(id);
@@ -203,7 +203,7 @@ public class AspiranteResourceTest {
 
     @Test
     public void buscarPorIdConExcepcionTest() {
-        System.out.println("Ejecutando test: buscarPorIdConExcepcionTest en Aspirante Resource");
+        System.out.println("Ejecutando test: buscarPorIdConExcepcionTest en AspiranteResource");
         UUID id = UUID.randomUUID();
         Mockito.when(mockAD.buscarPorId(id)).thenThrow(new RuntimeException("Error en base de datos"));
         Response resultado = cut.buscarPorId(id);
@@ -213,7 +213,7 @@ public class AspiranteResourceTest {
 
     @Test
     public void buscarPorIdNullTest() {
-        System.out.println("Ejecutando test: buscarPorIdNullTest en Aspirante Resource");
+        System.out.println("Ejecutando test: buscarPorIdNullTest en AspiranteResource");
         Response resultado = cut.buscarPorId(null);
         assertEquals(422, resultado.getStatus());
         Mockito.verifyNoInteractions(mockAD);
@@ -221,7 +221,7 @@ public class AspiranteResourceTest {
 
     @Test
     public void actualizarExitosoTest() {
-        System.out.println("Ejecutando test: actualizarExitosoTest en Aspirante Resource");
+        System.out.println("Ejecutando test: actualizarExitosoTest en AspiranteResource");
         Aspirante aspirante = new Aspirante(UUID.randomUUID());
         Mockito.when(mockAD.buscarPorId(aspirante.getIdAspirante())).thenReturn(aspirante);
         Mockito.when(mockAD.actualizar(aspirante)).thenReturn(aspirante);
@@ -236,7 +236,7 @@ public class AspiranteResourceTest {
 
     @Test
     public void actualizarNoEncontradoTest() {
-        System.out.println("Ejecutando test: actualizarNoEncontradoTest en Aspirante Resource");
+        System.out.println("Ejecutando test: actualizarNoEncontradoTest en AspiranteResource");
         Aspirante aspirante = new Aspirante(UUID.randomUUID());
         Mockito.when(mockAD.buscarPorId(aspirante.getIdAspirante())).thenReturn(null);
 
@@ -249,7 +249,7 @@ public class AspiranteResourceTest {
 
     @Test
     public void actualizarConExcepcionTest() {
-        System.out.println("Ejecutando test: actualizarConExcepcionTest en Aspirante Resource");
+        System.out.println("Ejecutando test: actualizarConExcepcionTest en AspiranteResource");
         Aspirante aspirante = new Aspirante(UUID.randomUUID());
         Mockito.when(mockAD.buscarPorId(aspirante.getIdAspirante())).thenReturn(aspirante);
         Mockito.doThrow(new RuntimeException("Error en base de datos"))
@@ -264,7 +264,7 @@ public class AspiranteResourceTest {
 
     @Test
     public void actualizarNullTest() {
-        System.out.println("Ejecutando test: actualizarNullTest en Aspirante Resource");
+        System.out.println("Ejecutando test: actualizarNullTest en AspiranteResource");
         Response resultado = cut.actualizar(null);
         assertEquals(422, resultado.getStatus());
         Mockito.verifyNoInteractions(mockAD);
@@ -272,7 +272,7 @@ public class AspiranteResourceTest {
 
     @Test
     public void actualizarSinIdTest() {
-        System.out.println("Ejecutando test: actualizarSinIdTest en Aspirante Resource");
+        System.out.println("Ejecutando test: actualizarSinIdTest en AspiranteResource");
         Aspirante aspirante = new Aspirante();
         Response resultado = cut.actualizar(aspirante);
         assertEquals(422, resultado.getStatus());
