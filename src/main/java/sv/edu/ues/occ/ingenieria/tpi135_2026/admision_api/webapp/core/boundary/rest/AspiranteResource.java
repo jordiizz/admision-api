@@ -111,13 +111,15 @@ public class AspiranteResource implements Serializable {
     }
     
     @PUT
+    @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response actualizar(Aspirante aspirante) {
-        if (aspirante != null && aspirante.getIdAspirante() != null) {
+    public Response actualizar(@PathParam("id") UUID id, Aspirante aspirante) {
+        if (aspirante != null && id != null) {
             try {
-                Aspirante existente = aspiranteDAO.buscarPorId(aspirante.getIdAspirante());
+                Aspirante existente = aspiranteDAO.buscarPorId(id);
                 if (existente != null) {
+                    aspirante.setIdAspirante(id);
                     aspiranteDAO.actualizar(aspirante);
                     return Response.ok(aspirante).build();
                 }

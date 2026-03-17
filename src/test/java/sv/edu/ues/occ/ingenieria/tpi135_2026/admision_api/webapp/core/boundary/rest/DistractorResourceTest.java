@@ -223,7 +223,7 @@ public class DistractorResourceTest {
         Mockito.when(mockDD.buscarPorId(distractor.getIdDistractor())).thenReturn(distractor);
         Mockito.when(mockDD.actualizar(distractor)).thenReturn(distractor);
 
-        Response resultado = cut.actualizar(distractor);
+        Response resultado = cut.actualizar(distractor.getIdDistractor(), distractor);
 
         assertEquals(200, resultado.getStatus());
         assertNotNull(resultado.getEntity());
@@ -237,7 +237,7 @@ public class DistractorResourceTest {
         Distractor distractor = new Distractor(UUID.randomUUID());
         Mockito.when(mockDD.buscarPorId(distractor.getIdDistractor())).thenReturn(null);
 
-        Response resultado = cut.actualizar(distractor);
+        Response resultado = cut.actualizar(distractor.getIdDistractor(), distractor);
 
         assertEquals(404, resultado.getStatus());
         Mockito.verify(mockDD).buscarPorId(distractor.getIdDistractor());
@@ -252,7 +252,7 @@ public class DistractorResourceTest {
         Mockito.doThrow(new RuntimeException("Error en base de datos"))
                 .when(mockDD).actualizar(distractor);
 
-        Response resultado = cut.actualizar(distractor);
+        Response resultado = cut.actualizar(distractor.getIdDistractor(), distractor);
 
         assertEquals(500, resultado.getStatus());
         Mockito.verify(mockDD).buscarPorId(distractor.getIdDistractor());
@@ -262,7 +262,7 @@ public class DistractorResourceTest {
     @Test
     public void actualizarNullTest() {
         System.out.println("Ejecutando test: actualizarNullTest en DistractorResource");
-        Response resultado = cut.actualizar(null);
+        Response resultado = cut.actualizar(null, null);
         assertEquals(422, resultado.getStatus());
         Mockito.verifyNoInteractions(mockDD);
     }
@@ -271,7 +271,7 @@ public class DistractorResourceTest {
     public void actualizarSinIdTest() {
         System.out.println("Ejecutando test: actualizarSinIdTest en DistractorResource");
         Distractor distractor = new Distractor();
-        Response resultado = cut.actualizar(distractor);
+        Response resultado = cut.actualizar(distractor.getIdDistractor(), distractor);
         assertEquals(422, resultado.getStatus());
         Mockito.verifyNoInteractions(mockDD);
     }

@@ -252,7 +252,7 @@ public class PruebaClaveAreaResourceTest {
         Mockito.when(mockDAO.buscarPorIdYPruebaClave(id, idPruebaClave)).thenReturn(existente);
         Mockito.when(mockDAO.actualizar(pruebaClaveArea)).thenReturn(pruebaClaveArea);
 
-        Response resultado = cut.actualizar(idPruebaClave, pruebaClaveArea);
+        Response resultado = cut.actualizar(idPruebaClave, pruebaClaveArea.getIdPruebaClaveArea(), pruebaClaveArea);
 
         assertEquals(200, resultado.getStatus());
         assertNotNull(resultado.getEntity());
@@ -268,7 +268,7 @@ public class PruebaClaveAreaResourceTest {
         UUID id = UUID.randomUUID();
         Mockito.when(mockDAO.buscarPorIdYPruebaClave(id, idPruebaClave)).thenReturn(null);
 
-        Response resultado = cut.actualizar(idPruebaClave, new PruebaClaveArea(id));
+        Response resultado = cut.actualizar(idPruebaClave, id, new PruebaClaveArea(id));
 
         assertEquals(404, resultado.getStatus());
         Mockito.verify(mockDAO).buscarPorIdYPruebaClave(id, idPruebaClave);
@@ -285,7 +285,7 @@ public class PruebaClaveAreaResourceTest {
         Mockito.when(mockDAO.buscarPorIdYPruebaClave(id, idPruebaClave)).thenReturn(existente);
         Mockito.doThrow(new IllegalStateException("Error en base de datos")).when(mockDAO).actualizar(pruebaClaveArea);
 
-        Response resultado = cut.actualizar(idPruebaClave, pruebaClaveArea);
+        Response resultado = cut.actualizar(idPruebaClave, pruebaClaveArea.getIdPruebaClaveArea(), pruebaClaveArea);
 
         assertEquals(500, resultado.getStatus());
         Mockito.verify(mockDAO).buscarPorIdYPruebaClave(id, idPruebaClave);
@@ -295,7 +295,7 @@ public class PruebaClaveAreaResourceTest {
     @Test
     public void actualizarNullTest() {
         System.out.println("Ejecutando test: actualizarNullTest en PruebaClaveAreaResource");
-        Response resultado = cut.actualizar(idPruebaClave, null);
+        Response resultado = cut.actualizar(idPruebaClave, UUID.randomUUID(), null);
         assertEquals(422, resultado.getStatus());
         Mockito.verifyNoInteractions(mockDAO);
     }
@@ -303,9 +303,9 @@ public class PruebaClaveAreaResourceTest {
     @Test
     public void actualizarSinIdEnBodyTest() {
         System.out.println("Ejecutando test: actualizarSinIdEnBodyTest en PruebaClaveAreaResource");
-        Response resultado = cut.actualizar(idPruebaClave, new PruebaClaveArea());
+        Response resultado = cut.actualizar(idPruebaClave, null, new PruebaClaveArea());
         assertEquals(422, resultado.getStatus());
-        assertEquals("El ID debe enviarse en el body",
+        assertEquals("El recurso no puede ser nulo y idPruebaClave no puede ser nulo",
                 resultado.getHeaderString(ResponseHeaders.WRONG_PARAMETER.toString()));
         Mockito.verifyNoInteractions(mockDAO);
     }
@@ -313,7 +313,7 @@ public class PruebaClaveAreaResourceTest {
     @Test
     public void actualizarIdPruebaClaveNullTest() {
         System.out.println("Ejecutando test: actualizarIdPruebaClaveNullTest en PruebaClaveAreaResource");
-        Response resultado = cut.actualizar(null, new PruebaClaveArea(UUID.randomUUID()));
+        Response resultado = cut.actualizar(null, UUID.randomUUID(), new PruebaClaveArea(UUID.randomUUID()));
         assertEquals(422, resultado.getStatus());
         Mockito.verifyNoInteractions(mockDAO);
     }

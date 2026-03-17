@@ -104,19 +104,22 @@ public class AspiranteOpcionResource implements Serializable {
     }
 
     @PUT
+    @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response actualizar(
             @PathParam("idAspirante") UUID idAspirante,
+            @PathParam("id") UUID id,
             AspiranteOpcion aspiranteOpcion) {
-        if (aspiranteOpcion == null || idAspirante == null || aspiranteOpcion.getIdAspiranteOpcion() == null) {
+        if (aspiranteOpcion == null || idAspirante == null || id == null) {
             return Response.status(422).header(ResponseHeaders.WRONG_PARAMETER.toString(), "El recurso o los identificadores no pueden ser nulos").build();
         }
         try {
-            AspiranteOpcion existente = aspiranteOpcionDAO.buscarPorIdYAspirante(aspiranteOpcion.getIdAspiranteOpcion(), idAspirante);
+            AspiranteOpcion existente = aspiranteOpcionDAO.buscarPorIdYAspirante(id, idAspirante);
             if (existente == null) {
                 return Response.status(404).header(ResponseHeaders.NOT_FOUND.toString(), "Recurso no encontrado").build();
             }
+            aspiranteOpcion.setIdAspiranteOpcion(id);
             aspiranteOpcion.setIdAspirante(existente.getIdAspirante());
             if (aspiranteOpcion.getFechaCreacion() == null) {
                 aspiranteOpcion.setFechaCreacion(existente.getFechaCreacion());

@@ -110,13 +110,15 @@ public class DistractorResource implements Serializable {
     }
 
     @PUT
+    @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response actualizar(Distractor distractor) {
-        if (distractor != null && distractor.getIdDistractor() != null) {
+    public Response actualizar(@PathParam("id") UUID id, Distractor distractor) {
+        if (distractor != null && id != null) {
             try {
-                Distractor existente = distractorDAO.buscarPorId(distractor.getIdDistractor());
+                Distractor existente = distractorDAO.buscarPorId(id);
                 if (existente != null) {
+                    distractor.setIdDistractor(id);
                     distractorDAO.actualizar(distractor);
                     return Response.ok(distractor).build();
                 }

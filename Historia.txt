@@ -1,0 +1,15 @@
+HISTORIA: Crear un servicio para que los clientes puedan crear un perfil de aspirante y asociarlo a una opción de carrera o curso.
+
+Como desarrollador de una aplicación web creada en Ecmascript y HTML, deseo una API rest para que los aspirantes a ingresar a la universidad puedan crear un perfil y asociarse a una o varias opciones de carrera o cursos.
+
+
+GHERKIN
+
+Scenarios: Crear perfil de aspirante y asociación a una opción de carrera o curso.
+
+Given se tiene un servidor corriendo con la aplicación desplegada.
+When puedo crear un aspirante 
+And puedo asociarle a una opcion de carrera, por ejemplo I30515
+Then puedo consultar el perfil del aspirante recien creado
+And verificar la opcionn de carrera a la que fue asociado.
+

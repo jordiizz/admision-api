@@ -103,20 +103,18 @@ public class PruebaClaveAreaResource implements Serializable {
     }
 
     @PUT
+    @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response actualizar(
             @PathParam("idPruebaClave") UUID idPruebaClave,
+            @PathParam("id") UUID id,
             PruebaClaveArea pruebaClaveArea) {
-        if (pruebaClaveArea != null && idPruebaClave != null) {
-            if (pruebaClaveArea.getIdPruebaClaveArea() == null) {
-                return Response.status(422)
-                        .header(ResponseHeaders.WRONG_PARAMETER.toString(), "El ID debe enviarse en el body")
-                        .build();
-            }
+        if (pruebaClaveArea != null && idPruebaClave != null && id != null) {
             try {
-                PruebaClaveArea existente = pruebaClaveAreaDAO.buscarPorIdYPruebaClave(pruebaClaveArea.getIdPruebaClaveArea(), idPruebaClave);
+                PruebaClaveArea existente = pruebaClaveAreaDAO.buscarPorIdYPruebaClave(id, idPruebaClave);
                 if (existente != null) {
+                    pruebaClaveArea.setIdPruebaClaveArea(id);
                     pruebaClaveArea.setIdPruebaClave(existente.getIdPruebaClave());
                     pruebaClaveAreaDAO.actualizar(pruebaClaveArea);
                     return Response.ok(pruebaClaveArea).build();

@@ -207,7 +207,7 @@ public class AspiranteOpcionResourceTest {
 
         Mockito.when(mockAOD.buscarPorIdYAspirante(idOpcion, idAspirante)).thenReturn(opcionExistente);
 
-        Response resultado = cut.actualizar(idAspirante, nuevaOpcion);
+        Response resultado = cut.actualizar(idAspirante, idOpcion, nuevaOpcion);
         assertEquals(200, resultado.getStatus());
         assertEquals(opcionExistente.getFechaCreacion(), nuevaOpcion.getFechaCreacion());
         Mockito.verify(mockAOD).actualizar(nuevaOpcion);
@@ -216,7 +216,7 @@ public class AspiranteOpcionResourceTest {
         AspiranteOpcion nuevaOpcionConFecha = new AspiranteOpcion(idOpcion);
         OffsetDateTime fechaPersonalizada = OffsetDateTime.now().minusDays(2);
         nuevaOpcionConFecha.setFechaCreacion(fechaPersonalizada);
-        Response resultadoConFecha = cut.actualizar(idAspirante, nuevaOpcionConFecha);
+        Response resultadoConFecha = cut.actualizar(idAspirante, idOpcion, nuevaOpcionConFecha);
         assertEquals(200, resultadoConFecha.getStatus());
         assertEquals(fechaPersonalizada, nuevaOpcionConFecha.getFechaCreacion());
         Mockito.verify(mockAOD).actualizar(nuevaOpcionConFecha);
@@ -231,20 +231,20 @@ public class AspiranteOpcionResourceTest {
 
         Mockito.when(mockAOD.buscarPorIdYAspirante(idOpcion, idAspirante)).thenReturn(null);
 
-        Response resultado = cut.actualizar(idAspirante, nuevaOpcion);
+        Response resultado = cut.actualizar(idAspirante, idOpcion, nuevaOpcion);
         assertEquals(404, resultado.getStatus());
     }
 
     @Test
     public void actualizarParametrosInvalidosTest() {
         System.out.println("Ejecutando test: actualizarParametrosInvalidosTest en AspiranteOpcionResource");
-        Response resultado = cut.actualizar(null, new AspiranteOpcion(UUID.randomUUID()));
+        Response resultado = cut.actualizar(null, null, new AspiranteOpcion(UUID.randomUUID()));
         assertEquals(422, resultado.getStatus());
 
-        resultado = cut.actualizar(UUID.randomUUID(), null);
+        resultado = cut.actualizar(UUID.randomUUID(), UUID.randomUUID(), null);
         assertEquals(422, resultado.getStatus());
 
-        resultado = cut.actualizar(UUID.randomUUID(), new AspiranteOpcion()); // idOpcion is null
+        resultado = cut.actualizar(UUID.randomUUID(), null, new AspiranteOpcion()); 
         assertEquals(422, resultado.getStatus());
     }
 
@@ -255,7 +255,7 @@ public class AspiranteOpcionResourceTest {
         UUID idOpcion = UUID.randomUUID();
         AspiranteOpcion nuevaOpcion = new AspiranteOpcion(idOpcion);
         Mockito.when(mockAOD.buscarPorIdYAspirante(idOpcion, idAspirante)).thenThrow(new IllegalArgumentException("Error"));
-        Response resultado = cut.actualizar(idAspirante, nuevaOpcion);
+        Response resultado = cut.actualizar(idAspirante, idOpcion, nuevaOpcion);
         assertEquals(500, resultado.getStatus());
     }
 

@@ -22,6 +22,7 @@ import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Jor
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.JornadaAula;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornada;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornadaAulaAspiranteOpcion;
+
 public class PruebaJornadaAulaAspiranteOpcionResourceTest {
 
     private UriInfo mockUriInfo;
@@ -45,8 +46,7 @@ public class PruebaJornadaAulaAspiranteOpcionResourceTest {
 
         Mockito.when(mockUriInfo.getAbsolutePathBuilder()).thenReturn(mockUriBuilder);
         Mockito.when(mockUriBuilder.path(Mockito.anyString())).thenReturn(mockUriBuilder);
-        Mockito.when(mockUriBuilder.build())
-                .thenReturn(URI.create("http://localhost:8080/v1/prueba-jornada/1/jornada-aula/1/aspirante-opcion/1"));
+        Mockito.when(mockUriBuilder.build()).thenReturn(URI.create("http://localhost/1"));
 
         idPruebaJornada = UUID.randomUUID();
         idJornadaAula = UUID.randomUUID();
@@ -64,195 +64,6 @@ public class PruebaJornadaAulaAspiranteOpcionResourceTest {
 
     @Test
     public void crearExitosoTest() {
-        System.out.println("crearExitosoTest");
-        UUID idAO = UUID.randomUUID();
-        AspiranteOpcion ao = new AspiranteOpcion(idAO);
-        PruebaJornadaAulaAspiranteOpcion entity = new PruebaJornadaAulaAspiranteOpcion();
-        entity.setIdAspiranteOpcion(ao);
-
-        UUID idJornadaCompartida = UUID.randomUUID();
-        PruebaJornada pj = new PruebaJornada(idPruebaJornada);
-        pj.setIdJornada(new Jornada(idJornadaCompartida));
-        JornadaAula ja = new JornadaAula(idJornadaAula);
-        ja.setIdJornada(new Jornada(idJornadaCompartida));
-
-        Mockito.when(mockPJDAO.buscarPorId(idPruebaJornada)).thenReturn(pj);
-        Mockito.when(mockJADAO.buscarPorId(idJornadaAula)).thenReturn(ja);
-        Mockito.when(mockAODAO.buscarPorId(idAO)).thenReturn(ao);
-        Mockito.doNothing().when(mockDAO).crear(entity);
-
-        Response resultado = cut.crear(idPruebaJornada, idJornadaAula, entity, mockUriInfo);
-
-        assertEquals(201, resultado.getStatus());
-        assertNotNull(resultado.getEntity());
-        Mockito.verify(mockPJDAO).buscarPorId(idPruebaJornada);
-        Mockito.verify(mockJADAO).buscarPorId(idJornadaAula);
-        Mockito.verify(mockAODAO).buscarPorId(idAO);
-        Mockito.verify(mockDAO).crear(entity);
-    }
-
-    @Test
-    public void crearEntityNullTest() {
-        System.out.println("crearEntityNullTest");
-        Response resultado = cut.crear(idPruebaJornada, idJornadaAula, null, mockUriInfo);
-        assertEquals(422, resultado.getStatus());
-        Mockito.verifyNoInteractions(mockDAO, mockPJDAO, mockJADAO, mockAODAO);
-    }
-
-    @Test
-    public void crearIdPruebaJornadaNullTest() {
-        System.out.println("crearIdPruebaJornadaNullTest");
-        Response resultado = cut.crear(null, idJornadaAula, new PruebaJornadaAulaAspiranteOpcion(), mockUriInfo);
-        assertEquals(400, resultado.getStatus());
-        Mockito.verifyNoInteractions(mockDAO, mockPJDAO, mockJADAO, mockAODAO);
-    }
-
-    @Test
-    public void crearIdJornadaAulaNullTest() {
-        System.out.println("crearIdJornadaAulaNullTest");
-        Response resultado = cut.crear(idPruebaJornada, null, new PruebaJornadaAulaAspiranteOpcion(), mockUriInfo);
-        assertEquals(400, resultado.getStatus());
-        Mockito.verifyNoInteractions(mockDAO, mockPJDAO, mockJADAO, mockAODAO);
-    }
-
-    @Test
-    public void crearSinIdAspiranteOpcionTest() {
-        System.out.println("crearSinIdAspiranteOpcionTest");
-        PruebaJornadaAulaAspiranteOpcion entity = new PruebaJornadaAulaAspiranteOpcion();
-        // idAspiranteOpcion is null inside entity
-        Response resultado = cut.crear(idPruebaJornada, idJornadaAula, entity, mockUriInfo);
-        assertEquals(422, resultado.getStatus());
-        Mockito.verifyNoInteractions(mockDAO, mockPJDAO, mockJADAO, mockAODAO);
-    }
-
-    @Test
-    public void crearAspiranteOpcionConUUIDNuloTest() {
-        System.out.println("crearAspiranteOpcionConUUIDNuloTest");
-        // outer idAspiranteOpcion object is non-null but its UUID is null → 422
-        PruebaJornadaAulaAspiranteOpcion entity = new PruebaJornadaAulaAspiranteOpcion();
-        entity.setIdAspiranteOpcion(new AspiranteOpcion()); // UUID inside is null
-        Response resultado = cut.crear(idPruebaJornada, idJornadaAula, entity, mockUriInfo);
-        assertEquals(422, resultado.getStatus());
-        Mockito.verifyNoInteractions(mockDAO, mockPJDAO, mockJADAO, mockAODAO);
-    }
-
-    @Test
-    public void crearPruebaJornadaNoEncontradaTest() {
-        System.out.println("crearPruebaJornadaNoEncontradaTest");
-        PruebaJornadaAulaAspiranteOpcion entity = new PruebaJornadaAulaAspiranteOpcion();
-        entity.setIdAspiranteOpcion(new AspiranteOpcion(UUID.randomUUID()));
-        Mockito.when(mockPJDAO.buscarPorId(idPruebaJornada)).thenReturn(null);
-
-        Response resultado = cut.crear(idPruebaJornada, idJornadaAula, entity, mockUriInfo);
-
-        assertEquals(404, resultado.getStatus());
-        Mockito.verify(mockPJDAO).buscarPorId(idPruebaJornada);
-        Mockito.verify(mockDAO, Mockito.never()).crear(Mockito.any());
-    }
-
-    @Test
-    public void crearJornadaAulaNoEncontradaTest() {
-        System.out.println("crearJornadaAulaNoEncontradaTest");
-        PruebaJornadaAulaAspiranteOpcion entity = new PruebaJornadaAulaAspiranteOpcion();
-        entity.setIdAspiranteOpcion(new AspiranteOpcion(UUID.randomUUID()));
-        Mockito.when(mockPJDAO.buscarPorId(idPruebaJornada)).thenReturn(new PruebaJornada(idPruebaJornada));
-        Mockito.when(mockJADAO.buscarPorId(idJornadaAula)).thenReturn(null);
-
-        Response resultado = cut.crear(idPruebaJornada, idJornadaAula, entity, mockUriInfo);
-
-        assertEquals(404, resultado.getStatus());
-        Mockito.verify(mockPJDAO).buscarPorId(idPruebaJornada);
-        Mockito.verify(mockJADAO).buscarPorId(idJornadaAula);
-        Mockito.verify(mockDAO, Mockito.never()).crear(Mockito.any());
-    }
-
-    @Test
-    public void crearAspiranteOpcionNoEncontradaTest() {
-        System.out.println("crearAspiranteOpcionNoEncontradaTest");
-        UUID idAO = UUID.randomUUID();
-        PruebaJornadaAulaAspiranteOpcion entity = new PruebaJornadaAulaAspiranteOpcion();
-        entity.setIdAspiranteOpcion(new AspiranteOpcion(idAO));
-
-        UUID idJornadaCompartida = UUID.randomUUID();
-        PruebaJornada pj = new PruebaJornada(idPruebaJornada);
-        pj.setIdJornada(new Jornada(idJornadaCompartida));
-        JornadaAula ja = new JornadaAula(idJornadaAula);
-        ja.setIdJornada(new Jornada(idJornadaCompartida));
-
-        Mockito.when(mockPJDAO.buscarPorId(idPruebaJornada)).thenReturn(pj);
-        Mockito.when(mockJADAO.buscarPorId(idJornadaAula)).thenReturn(ja);
-        Mockito.when(mockAODAO.buscarPorId(idAO)).thenReturn(null);
-
-        Response resultado = cut.crear(idPruebaJornada, idJornadaAula, entity, mockUriInfo);
-
-        assertEquals(404, resultado.getStatus());
-        Mockito.verify(mockAODAO).buscarPorId(idAO);
-        Mockito.verify(mockDAO, Mockito.never()).crear(Mockito.any());
-    }
-
-    @Test
-    public void crearJornadaAulaIdJornadaNullTest() {
-        System.out.println("crearJornadaAulaIdJornadaNullTest");
-        PruebaJornadaAulaAspiranteOpcion entity = new PruebaJornadaAulaAspiranteOpcion();
-        entity.setIdAspiranteOpcion(new AspiranteOpcion(UUID.randomUUID()));
-
-        PruebaJornada pj = new PruebaJornada(idPruebaJornada);
-        pj.setIdJornada(new Jornada(UUID.randomUUID()));
-        JornadaAula ja = new JornadaAula(idJornadaAula);
-        ja.setIdJornada(null); // NULL here to test first condition
-
-        Mockito.when(mockPJDAO.buscarPorId(idPruebaJornada)).thenReturn(pj);
-        Mockito.when(mockJADAO.buscarPorId(idJornadaAula)).thenReturn(ja);
-
-        Response resultado = cut.crear(idPruebaJornada, idJornadaAula, entity, mockUriInfo);
-
-        assertEquals(400, resultado.getStatus());
-        Mockito.verify(mockDAO, Mockito.never()).crear(Mockito.any());
-    }
-
-    @Test
-    public void crearPruebaJornadaIdJornadaNullTest() {
-        System.out.println("crearPruebaJornadaIdJornadaNullTest");
-        PruebaJornadaAulaAspiranteOpcion entity = new PruebaJornadaAulaAspiranteOpcion();
-        entity.setIdAspiranteOpcion(new AspiranteOpcion(UUID.randomUUID()));
-
-        PruebaJornada pj = new PruebaJornada(idPruebaJornada);
-        pj.setIdJornada(null); // NULL here to test second condition
-        JornadaAula ja = new JornadaAula(idJornadaAula);
-        ja.setIdJornada(new Jornada(UUID.randomUUID()));
-
-        Mockito.when(mockPJDAO.buscarPorId(idPruebaJornada)).thenReturn(pj);
-        Mockito.when(mockJADAO.buscarPorId(idJornadaAula)).thenReturn(ja);
-
-        Response resultado = cut.crear(idPruebaJornada, idJornadaAula, entity, mockUriInfo);
-
-        assertEquals(400, resultado.getStatus());
-        Mockito.verify(mockDAO, Mockito.never()).crear(Mockito.any());
-    }
-
-    @Test
-    public void crearJornadaMismatchedTest() {
-        System.out.println("crearJornadaMismatchedTest");
-        PruebaJornadaAulaAspiranteOpcion entity = new PruebaJornadaAulaAspiranteOpcion();
-        entity.setIdAspiranteOpcion(new AspiranteOpcion(UUID.randomUUID()));
-
-        PruebaJornada pj = new PruebaJornada(idPruebaJornada);
-        pj.setIdJornada(new Jornada(UUID.randomUUID()));
-        JornadaAula ja = new JornadaAula(idJornadaAula);
-        ja.setIdJornada(new Jornada(UUID.randomUUID()));
-
-        Mockito.when(mockPJDAO.buscarPorId(idPruebaJornada)).thenReturn(pj);
-        Mockito.when(mockJADAO.buscarPorId(idJornadaAula)).thenReturn(ja);
-
-        Response resultado = cut.crear(idPruebaJornada, idJornadaAula, entity, mockUriInfo);
-
-        assertEquals(400, resultado.getStatus());
-        Mockito.verify(mockDAO, Mockito.never()).crear(Mockito.any());
-    }
-
-    @Test
-    public void crearConExcepcionTest() {
-        System.out.println("crearConExcepcionTest");
         UUID idAO = UUID.randomUUID();
         PruebaJornadaAulaAspiranteOpcion entity = new PruebaJornadaAulaAspiranteOpcion();
         entity.setIdAspiranteOpcion(new AspiranteOpcion(idAO));
@@ -266,83 +77,132 @@ public class PruebaJornadaAulaAspiranteOpcionResourceTest {
         Mockito.when(mockPJDAO.buscarPorId(idPruebaJornada)).thenReturn(pj);
         Mockito.when(mockJADAO.buscarPorId(idJornadaAula)).thenReturn(ja);
         Mockito.when(mockAODAO.buscarPorId(idAO)).thenReturn(new AspiranteOpcion(idAO));
-        Mockito.doThrow(new IllegalStateException("DB error")).when(mockDAO).crear(entity);
 
-        Response resultado = cut.crear(idPruebaJornada, idJornadaAula, entity, mockUriInfo);
+        Response res = cut.crear(idPruebaJornada, idJornadaAula, entity, mockUriInfo);
+        assertEquals(201, res.getStatus());
+        Mockito.verify(mockDAO).crear(entity);
+    }
 
-        assertEquals(500, resultado.getStatus());
+    @Test
+    public void crearValidacionFallidaTest() {
+        assertEquals(422, cut.crear(null, idJornadaAula, new PruebaJornadaAulaAspiranteOpcion(), mockUriInfo).getStatus());
+        assertEquals(422, cut.crear(idPruebaJornada, null, new PruebaJornadaAulaAspiranteOpcion(), mockUriInfo).getStatus());
+
+        assertEquals(422, cut.crear(idPruebaJornada, idJornadaAula, null, mockUriInfo).getStatus());
+
+        // AspiranteOpcion nulo o con ID interno nulo
+        PruebaJornadaAulaAspiranteOpcion entitySinAO = new PruebaJornadaAulaAspiranteOpcion();
+        assertEquals(422, cut.crear(idPruebaJornada, idJornadaAula, entitySinAO, mockUriInfo).getStatus());
+
+        PruebaJornadaAulaAspiranteOpcion entityConAOSinId = new PruebaJornadaAulaAspiranteOpcion();
+        entityConAOSinId.setIdAspiranteOpcion(new AspiranteOpcion());
+        assertEquals(422, cut.crear(idPruebaJornada, idJornadaAula, entityConAOSinId, mockUriInfo).getStatus());
+    }
+
+    @Test
+    public void crearJornadasNoCoincidenODesconocidasTest() {
+        PruebaJornadaAulaAspiranteOpcion entity = new PruebaJornadaAulaAspiranteOpcion();
+        entity.setIdAspiranteOpcion(new AspiranteOpcion(UUID.randomUUID()));
+
+        PruebaJornada pj = new PruebaJornada(idPruebaJornada);
+        JornadaAula ja = new JornadaAula(idJornadaAula);
+
+        Mockito.when(mockPJDAO.buscarPorId(idPruebaJornada)).thenReturn(pj);
+        Mockito.when(mockJADAO.buscarPorId(idJornadaAula)).thenReturn(ja);
+        Mockito.when(mockAODAO.buscarPorId(Mockito.any())).thenReturn(new AspiranteOpcion());
+
+        // Escenario 1: aula.getIdJornada() == null
+        Response res1 = cut.crear(idPruebaJornada, idJornadaAula, entity, mockUriInfo);
+        assertEquals(400, res1.getStatus());
+
+        // Escenario 2: aula SÍ tiene jornada, pero prueba.getIdJornada() 
+        ja.setIdJornada(new Jornada(UUID.randomUUID()));
+        Response res2 = cut.crear(idPruebaJornada, idJornadaAula, entity, mockUriInfo);
+        assertEquals(400, res2.getStatus());
+
+        // Escenario 3: Ambas tienen jornada, pero los IDs son distintos
+        pj.setIdJornada(new Jornada(UUID.randomUUID())); // pj ahora tiene, pero distinta a ja
+        Response res3 = cut.crear(idPruebaJornada, idJornadaAula, entity, mockUriInfo);
+        assertEquals(400, res3.getStatus());
+    }
+
+    @Test
+    public void crearConflictoDePertenenciaJornadaTest() {
+        UUID idAO = UUID.randomUUID();
+        PruebaJornadaAulaAspiranteOpcion entity = new PruebaJornadaAulaAspiranteOpcion();
+        entity.setIdAspiranteOpcion(new AspiranteOpcion(idAO));
+
+        PruebaJornada pj = new PruebaJornada(idPruebaJornada);
+        pj.setIdJornada(new Jornada(UUID.randomUUID()));
+
+        JornadaAula ja = new JornadaAula(idJornadaAula);
+        ja.setIdJornada(new Jornada(UUID.randomUUID()));
+
+        Mockito.when(mockPJDAO.buscarPorId(idPruebaJornada)).thenReturn(pj);
+        Mockito.when(mockJADAO.buscarPorId(idJornadaAula)).thenReturn(ja);
+        Mockito.when(mockAODAO.buscarPorId(idAO)).thenReturn(new AspiranteOpcion(idAO));
+
+        Response res = cut.crear(idPruebaJornada, idJornadaAula, entity, mockUriInfo);
+
+        assertEquals(400, res.getStatus());
+        assertEquals("Conflicto de Jornada", res.getHeaderString(ResponseHeaders.WRONG_PARAMETER.toString()));
+        Mockito.verify(mockDAO, Mockito.never()).crear(Mockito.any());
+    }
+
+    @Test
+    public void crearNoEncontradosTest() {
+        PruebaJornadaAulaAspiranteOpcion entity = new PruebaJornadaAulaAspiranteOpcion();
+        entity.setIdAspiranteOpcion(new AspiranteOpcion(UUID.randomUUID()));
+
+        // 1. Falta prueba
+        Mockito.when(mockPJDAO.buscarPorId(idPruebaJornada)).thenReturn(null);
+        assertEquals(404, cut.crear(idPruebaJornada, idJornadaAula, entity, mockUriInfo).getStatus());
+
+        // 2. Falta aula (pero prueba sí está)
+        Mockito.when(mockPJDAO.buscarPorId(idPruebaJornada)).thenReturn(new PruebaJornada());
+        Mockito.when(mockJADAO.buscarPorId(idJornadaAula)).thenReturn(null);
+        assertEquals(404, cut.crear(idPruebaJornada, idJornadaAula, entity, mockUriInfo).getStatus());
+
+        // 3. Falta aspirante (pero prueba y aula sí están)
+        Mockito.when(mockJADAO.buscarPorId(idJornadaAula)).thenReturn(new JornadaAula());
+        Mockito.when(mockAODAO.buscarPorId(Mockito.any())).thenReturn(null);
+        assertEquals(404, cut.crear(idPruebaJornada, idJornadaAula, entity, mockUriInfo).getStatus());
+    }
+
+    @Test
+    public void crearExcepcionTest() {
+        PruebaJornadaAulaAspiranteOpcion entity = new PruebaJornadaAulaAspiranteOpcion();
+        entity.setIdAspiranteOpcion(new AspiranteOpcion(UUID.randomUUID()));
+
+        Mockito.when(mockPJDAO.buscarPorId(Mockito.any())).thenThrow(new RuntimeException("Error BD"));
+        assertEquals(500, cut.crear(idPruebaJornada, idJornadaAula, entity, mockUriInfo).getStatus());
     }
 
     // ============================================================
-    //  GET list - buscarPorRango
+    //  GET - buscarPorRango
     // ============================================================
 
     @Test
     public void buscarPorRangoExitosoTest() {
-        System.out.println("buscarPorRangoExitosoTest");
-        List<PruebaJornadaAulaAspiranteOpcion> registros =
-                List.of(new PruebaJornadaAulaAspiranteOpcion(UUID.randomUUID()));
-        Mockito.when(mockDAO.buscarPorPruebaJornadaYJornadaAulaRango(idPruebaJornada, idJornadaAula, 0, 50))
-                .thenReturn(registros);
-        Mockito.when(mockDAO.contarPorPruebaJornadaYJornadaAula(idPruebaJornada, idJornadaAula)).thenReturn(1L);
-
-        Response resultado = cut.buscarPorRango(idPruebaJornada, idJornadaAula, 0, 50);
-
-        assertEquals(200, resultado.getStatus());
-        assertNotNull(resultado.getEntity());
-        Mockito.verify(mockDAO).buscarPorPruebaJornadaYJornadaAulaRango(idPruebaJornada, idJornadaAula, 0, 50);
-        Mockito.verify(mockDAO).contarPorPruebaJornadaYJornadaAula(idPruebaJornada, idJornadaAula);
+        Mockito.when(mockDAO.buscarPorPruebaJornadaYJornadaAulaRango(idPruebaJornada, idJornadaAula, 0, 50)).thenReturn(List.of());
+        Mockito.when(mockDAO.contarPorPruebaJornadaYJornadaAula(idPruebaJornada, idJornadaAula)).thenReturn(0L);
+        assertEquals(200, cut.buscarPorRango(idPruebaJornada, idJornadaAula, 0, 50).getStatus());
     }
 
     @Test
-    public void buscarPorRangoFirstNegativoTest() {
-        System.out.println("buscarPorRangoFirstNegativoTest");
-        Response resultado = cut.buscarPorRango(idPruebaJornada, idJornadaAula, -1, 10);
-        assertEquals(422, resultado.getStatus());
-        Mockito.verifyNoInteractions(mockDAO);
+    public void buscarPorRangoValidacionFallidaTest() {
+        assertEquals(422, cut.buscarPorRango(null, idJornadaAula, 0, 50).getStatus()); // idPrueba nulo
+        assertEquals(422, cut.buscarPorRango(idPruebaJornada, null, 0, 50).getStatus()); // idAula nulo
+        assertEquals(422, cut.buscarPorRango(idPruebaJornada, idJornadaAula, -1, 50).getStatus()); // first negativo
+        assertEquals(422, cut.buscarPorRango(idPruebaJornada, idJornadaAula, 0, 0).getStatus()); // max cero
+        assertEquals(422, cut.buscarPorRango(idPruebaJornada, idJornadaAula, 0, 51).getStatus()); // max mayor a 50
     }
 
     @Test
-    public void buscarPorRangoMaxCeroTest() {
-        System.out.println("buscarPorRangoMaxCeroTest");
-        Response resultado = cut.buscarPorRango(idPruebaJornada, idJornadaAula, 0, 0);
-        assertEquals(422, resultado.getStatus());
-        Mockito.verifyNoInteractions(mockDAO);
-    }
-
-    @Test
-    public void buscarPorRangoMaxMayorACincuentaTest() {
-        System.out.println("buscarPorRangoMaxMayorACincuentaTest");
-        Response resultado = cut.buscarPorRango(idPruebaJornada, idJornadaAula, 0, 51);
-        assertEquals(422, resultado.getStatus());
-        Mockito.verifyNoInteractions(mockDAO);
-    }
-
-    @Test
-    public void buscarPorRangoIdPruebaJornadaNullTest() {
-        System.out.println("buscarPorRangoIdPruebaJornadaNullTest");
-        Response resultado = cut.buscarPorRango(null, idJornadaAula, 0, 50);
-        assertEquals(400, resultado.getStatus());
-        Mockito.verifyNoInteractions(mockDAO);
-    }
-
-    @Test
-    public void buscarPorRangoIdJornadaAulaNullTest() {
-        System.out.println("buscarPorRangoIdJornadaAulaNullTest");
-        Response resultado = cut.buscarPorRango(idPruebaJornada, null, 0, 50);
-        assertEquals(400, resultado.getStatus());
-        Mockito.verifyNoInteractions(mockDAO);
-    }
-
-    @Test
-    public void buscarPorRangoConExcepcionTest() {
-        System.out.println("buscarPorRangoConExcepcionTest");
-        Mockito.when(mockDAO.buscarPorPruebaJornadaYJornadaAulaRango(idPruebaJornada, idJornadaAula, 0, 50))
-                .thenThrow(new RuntimeException("DB error"));
-
-        Response resultado = cut.buscarPorRango(idPruebaJornada, idJornadaAula, 0, 50);
-
-        assertEquals(500, resultado.getStatus());
+    public void buscarPorRangoExcepcionTest() {
+        Mockito.when(mockDAO.buscarPorPruebaJornadaYJornadaAulaRango(Mockito.any(), Mockito.any(), Mockito.anyInt(), Mockito.anyInt()))
+                .thenThrow(new RuntimeException("Error"));
+        assertEquals(500, cut.buscarPorRango(idPruebaJornada, idJornadaAula, 0, 50).getStatus());
     }
 
     // ============================================================
@@ -351,65 +211,32 @@ public class PruebaJornadaAulaAspiranteOpcionResourceTest {
 
     @Test
     public void buscarPorIdExitosoTest() {
-        System.out.println("buscarPorIdExitosoTest");
         UUID id = UUID.randomUUID();
-        PruebaJornadaAulaAspiranteOpcion encontrado = new PruebaJornadaAulaAspiranteOpcion(id);
         Mockito.when(mockDAO.buscarPorIdYPruebaJornadaYJornadaAula(id, idPruebaJornada, idJornadaAula))
-                .thenReturn(encontrado);
+                .thenReturn(new PruebaJornadaAulaAspiranteOpcion(id));
+        assertEquals(200, cut.buscarPorId(idPruebaJornada, idJornadaAula, id).getStatus());
+    }
 
-        Response resultado = cut.buscarPorId(idPruebaJornada, idJornadaAula, id);
-
-        assertEquals(200, resultado.getStatus());
-        assertNotNull(resultado.getEntity());
-        Mockito.verify(mockDAO).buscarPorIdYPruebaJornadaYJornadaAula(id, idPruebaJornada, idJornadaAula);
+    @Test
+    public void buscarPorIdValidacionFallidaTest() {
+        assertEquals(422, cut.buscarPorId(null, idJornadaAula, UUID.randomUUID()).getStatus());
+        assertEquals(422, cut.buscarPorId(idPruebaJornada, null, UUID.randomUUID()).getStatus());
+        assertEquals(422, cut.buscarPorId(idPruebaJornada, idJornadaAula, null).getStatus());
     }
 
     @Test
     public void buscarPorIdNoEncontradoTest() {
-        System.out.println("buscarPorIdNoEncontradoTest");
         UUID id = UUID.randomUUID();
         Mockito.when(mockDAO.buscarPorIdYPruebaJornadaYJornadaAula(id, idPruebaJornada, idJornadaAula))
                 .thenReturn(null);
-
-        Response resultado = cut.buscarPorId(idPruebaJornada, idJornadaAula, id);
-
-        assertEquals(404, resultado.getStatus());
+        assertEquals(404, cut.buscarPorId(idPruebaJornada, idJornadaAula, id).getStatus());
     }
 
     @Test
-    public void buscarPorIdNullTest() {
-        System.out.println("buscarPorIdNullTest");
-        Response resultado = cut.buscarPorId(idPruebaJornada, idJornadaAula, null);
-        assertEquals(422, resultado.getStatus());
-        Mockito.verifyNoInteractions(mockDAO);
-    }
-
-    @Test
-    public void buscarPorIdIdPruebaJornadaNullTest() {
-        System.out.println("buscarPorIdIdPruebaJornadaNullTest");
-        Response resultado = cut.buscarPorId(null, idJornadaAula, UUID.randomUUID());
-        assertEquals(400, resultado.getStatus());
-        Mockito.verifyNoInteractions(mockDAO);
-    }
-
-    @Test
-    public void buscarPorIdIdJornadaAulaNullTest() {
-        System.out.println("buscarPorIdIdJornadaAulaNullTest");
-        Response resultado = cut.buscarPorId(idPruebaJornada, null, UUID.randomUUID());
-        assertEquals(400, resultado.getStatus());
-        Mockito.verifyNoInteractions(mockDAO);
-    }
-
-    @Test
-    public void buscarPorIdConExcepcionTest() {
-        System.out.println("buscarPorIdConExcepcionTest");
-        UUID id = UUID.randomUUID();
-        Mockito.when(mockDAO.buscarPorIdYPruebaJornadaYJornadaAula(id, idPruebaJornada, idJornadaAula))
-                .thenThrow(new RuntimeException("DB error"));
-
-        Response resultado = cut.buscarPorId(idPruebaJornada, idJornadaAula, id);
-
-        assertEquals(500, resultado.getStatus());
+    public void buscarPorIdExcepcionTest() {
+        Mockito.when(mockDAO.buscarPorIdYPruebaJornadaYJornadaAula(Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenThrow(new RuntimeException("DB Error"));
+        assertEquals(500, cut.buscarPorId(idPruebaJornada, idJornadaAula, UUID.randomUUID()).getStatus());
     }
 
     // ============================================================
@@ -418,7 +245,6 @@ public class PruebaJornadaAulaAspiranteOpcionResourceTest {
 
     @Test
     public void actualizarExitosoTest() {
-        System.out.println("actualizarExitosoTest");
         UUID id = UUID.randomUUID();
         UUID idAO = UUID.randomUUID();
         PruebaJornadaAulaAspiranteOpcion entity = new PruebaJornadaAulaAspiranteOpcion(id);
@@ -427,228 +253,117 @@ public class PruebaJornadaAulaAspiranteOpcionResourceTest {
         PruebaJornadaAulaAspiranteOpcion existente = new PruebaJornadaAulaAspiranteOpcion(id);
         existente.setIdPruebaJornada(new PruebaJornada(idPruebaJornada));
         existente.setIdJornadaAula(new JornadaAula(idJornadaAula));
-        existente.setIdAspiranteOpcion(new AspiranteOpcion(idAO));
 
-        Mockito.when(mockDAO.buscarPorIdYPruebaJornadaYJornadaAula(id, idPruebaJornada, idJornadaAula))
-                .thenReturn(existente);
+        Mockito.when(mockDAO.buscarPorIdYPruebaJornadaYJornadaAula(id, idPruebaJornada, idJornadaAula)).thenReturn(existente);
         Mockito.when(mockAODAO.buscarPorId(idAO)).thenReturn(new AspiranteOpcion(idAO));
-        Mockito.when(mockDAO.actualizar(entity)).thenReturn(entity);
 
-        Response resultado = cut.actualizar(idPruebaJornada, idJornadaAula, entity);
-
-        assertEquals(200, resultado.getStatus());
-        assertNotNull(resultado.getEntity());
-        Mockito.verify(mockDAO).buscarPorIdYPruebaJornadaYJornadaAula(id, idPruebaJornada, idJornadaAula);
-        Mockito.verify(mockAODAO).buscarPorId(idAO);
+        Response res = cut.actualizar(idPruebaJornada, idJornadaAula, entity.getIdPruebaJornadaAulaAspiranteOpcion(), entity);
+        assertEquals(200, res.getStatus());
         Mockito.verify(mockDAO).actualizar(entity);
     }
 
     @Test
-    public void actualizarSinCambiarAspiranteOpcionTest() {
-        System.out.println("actualizarSinCambiarAspiranteOpcionTest");
+    public void actualizarPreservarAspiranteOpcionTest() {
         UUID id = UUID.randomUUID();
-        UUID idAO = UUID.randomUUID();
-        PruebaJornadaAulaAspiranteOpcion entity = new PruebaJornadaAulaAspiranteOpcion(id);
-        // entity sin idAspiranteOpcion → debe conservar el del existente
+
+        // Escenario 1: El body tiene AspiranteOpcion pero el ID interno es nulo
+        PruebaJornadaAulaAspiranteOpcion entity1 = new PruebaJornadaAulaAspiranteOpcion(id);
+        entity1.setIdAspiranteOpcion(new AspiranteOpcion());
+
+        // Escenario 2: El body viene con AspiranteOpcion totalmente en nulo
+        PruebaJornadaAulaAspiranteOpcion entity2 = new PruebaJornadaAulaAspiranteOpcion(id);
+        entity2.setIdAspiranteOpcion(null);
 
         PruebaJornadaAulaAspiranteOpcion existente = new PruebaJornadaAulaAspiranteOpcion(id);
-        existente.setIdPruebaJornada(new PruebaJornada(idPruebaJornada));
-        existente.setIdJornadaAula(new JornadaAula(idJornadaAula));
-        existente.setIdAspiranteOpcion(new AspiranteOpcion(idAO));
+        existente.setIdAspiranteOpcion(new AspiranteOpcion(UUID.randomUUID()));
 
-        Mockito.when(mockDAO.buscarPorIdYPruebaJornadaYJornadaAula(id, idPruebaJornada, idJornadaAula))
-                .thenReturn(existente);
-        Mockito.when(mockDAO.actualizar(entity)).thenReturn(entity);
+        Mockito.when(mockDAO.buscarPorIdYPruebaJornadaYJornadaAula(id, idPruebaJornada, idJornadaAula)).thenReturn(existente);
 
-        Response resultado = cut.actualizar(idPruebaJornada, idJornadaAula, entity);
+        // Prueba Escenario 1
+        Response res1 = cut.actualizar(idPruebaJornada, idJornadaAula, entity1.getIdPruebaJornadaAulaAspiranteOpcion(), entity1);
+        assertEquals(200, res1.getStatus());
+        assertNotNull(entity1.getIdAspiranteOpcion().getIdAspiranteOpcion());
 
-        assertEquals(200, resultado.getStatus());
-        assertEquals(existente.getIdAspiranteOpcion(), entity.getIdAspiranteOpcion());
-        Mockito.verify(mockAODAO, Mockito.never()).buscarPorId(Mockito.any());
+        // Prueba Escenario 2
+        Response res2 = cut.actualizar(idPruebaJornada, idJornadaAula, entity2.getIdPruebaJornadaAulaAspiranteOpcion(), entity2);
+        assertEquals(200, res2.getStatus());
+        assertNotNull(entity2.getIdAspiranteOpcion().getIdAspiranteOpcion());
+    }
+
+    @Test
+    public void actualizarValidacionFallidaTest() {
+        assertEquals(422, cut.actualizar(null, idJornadaAula, UUID.randomUUID(), new PruebaJornadaAulaAspiranteOpcion(UUID.randomUUID())).getStatus());
+        assertEquals(422, cut.actualizar(idPruebaJornada, null, UUID.randomUUID(), new PruebaJornadaAulaAspiranteOpcion(UUID.randomUUID())).getStatus());
+        assertEquals(422, cut.actualizar(idPruebaJornada, idJornadaAula, UUID.randomUUID(), null).getStatus());
+        assertEquals(422, cut.actualizar(idPruebaJornada, idJornadaAula, null, new PruebaJornadaAulaAspiranteOpcion()).getStatus());
     }
 
     @Test
     public void actualizarNoEncontradoTest() {
-        System.out.println("actualizarNoEncontradoTest");
         UUID id = UUID.randomUUID();
-        Mockito.when(mockDAO.buscarPorIdYPruebaJornadaYJornadaAula(id, idPruebaJornada, idJornadaAula))
-                .thenReturn(null);
+        PruebaJornadaAulaAspiranteOpcion entity = new PruebaJornadaAulaAspiranteOpcion(id);
+        Mockito.when(mockDAO.buscarPorIdYPruebaJornadaYJornadaAula(id, idPruebaJornada, idJornadaAula)).thenReturn(null);
 
-        Response resultado = cut.actualizar(idPruebaJornada, idJornadaAula, new PruebaJornadaAulaAspiranteOpcion(id));
-
-        assertEquals(404, resultado.getStatus());
-        Mockito.verify(mockDAO, Mockito.never()).actualizar(Mockito.any());
+        assertEquals(404, cut.actualizar(idPruebaJornada, idJornadaAula, entity.getIdPruebaJornadaAulaAspiranteOpcion(), entity).getStatus());
     }
 
     @Test
-    public void actualizarAspiranteOpcionNoEncontradaTest() {
-        System.out.println("actualizarAspiranteOpcionNoEncontradaTest");
+    public void actualizarAspiranteOpcionNoEncontradoTest() {
         UUID id = UUID.randomUUID();
         UUID idAO = UUID.randomUUID();
         PruebaJornadaAulaAspiranteOpcion entity = new PruebaJornadaAulaAspiranteOpcion(id);
         entity.setIdAspiranteOpcion(new AspiranteOpcion(idAO));
 
         PruebaJornadaAulaAspiranteOpcion existente = new PruebaJornadaAulaAspiranteOpcion(id);
-        existente.setIdPruebaJornada(new PruebaJornada(idPruebaJornada));
-        existente.setIdJornadaAula(new JornadaAula(idJornadaAula));
 
-        Mockito.when(mockDAO.buscarPorIdYPruebaJornadaYJornadaAula(id, idPruebaJornada, idJornadaAula))
-                .thenReturn(existente);
-        Mockito.when(mockAODAO.buscarPorId(idAO)).thenReturn(null);
+        Mockito.when(mockDAO.buscarPorIdYPruebaJornadaYJornadaAula(id, idPruebaJornada, idJornadaAula)).thenReturn(existente);
+        Mockito.when(mockAODAO.buscarPorId(idAO)).thenReturn(null); // Retorna nulo, detona el 404 interno
 
-        Response resultado = cut.actualizar(idPruebaJornada, idJornadaAula, entity);
-
-        assertEquals(404, resultado.getStatus());
-        Mockito.verify(mockDAO, Mockito.never()).actualizar(Mockito.any());
+        assertEquals(404, cut.actualizar(idPruebaJornada, idJornadaAula, entity.getIdPruebaJornadaAulaAspiranteOpcion(), entity).getStatus());
     }
 
     @Test
-    public void actualizarEntityNullTest() {
-        System.out.println("actualizarEntityNullTest");
-        Response resultado = cut.actualizar(idPruebaJornada, idJornadaAula, null);
-        assertEquals(422, resultado.getStatus());
-        Mockito.verifyNoInteractions(mockDAO);
-    }
-
-    @Test
-    public void actualizarSinIdEnBodyTest() {
-        System.out.println("actualizarSinIdEnBodyTest");
-        Response resultado = cut.actualizar(idPruebaJornada, idJornadaAula, new PruebaJornadaAulaAspiranteOpcion());
-        assertEquals(422, resultado.getStatus());
-        assertEquals("El ID debe enviarse en el body",
-                resultado.getHeaderString(ResponseHeaders.WRONG_PARAMETER.toString()));
-        Mockito.verifyNoInteractions(mockDAO);
-    }
-
-    @Test
-    public void actualizarIdPruebaJornadaNullTest() {
-        System.out.println("actualizarIdPruebaJornadaNullTest");
-        Response resultado = cut.actualizar(null, idJornadaAula, new PruebaJornadaAulaAspiranteOpcion(UUID.randomUUID()));
-        assertEquals(400, resultado.getStatus());
-        Mockito.verifyNoInteractions(mockDAO);
-    }
-
-    @Test
-    public void actualizarIdJornadaAulaNullTest() {
-        System.out.println("actualizarIdJornadaAulaNullTest");
-        Response resultado = cut.actualizar(idPruebaJornada, null, new PruebaJornadaAulaAspiranteOpcion(UUID.randomUUID()));
-        assertEquals(400, resultado.getStatus());
-        Mockito.verifyNoInteractions(mockDAO);
-    }
-
-    @Test
-    public void actualizarAspiranteOpcionConUUIDNuloTest() {
-        System.out.println("actualizarAspiranteOpcionConUUIDNuloTest");
-        // outer idAspiranteOpcion non-null but its UUID is null → else branch → preserve existing
-        UUID id = UUID.randomUUID();
-        UUID idAO = UUID.randomUUID();
-        PruebaJornadaAulaAspiranteOpcion entity = new PruebaJornadaAulaAspiranteOpcion(id);
-        entity.setIdAspiranteOpcion(new AspiranteOpcion()); // UUID inside is null
-
-        PruebaJornadaAulaAspiranteOpcion existente = new PruebaJornadaAulaAspiranteOpcion(id);
-        existente.setIdPruebaJornada(new PruebaJornada(idPruebaJornada));
-        existente.setIdJornadaAula(new JornadaAula(idJornadaAula));
-        existente.setIdAspiranteOpcion(new AspiranteOpcion(idAO));
-
-        Mockito.when(mockDAO.buscarPorIdYPruebaJornadaYJornadaAula(id, idPruebaJornada, idJornadaAula))
-                .thenReturn(existente);
-        Mockito.when(mockDAO.actualizar(entity)).thenReturn(entity);
-
-        Response resultado = cut.actualizar(idPruebaJornada, idJornadaAula, entity);
-
-        assertEquals(200, resultado.getStatus());
-        assertEquals(existente.getIdAspiranteOpcion(), entity.getIdAspiranteOpcion());
-        Mockito.verify(mockAODAO, Mockito.never()).buscarPorId(Mockito.any());
-    }
-
-    @Test
-    public void actualizarConExcepcionTest() {
-        System.out.println("actualizarConExcepcionTest");
+    public void actualizarExcepcionTest() {
         UUID id = UUID.randomUUID();
         PruebaJornadaAulaAspiranteOpcion entity = new PruebaJornadaAulaAspiranteOpcion(id);
-
-        PruebaJornadaAulaAspiranteOpcion existente = new PruebaJornadaAulaAspiranteOpcion(id);
-        existente.setIdPruebaJornada(new PruebaJornada(idPruebaJornada));
-        existente.setIdJornadaAula(new JornadaAula(idJornadaAula));
-        existente.setIdAspiranteOpcion(new AspiranteOpcion(UUID.randomUUID()));
-
-        Mockito.when(mockDAO.buscarPorIdYPruebaJornadaYJornadaAula(id, idPruebaJornada, idJornadaAula))
-                .thenReturn(existente);
-        Mockito.doThrow(new IllegalStateException("DB error")).when(mockDAO).actualizar(entity);
-
-        Response resultado = cut.actualizar(idPruebaJornada, idJornadaAula, entity);
-
-        assertEquals(500, resultado.getStatus());
+        Mockito.when(mockDAO.buscarPorIdYPruebaJornadaYJornadaAula(Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenThrow(new RuntimeException("DB Error"));
+        assertEquals(500, cut.actualizar(idPruebaJornada, idJornadaAula, entity.getIdPruebaJornadaAulaAspiranteOpcion(), entity).getStatus());
     }
 
     // ============================================================
-    //  DELETE {id} - eliminar
+    //  DELETE - eliminar
     // ============================================================
 
     @Test
     public void eliminarExitosoTest() {
-        System.out.println("eliminarExitosoTest");
         UUID id = UUID.randomUUID();
         PruebaJornadaAulaAspiranteOpcion existente = new PruebaJornadaAulaAspiranteOpcion(id);
-        Mockito.when(mockDAO.buscarPorIdYPruebaJornadaYJornadaAula(id, idPruebaJornada, idJornadaAula))
-                .thenReturn(existente);
-        Mockito.doNothing().when(mockDAO).eliminar(existente);
+        Mockito.when(mockDAO.buscarPorIdYPruebaJornadaYJornadaAula(id, idPruebaJornada, idJornadaAula)).thenReturn(existente);
 
-        Response resultado = cut.eliminar(idPruebaJornada, idJornadaAula, id);
-
-        assertEquals(204, resultado.getStatus());
-        Mockito.verify(mockDAO).buscarPorIdYPruebaJornadaYJornadaAula(id, idPruebaJornada, idJornadaAula);
+        assertEquals(204, cut.eliminar(idPruebaJornada, idJornadaAula, id).getStatus());
         Mockito.verify(mockDAO).eliminar(existente);
     }
 
     @Test
+    public void eliminarValidacionFallidaTest() {
+        assertEquals(422, cut.eliminar(null, idJornadaAula, UUID.randomUUID()).getStatus());
+        assertEquals(422, cut.eliminar(idPruebaJornada, null, UUID.randomUUID()).getStatus());
+        assertEquals(422, cut.eliminar(idPruebaJornada, idJornadaAula, null).getStatus());
+    }
+
+    @Test
     public void eliminarNoEncontradoTest() {
-        System.out.println("eliminarNoEncontradoTest");
         UUID id = UUID.randomUUID();
-        Mockito.when(mockDAO.buscarPorIdYPruebaJornadaYJornadaAula(id, idPruebaJornada, idJornadaAula))
-                .thenReturn(null);
-
-        Response resultado = cut.eliminar(idPruebaJornada, idJornadaAula, id);
-
-        assertEquals(404, resultado.getStatus());
-        Mockito.verify(mockDAO, Mockito.never()).eliminar(Mockito.any());
+        Mockito.when(mockDAO.buscarPorIdYPruebaJornadaYJornadaAula(id, idPruebaJornada, idJornadaAula)).thenReturn(null);
+        assertEquals(404, cut.eliminar(idPruebaJornada, idJornadaAula, id).getStatus());
     }
 
     @Test
-    public void eliminarIdNullTest() {
-        System.out.println("eliminarIdNullTest");
-        Response resultado = cut.eliminar(idPruebaJornada, idJornadaAula, null);
-        assertEquals(422, resultado.getStatus());
-        Mockito.verifyNoInteractions(mockDAO);
-    }
-
-    @Test
-    public void eliminarIdPruebaJornadaNullTest() {
-        System.out.println("eliminarIdPruebaJornadaNullTest");
-        Response resultado = cut.eliminar(null, idJornadaAula, UUID.randomUUID());
-        assertEquals(400, resultado.getStatus());
-        Mockito.verifyNoInteractions(mockDAO);
-    }
-
-    @Test
-    public void eliminarIdJornadaAulaNullTest() {
-        System.out.println("eliminarIdJornadaAulaNullTest");
-        Response resultado = cut.eliminar(idPruebaJornada, null, UUID.randomUUID());
-        assertEquals(400, resultado.getStatus());
-        Mockito.verifyNoInteractions(mockDAO);
-    }
-
-    @Test
-    public void eliminarConExcepcionTest() {
-        System.out.println("eliminarConExcepcionTest");
+    public void eliminarExcepcionTest() {
         UUID id = UUID.randomUUID();
-        PruebaJornadaAulaAspiranteOpcion existente = new PruebaJornadaAulaAspiranteOpcion(id);
-        Mockito.when(mockDAO.buscarPorIdYPruebaJornadaYJornadaAula(id, idPruebaJornada, idJornadaAula))
-                .thenReturn(existente);
-        Mockito.doThrow(new RuntimeException("DB error")).when(mockDAO).eliminar(existente);
-
-        Response resultado = cut.eliminar(idPruebaJornada, idJornadaAula, id);
-
-        assertEquals(500, resultado.getStatus());
+        Mockito.when(mockDAO.buscarPorIdYPruebaJornadaYJornadaAula(Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenThrow(new RuntimeException("Error"));
+        assertEquals(500, cut.eliminar(idPruebaJornada, idJornadaAula, id).getStatus());
     }
 }

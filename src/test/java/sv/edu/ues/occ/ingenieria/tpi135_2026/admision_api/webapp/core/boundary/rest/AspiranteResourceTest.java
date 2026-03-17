@@ -226,7 +226,7 @@ public class AspiranteResourceTest {
         Mockito.when(mockAD.buscarPorId(aspirante.getIdAspirante())).thenReturn(aspirante);
         Mockito.when(mockAD.actualizar(aspirante)).thenReturn(aspirante);
 
-        Response resultado = cut.actualizar(aspirante);
+        Response resultado = cut.actualizar(aspirante.getIdAspirante(), aspirante);
 
         assertEquals(200, resultado.getStatus());
         assertNotNull(resultado.getEntity());
@@ -240,7 +240,7 @@ public class AspiranteResourceTest {
         Aspirante aspirante = new Aspirante(UUID.randomUUID());
         Mockito.when(mockAD.buscarPorId(aspirante.getIdAspirante())).thenReturn(null);
 
-        Response resultado = cut.actualizar(aspirante);
+        Response resultado = cut.actualizar(aspirante.getIdAspirante(), aspirante);
 
         assertEquals(404, resultado.getStatus());
         Mockito.verify(mockAD).buscarPorId(aspirante.getIdAspirante());
@@ -255,7 +255,7 @@ public class AspiranteResourceTest {
         Mockito.doThrow(new RuntimeException("Error en base de datos"))
                 .when(mockAD).actualizar(aspirante);
 
-        Response resultado = cut.actualizar(aspirante);
+        Response resultado = cut.actualizar(aspirante.getIdAspirante(), aspirante);
 
         assertEquals(500, resultado.getStatus());
         Mockito.verify(mockAD).buscarPorId(aspirante.getIdAspirante());
@@ -265,7 +265,7 @@ public class AspiranteResourceTest {
     @Test
     public void actualizarNullTest() {
         System.out.println("Ejecutando test: actualizarNullTest en AspiranteResource");
-        Response resultado = cut.actualizar(null);
+        Response resultado = cut.actualizar(null, null);
         assertEquals(422, resultado.getStatus());
         Mockito.verifyNoInteractions(mockAD);
     }
@@ -274,7 +274,7 @@ public class AspiranteResourceTest {
     public void actualizarSinIdTest() {
         System.out.println("Ejecutando test: actualizarSinIdTest en AspiranteResource");
         Aspirante aspirante = new Aspirante();
-        Response resultado = cut.actualizar(aspirante);
+        Response resultado = cut.actualizar(aspirante.getIdAspirante(), aspirante);
         assertEquals(422, resultado.getStatus());
         Mockito.verifyNoInteractions(mockAD);
     }
