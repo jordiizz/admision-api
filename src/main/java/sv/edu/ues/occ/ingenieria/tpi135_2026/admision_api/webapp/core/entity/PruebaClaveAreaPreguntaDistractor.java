@@ -9,8 +9,24 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 
+@NamedQueries({
+    @NamedQuery(
+        name = "PruebaClaveAreaPreguntaDistractor.buscarPorPadre",
+        query = "SELECT p FROM PruebaClaveAreaPreguntaDistractor p WHERE p.idPruebaClaveAreaPregunta.idPruebaClaveAreaPregunta = :idPruebaClaveAreaPregunta ORDER BY p.idPruebaClaveAreaPreguntaDistractor"
+    ),
+    @NamedQuery(
+        name = "PruebaClaveAreaPreguntaDistractor.contarPorPadre",
+        query = "SELECT COUNT(p) FROM PruebaClaveAreaPreguntaDistractor p WHERE p.idPruebaClaveAreaPregunta.idPruebaClaveAreaPregunta = :idPruebaClaveAreaPregunta"
+    ),
+    @NamedQuery(
+        name = "PruebaClaveAreaPreguntaDistractor.buscarPorIdYPadre",
+        query = "SELECT p FROM PruebaClaveAreaPreguntaDistractor p WHERE p.idPruebaClaveAreaPreguntaDistractor = :idPruebaClaveAreaPreguntaDistractor AND p.idPruebaClaveAreaPregunta.idPruebaClaveAreaPregunta = :idPruebaClaveAreaPregunta"
+    )
+})
 @Entity
 @Table(name = "prueba_clave_area_pregunta_distractor")
 public class PruebaClaveAreaPreguntaDistractor implements Serializable{
