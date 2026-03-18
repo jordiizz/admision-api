@@ -20,10 +20,6 @@ import jakarta.persistence.Table;
     @NamedQuery(
         name = "PruebaClaveAreaPreguntaDistractor.contarPorPadre",
         query = "SELECT COUNT(p) FROM PruebaClaveAreaPreguntaDistractor p WHERE p.idPruebaClave = :idPruebaClave AND p.idArea = :idArea AND p.idPregunta = :idPregunta"
-    ),
-    @NamedQuery(
-        name = "PruebaClaveAreaPreguntaDistractor.buscarPorIdYPadre",
-        query = "SELECT p FROM PruebaClaveAreaPreguntaDistractor p WHERE p.idDistractor = :idDistractor AND p.idPruebaClave = :idPruebaClave AND p.idArea = :idArea AND p.idPregunta = :idPregunta"
     )
 })
 @Entity

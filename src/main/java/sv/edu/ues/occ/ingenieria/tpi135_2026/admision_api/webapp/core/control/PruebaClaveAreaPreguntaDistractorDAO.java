@@ -47,19 +47,4 @@ public class PruebaClaveAreaPreguntaDistractorDAO extends DefaultDAO<PruebaClave
             .setParameter("idPregunta", idPregunta)
                 .getSingleResult();
     }
-
-    public PruebaClaveAreaPreguntaDistractor buscarPorIdYPadre(
-            UUID idDistractor, UUID idPruebaClave, UUID idArea, UUID idPregunta) {
-        List<PruebaClaveAreaPreguntaDistractor> resultados = em
-                .createNamedQuery(
-                        "PruebaClaveAreaPreguntaDistractor.buscarPorIdYPadre",
-                        PruebaClaveAreaPreguntaDistractor.class)
-            .setParameter("idDistractor", idDistractor)
-            .setParameter("idPruebaClave", idPruebaClave)
-            .setParameter("idArea", idArea)
-            .setParameter("idPregunta", idPregunta)
-                .setMaxResults(1)
-                .getResultList();
-        return resultados.isEmpty() ? null : resultados.get(0);
-    }
 }
