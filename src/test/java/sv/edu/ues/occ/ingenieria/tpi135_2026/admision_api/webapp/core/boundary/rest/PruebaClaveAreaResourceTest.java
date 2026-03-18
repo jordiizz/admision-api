@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -15,8 +16,10 @@ import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriInfo;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PruebaClaveAreaDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PruebaClaveDAO;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Area;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClave;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveArea;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveAreaPK;
 
 public class PruebaClaveAreaResourceTest {
 
@@ -26,6 +29,7 @@ public class PruebaClaveAreaResourceTest {
     private PruebaClaveAreaResource cut;
 
     private UUID idPruebaClave;
+    private UUID idArea;
 
     @BeforeEach
     public void setup() {
@@ -40,6 +44,7 @@ public class PruebaClaveAreaResourceTest {
                 .thenReturn(URI.create("http://localhost:8080/v1/prueba-clave/1/area/1"));
 
         idPruebaClave = UUID.randomUUID();
+        idArea = UUID.randomUUID();
 
         cut = new PruebaClaveAreaResource();
         cut.pruebaClaveAreaDAO = mockDAO;
@@ -49,8 +54,8 @@ public class PruebaClaveAreaResourceTest {
     // --- crear ---
 
     @Test
-    public void crearExitosoTest() {
-        System.out.println("Ejecutando test: crearExitosoTest en PruebaClaveAreaResource");
+    public void crearExitosoSinIdAreaTest() {
+        System.out.println("Ejecutando test: crearExitosoSinIdAreaTest en PruebaClaveAreaResource");
         PruebaClave pruebaClave = new PruebaClave(idPruebaClave);
         PruebaClaveArea nueva = new PruebaClaveArea();
         Mockito.when(mockPCD.buscarPorId(idPruebaClave)).thenReturn(pruebaClave);
@@ -60,6 +65,7 @@ public class PruebaClaveAreaResourceTest {
 
         assertEquals(201, resultado.getStatus());
         assertNotNull(resultado.getEntity());
+        assertNull(nueva.getIdPruebaClaveArea());
         Mockito.verify(mockPCD).buscarPorId(idPruebaClave);
         Mockito.verify(mockDAO).crear(nueva);
     }
@@ -103,7 +109,7 @@ public class PruebaClaveAreaResourceTest {
     @Test
     public void crearConIdTest() {
         System.out.println("Ejecutando test: crearConIdTest en PruebaClaveAreaResource");
-        PruebaClaveArea nueva = new PruebaClaveArea(UUID.randomUUID());
+        PruebaClaveArea nueva = new PruebaClaveArea(idArea);
         Mockito.when(mockPCD.buscarPorId(idPruebaClave)).thenReturn(new PruebaClave(idPruebaClave));
 
         Response resultado = cut.crear(idPruebaClave, nueva, mockUriInfo);
@@ -123,12 +129,24 @@ public class PruebaClaveAreaResourceTest {
         Mockito.verifyNoInteractions(mockPCD);
     }
 
+    @Test
+    public void crearConIllegalArgumentExceptionTest() {
+        System.out.println("Ejecutando test: crearConIllegalArgumentExceptionTest en PruebaClaveAreaResource");
+        PruebaClaveArea nueva = new PruebaClaveArea();
+        Mockito.when(mockPCD.buscarPorId(idPruebaClave)).thenThrow(new IllegalArgumentException("Argumento inválido"));
+
+        Response resultado = cut.crear(idPruebaClave, nueva, mockUriInfo);
+
+        assertEquals(500, resultado.getStatus());
+        Mockito.verify(mockPCD).buscarPorId(idPruebaClave);
+    }
+
     // --- buscarPorRango ---
 
     @Test
     public void buscarPorRangoExitosoTest() {
         System.out.println("Ejecutando test: buscarPorRangoExitosoTest en PruebaClaveAreaResource");
-        List<PruebaClaveArea> registros = List.of(new PruebaClaveArea(UUID.randomUUID()));
+        List<PruebaClaveArea> registros = List.of(new PruebaClaveArea(idArea));
         Mockito.when(mockDAO.buscarPorPruebaClaveRango(idPruebaClave, 0, 50)).thenReturn(registros);
         Mockito.when(mockDAO.contarPorPruebaClave(idPruebaClave)).thenReturn(1L);
 
@@ -136,6 +154,7 @@ public class PruebaClaveAreaResourceTest {
 
         assertEquals(200, resultado.getStatus());
         assertNotNull(resultado.getEntity());
+        assertEquals("1", resultado.getHeaderString(ResponseHeaders.TOTAL_RECORDS.toString()));
         Mockito.verify(mockDAO).buscarPorPruebaClaveRango(idPruebaClave, 0, 50);
         Mockito.verify(mockDAO).contarPorPruebaClave(idPruebaClave);
     }
@@ -189,39 +208,37 @@ public class PruebaClaveAreaResourceTest {
     @Test
     public void buscarPorIdExitosoTest() {
         System.out.println("Ejecutando test: buscarPorIdExitosoTest en PruebaClaveAreaResource");
-        UUID id = UUID.randomUUID();
-        PruebaClaveArea encontrado = new PruebaClaveArea(id);
-        Mockito.when(mockDAO.buscarPorIdYPruebaClave(id, idPruebaClave)).thenReturn(encontrado);
+        PruebaClaveArea encontrado = new PruebaClaveArea(idArea);
+        Mockito.when(mockDAO.buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea))).thenReturn(encontrado);
 
-        Response resultado = cut.buscarPorId(idPruebaClave, id);
+        Response resultado = cut.buscarPorId(idPruebaClave, idArea);
 
         assertEquals(200, resultado.getStatus());
         assertNotNull(resultado.getEntity());
-        Mockito.verify(mockDAO).buscarPorIdYPruebaClave(id, idPruebaClave);
+        Mockito.verify(mockDAO).buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea));
     }
 
     @Test
     public void buscarPorIdNoEncontradoTest() {
         System.out.println("Ejecutando test: buscarPorIdNoEncontradoTest en PruebaClaveAreaResource");
-        UUID id = UUID.randomUUID();
-        Mockito.when(mockDAO.buscarPorIdYPruebaClave(id, idPruebaClave)).thenReturn(null);
+        Mockito.when(mockDAO.buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea))).thenReturn(null);
 
-        Response resultado = cut.buscarPorId(idPruebaClave, id);
+        Response resultado = cut.buscarPorId(idPruebaClave, idArea);
 
         assertEquals(404, resultado.getStatus());
-        Mockito.verify(mockDAO).buscarPorIdYPruebaClave(id, idPruebaClave);
+        Mockito.verify(mockDAO).buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea));
     }
 
     @Test
     public void buscarPorIdConExcepcionTest() {
         System.out.println("Ejecutando test: buscarPorIdConExcepcionTest en PruebaClaveAreaResource");
-        UUID id = UUID.randomUUID();
-        Mockito.when(mockDAO.buscarPorIdYPruebaClave(id, idPruebaClave)).thenThrow(new RuntimeException("Error en base de datos"));
+        Mockito.when(mockDAO.buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea)))
+                .thenThrow(new RuntimeException("Error en base de datos"));
 
-        Response resultado = cut.buscarPorId(idPruebaClave, id);
+        Response resultado = cut.buscarPorId(idPruebaClave, idArea);
 
         assertEquals(500, resultado.getStatus());
-        Mockito.verify(mockDAO).buscarPorIdYPruebaClave(id, idPruebaClave);
+        Mockito.verify(mockDAO).buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea));
     }
 
     @Test
@@ -245,50 +262,49 @@ public class PruebaClaveAreaResourceTest {
     @Test
     public void actualizarExitosoTest() {
         System.out.println("Ejecutando test: actualizarExitosoTest en PruebaClaveAreaResource");
-        UUID id = UUID.randomUUID();
-        PruebaClaveArea pruebaClaveArea = new PruebaClaveArea(id);
-        PruebaClaveArea existente = new PruebaClaveArea(id);
+        UUID otroIdPrueba = UUID.randomUUID();
+        UUID otroIdArea = UUID.randomUUID();
+        PruebaClaveArea pruebaClaveArea = new PruebaClaveArea(new PruebaClave(otroIdPrueba), new Area(otroIdArea));
+        PruebaClaveArea existente = new PruebaClaveArea(new PruebaClave(idPruebaClave), new Area(idArea));
         existente.setIdPruebaClave(new PruebaClave(idPruebaClave));
-        Mockito.when(mockDAO.buscarPorIdYPruebaClave(id, idPruebaClave)).thenReturn(existente);
+        Mockito.when(mockDAO.buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea))).thenReturn(existente);
         Mockito.when(mockDAO.actualizar(pruebaClaveArea)).thenReturn(pruebaClaveArea);
 
-        Response resultado = cut.actualizar(idPruebaClave, pruebaClaveArea.getIdPruebaClaveArea(), pruebaClaveArea);
+        Response resultado = cut.actualizar(idPruebaClave, idArea, pruebaClaveArea);
 
         assertEquals(200, resultado.getStatus());
         assertNotNull(resultado.getEntity());
-        assertEquals(id, pruebaClaveArea.getIdPruebaClaveArea());
+        assertEquals(idArea, pruebaClaveArea.getIdPruebaClaveArea());
         assertEquals(idPruebaClave, pruebaClaveArea.getIdPruebaClave().getIdPruebaClave());
-        Mockito.verify(mockDAO).buscarPorIdYPruebaClave(id, idPruebaClave);
+        Mockito.verify(mockDAO).buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea));
         Mockito.verify(mockDAO).actualizar(pruebaClaveArea);
     }
 
     @Test
     public void actualizarNoEncontradoTest() {
         System.out.println("Ejecutando test: actualizarNoEncontradoTest en PruebaClaveAreaResource");
-        UUID id = UUID.randomUUID();
-        Mockito.when(mockDAO.buscarPorIdYPruebaClave(id, idPruebaClave)).thenReturn(null);
+        Mockito.when(mockDAO.buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea))).thenReturn(null);
 
-        Response resultado = cut.actualizar(idPruebaClave, id, new PruebaClaveArea(id));
+        Response resultado = cut.actualizar(idPruebaClave, idArea, new PruebaClaveArea(idArea));
 
         assertEquals(404, resultado.getStatus());
-        Mockito.verify(mockDAO).buscarPorIdYPruebaClave(id, idPruebaClave);
+        Mockito.verify(mockDAO).buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea));
         Mockito.verify(mockDAO, Mockito.never()).actualizar(Mockito.any());
     }
 
     @Test
     public void actualizarConExcepcionTest() {
         System.out.println("Ejecutando test: actualizarConExcepcionTest en PruebaClaveAreaResource");
-        UUID id = UUID.randomUUID();
-        PruebaClaveArea pruebaClaveArea = new PruebaClaveArea(id);
-        PruebaClaveArea existente = new PruebaClaveArea(id);
+        PruebaClaveArea pruebaClaveArea = new PruebaClaveArea(idArea);
+        PruebaClaveArea existente = new PruebaClaveArea(idArea);
         existente.setIdPruebaClave(new PruebaClave(idPruebaClave));
-        Mockito.when(mockDAO.buscarPorIdYPruebaClave(id, idPruebaClave)).thenReturn(existente);
+        Mockito.when(mockDAO.buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea))).thenReturn(existente);
         Mockito.doThrow(new IllegalStateException("Error en base de datos")).when(mockDAO).actualizar(pruebaClaveArea);
 
-        Response resultado = cut.actualizar(idPruebaClave, pruebaClaveArea.getIdPruebaClaveArea(), pruebaClaveArea);
+        Response resultado = cut.actualizar(idPruebaClave, idArea, pruebaClaveArea);
 
         assertEquals(500, resultado.getStatus());
-        Mockito.verify(mockDAO).buscarPorIdYPruebaClave(id, idPruebaClave);
+        Mockito.verify(mockDAO).buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea));
         Mockito.verify(mockDAO).actualizar(pruebaClaveArea);
     }
 
@@ -318,48 +334,60 @@ public class PruebaClaveAreaResourceTest {
         Mockito.verifyNoInteractions(mockDAO);
     }
 
+    @Test
+    public void actualizarConIllegalArgumentExceptionTest() {
+        System.out.println("Ejecutando test: actualizarConIllegalArgumentExceptionTest en PruebaClaveAreaResource");
+        PruebaClaveArea pruebaClaveArea = new PruebaClaveArea(idArea);
+        PruebaClaveArea existente = new PruebaClaveArea(idArea);
+        existente.setIdPruebaClave(new PruebaClave(idPruebaClave));
+        Mockito.when(mockDAO.buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea))).thenReturn(existente);
+        Mockito.doThrow(new IllegalArgumentException("Error de validación")).when(mockDAO).actualizar(pruebaClaveArea);
+
+        Response resultado = cut.actualizar(idPruebaClave, idArea, pruebaClaveArea);
+
+        assertEquals(500, resultado.getStatus());
+        Mockito.verify(mockDAO).actualizar(pruebaClaveArea);
+    }
+
     // --- eliminar ---
 
     @Test
     public void eliminarExitosoTest() {
         System.out.println("Ejecutando test: eliminarExitosoTest en PruebaClaveAreaResource");
-        UUID id = UUID.randomUUID();
-        PruebaClaveArea existente = new PruebaClaveArea(id);
-        Mockito.when(mockDAO.buscarPorIdYPruebaClave(id, idPruebaClave)).thenReturn(existente);
+        PruebaClaveArea existente = new PruebaClaveArea(idArea);
+        Mockito.when(mockDAO.buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea))).thenReturn(existente);
         Mockito.doNothing().when(mockDAO).eliminar(existente);
 
-        Response resultado = cut.eliminar(idPruebaClave, id);
+        Response resultado = cut.eliminar(idPruebaClave, idArea);
 
         assertEquals(204, resultado.getStatus());
-        Mockito.verify(mockDAO).buscarPorIdYPruebaClave(id, idPruebaClave);
+        Mockito.verify(mockDAO).buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea));
         Mockito.verify(mockDAO).eliminar(existente);
     }
 
     @Test
     public void eliminarNoEncontradoTest() {
         System.out.println("Ejecutando test: eliminarNoEncontradoTest en PruebaClaveAreaResource");
-        UUID id = UUID.randomUUID();
-        Mockito.when(mockDAO.buscarPorIdYPruebaClave(id, idPruebaClave)).thenReturn(null);
+        Mockito.when(mockDAO.buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea))).thenReturn(null);
 
-        Response resultado = cut.eliminar(idPruebaClave, id);
+        Response resultado = cut.eliminar(idPruebaClave, idArea);
 
         assertEquals(404, resultado.getStatus());
-        Mockito.verify(mockDAO).buscarPorIdYPruebaClave(id, idPruebaClave);
+        Mockito.verify(mockDAO).buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea));
         Mockito.verify(mockDAO, Mockito.never()).eliminar(Mockito.any());
     }
 
     @Test
     public void eliminarConExcepcionTest() {
         System.out.println("Ejecutando test: eliminarConExcepcionTest en PruebaClaveAreaResource");
-        UUID id = UUID.randomUUID();
-        PruebaClaveArea existente = new PruebaClaveArea(id);
-        Mockito.when(mockDAO.buscarPorIdYPruebaClave(id, idPruebaClave)).thenReturn(existente);
+        PruebaClaveArea existente = new PruebaClaveArea(idArea);
+        Mockito.when(mockDAO.buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea))).thenReturn(existente);
         Mockito.doThrow(new RuntimeException("Error en base de datos")).when(mockDAO).eliminar(existente);
 
-        Response resultado = cut.eliminar(idPruebaClave, id);
+        Response resultado = cut.eliminar(idPruebaClave, idArea);
 
         assertEquals(500, resultado.getStatus());
-        Mockito.verify(mockDAO).buscarPorIdYPruebaClave(id, idPruebaClave);
+        Mockito.verify(mockDAO).buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea));
         Mockito.verify(mockDAO).eliminar(existente);
     }
 

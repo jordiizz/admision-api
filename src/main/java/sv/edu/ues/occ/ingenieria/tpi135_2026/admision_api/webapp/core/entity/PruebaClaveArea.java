@@ -25,10 +25,6 @@ import jakarta.persistence.Table;
     @NamedQuery(
         name = "PruebaClaveArea.contarPorPruebaClave",
         query = "SELECT COUNT(p) FROM PruebaClaveArea p WHERE p.idPruebaClave.idPruebaClave = :idPruebaClave"
-    ),
-    @NamedQuery(
-        name = "PruebaClaveArea.buscarPorIdYPruebaClave",
-        query = "SELECT p FROM PruebaClaveArea p WHERE p.idArea.idArea = :idArea AND p.idPruebaClave.idPruebaClave = :idPruebaClave"
     )
 })
 @Entity

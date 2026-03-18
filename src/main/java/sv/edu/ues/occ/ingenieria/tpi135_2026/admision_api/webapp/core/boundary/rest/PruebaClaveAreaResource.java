@@ -24,6 +24,7 @@ import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.Pr
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PruebaClaveDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClave;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveArea;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveAreaPK;
 
 @Path("prueba-clave/{id_prueba_clave}/area")
 public class PruebaClaveAreaResource implements Serializable {
@@ -92,7 +93,7 @@ public class PruebaClaveAreaResource implements Serializable {
             @PathParam("id_area") UUID idArea) {
         if (idArea != null && idPruebaClave != null) {
             try {
-                PruebaClaveArea encontrado = pruebaClaveAreaDAO.buscarPorIdYPruebaClave(idArea, idPruebaClave);
+                PruebaClaveArea encontrado = pruebaClaveAreaDAO.buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea));
                 if (encontrado != null) {
                     return Response.ok(encontrado).type(MediaType.APPLICATION_JSON).build();
                 }
@@ -114,7 +115,7 @@ public class PruebaClaveAreaResource implements Serializable {
             PruebaClaveArea pruebaClaveArea) {
         if (pruebaClaveArea != null && idPruebaClave != null && idArea != null) {
             try {
-                PruebaClaveArea existente = pruebaClaveAreaDAO.buscarPorIdYPruebaClave(idArea, idPruebaClave);
+                PruebaClaveArea existente = pruebaClaveAreaDAO.buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea));
                 if (existente != null) {
                     pruebaClaveArea.setIdArea(existente.getIdArea());
                     pruebaClaveArea.setIdPruebaClave(existente.getIdPruebaClave());
@@ -136,7 +137,7 @@ public class PruebaClaveAreaResource implements Serializable {
             @PathParam("id_area") UUID idArea) {
         if (idArea != null && idPruebaClave != null) {
             try {
-                PruebaClaveArea pruebaClaveArea = pruebaClaveAreaDAO.buscarPorIdYPruebaClave(idArea, idPruebaClave);
+                PruebaClaveArea pruebaClaveArea = pruebaClaveAreaDAO.buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea));
                 if (pruebaClaveArea != null) {
                     pruebaClaveAreaDAO.eliminar(pruebaClaveArea);
                     return Response.noContent().build();
