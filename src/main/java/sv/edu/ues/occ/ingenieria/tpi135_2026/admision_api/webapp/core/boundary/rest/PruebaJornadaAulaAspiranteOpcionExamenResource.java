@@ -23,6 +23,8 @@ import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.Pr
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClave;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornadaAulaAspiranteOpcion;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornadaAulaAspiranteOpcionExamen;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornadaAulaAspiranteOpcionExamenPK;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornadaAulaAspiranteOpcionPK;
 
 @Path("prueba/{id_prueba}/jornada/{id_jornada}/aula/{id_aula}/aspirante-opcion/{id_aspirante_opcion}/examen")
 public class PruebaJornadaAulaAspiranteOpcionExamenResource implements Serializable {
@@ -57,13 +59,13 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResource implements Serializa
 
         try {
             PruebaJornadaAulaAspiranteOpcion padre = pruebaJornadaAulaAspiranteOpcionDAO
-                    .buscarPorIdYPruebaJornadaYJornadaAula(idAspiranteOpcion, idPrueba, idJornada, idAula);
+                    .buscarPorId(new PruebaJornadaAulaAspiranteOpcionPK(idPrueba, idJornada, idAula, idAspiranteOpcion));
             PruebaClave pruebaClave = pruebaClaveDAO.buscarPorId(entity.getIdPruebaClave());
             if (padre == null) {
                 return Response.status(404).header(ResponseHeaders.NOT_FOUND.toString(), "Padre no encontrado").build();
             }
-            if (pruebaJornadaAulaAspiranteOpcionExamenDAO
-                    .buscarPorPadre(idPrueba, idJornada, idAula, idAspiranteOpcion) != null) {
+                if (pruebaJornadaAulaAspiranteOpcionExamenDAO
+                    .buscarPorId(new PruebaJornadaAulaAspiranteOpcionExamenPK(idPrueba, idJornada, idAula, idAspiranteOpcion)) != null) {
                 return Response.status(409)
                         .header(ResponseHeaders.WRONG_PARAMETER.toString(), "Ya existe examen para este aspirante")
                         .build();
@@ -103,7 +105,7 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResource implements Serializa
 
         try {
             PruebaJornadaAulaAspiranteOpcionExamen encontrado = pruebaJornadaAulaAspiranteOpcionExamenDAO
-                    .buscarPorPadre(idPrueba, idJornada, idAula, idAspiranteOpcion);
+                    .buscarPorId(new PruebaJornadaAulaAspiranteOpcionExamenPK(idPrueba, idJornada, idAula, idAspiranteOpcion));
             return encontrado != null
                     ? Response.ok(encontrado).build()
                     : Response.status(404).header(ResponseHeaders.NOT_FOUND.toString(), "No encontrado").build();
@@ -128,7 +130,7 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResource implements Serializa
 
         try {
             PruebaJornadaAulaAspiranteOpcionExamen existente = pruebaJornadaAulaAspiranteOpcionExamenDAO
-                    .buscarPorPadre(idPrueba, idJornada, idAula, idAspiranteOpcion);
+                    .buscarPorId(new PruebaJornadaAulaAspiranteOpcionExamenPK(idPrueba, idJornada, idAula, idAspiranteOpcion));
             if (existente == null) {
                 return Response.status(404).header(ResponseHeaders.NOT_FOUND.toString(), "No encontrado").build();
             }
@@ -167,7 +169,7 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResource implements Serializa
 
         try {
             PruebaJornadaAulaAspiranteOpcionExamen existente = pruebaJornadaAulaAspiranteOpcionExamenDAO
-                    .buscarPorPadre(idPrueba, idJornada, idAula, idAspiranteOpcion);
+                    .buscarPorId(new PruebaJornadaAulaAspiranteOpcionExamenPK(idPrueba, idJornada, idAula, idAspiranteOpcion));
             if (existente == null) {
                 return Response.status(404).header(ResponseHeaders.NOT_FOUND.toString(), "No encontrado").build();
             }

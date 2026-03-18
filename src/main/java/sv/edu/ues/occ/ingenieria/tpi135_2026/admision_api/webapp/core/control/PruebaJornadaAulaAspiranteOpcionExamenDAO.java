@@ -50,20 +50,5 @@ public class PruebaJornadaAulaAspiranteOpcionExamenDAO
             .setParameter("idAspiranteOpcion", idAspiranteOpcion)
                 .getSingleResult();
     }
-
-        public PruebaJornadaAulaAspiranteOpcionExamen buscarPorPadre(
-            UUID idPrueba, UUID idJornada, String idAula, UUID idAspiranteOpcion) {
-        List<PruebaJornadaAulaAspiranteOpcionExamen> resultados = em
-            .createNamedQuery(
-            "PruebaJornadaAulaAspiranteOpcionExamen.buscarUnicoPorPadre",
-                PruebaJornadaAulaAspiranteOpcionExamen.class)
-            .setParameter("idPrueba", idPrueba)
-            .setParameter("idJornada", idJornada)
-            .setParameter("idAula", idAula)
-            .setParameter("idAspiranteOpcion", idAspiranteOpcion)
-                .setMaxResults(1)
-                .getResultList();
-        return resultados.isEmpty() ? null : resultados.get(0);
-    }
 }
 

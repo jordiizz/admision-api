@@ -58,7 +58,7 @@ class PruebaClaveAreaPreguntaDistractorResourceTest {
     }
 
     // =========================
-    // ✅ CREAR
+    //  CREAR
     // =========================
 
     @Test
