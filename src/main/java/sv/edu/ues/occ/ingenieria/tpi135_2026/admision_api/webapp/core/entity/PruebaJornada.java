@@ -1,50 +1,44 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
-import jakarta.json.bind.annotation.JsonbTransient;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.Transient;
 import jakarta.persistence.Table;
 
 @Entity
+@IdClass(PruebaJornadaPK.class)
 @Table(name = "prueba_jornada")
 public class PruebaJornada implements Serializable {
 
     @Id
-    @Column(name = "id_prueba_jornada", nullable = false)
-    private UUID idPruebaJornada;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_prueba", nullable = false)
     private Prueba idPrueba;
 
+    @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_jornada", nullable = false)
     private Jornada idJornada;
 
-    @OneToMany(mappedBy = "idPruebaJornada")
-    private List<PruebaJornadaAulaAspiranteOpcion> listPruebaJornadaAulaAspiranteOpcion;
-
     public PruebaJornada() {}
 
-    public PruebaJornada(UUID idPruebaJornada) {
-        this.idPruebaJornada = idPruebaJornada;
+    public PruebaJornada(Prueba idPrueba, Jornada idJornada) {
+        this.idPrueba = idPrueba;
+        this.idJornada = idJornada;
     }
 
-    public UUID getIdPruebaJornada() {
-        return idPruebaJornada;
-    }
-
-    public void setIdPruebaJornada(UUID idPruebaJornada) {
-        this.idPruebaJornada = idPruebaJornada;
+    public PruebaJornada(UUID legacyId) {
+        Prueba prueba = new Prueba();
+        prueba.setIdPrueba(legacyId);
+        this.idPrueba = prueba;
     }
 
     
@@ -65,22 +59,26 @@ public class PruebaJornada implements Serializable {
         this.idJornada = idJornada;
     }
 
-    @JsonbTransient
-    public List<PruebaJornadaAulaAspiranteOpcion> getListPruebaJornadaAulaAspiranteOpcion() {
-        return listPruebaJornadaAulaAspiranteOpcion;
+    @Transient
+    public UUID getIdPruebaJornada() {
+        return idPrueba != null ? idPrueba.getIdPrueba() : null;
     }
 
-    public void setListPruebaJornadaAulaAspiranteOpcion(
-            List<PruebaJornadaAulaAspiranteOpcion> listPruebaJornadaAulaAspiranteOpcion) {
-        this.listPruebaJornadaAulaAspiranteOpcion = listPruebaJornadaAulaAspiranteOpcion;
+    public void setIdPruebaJornada(UUID legacyId) {
+        if (legacyId == null) {
+            this.idPrueba = null;
+            return;
+        }
+        if (this.idPrueba == null) {
+            this.idPrueba = new Prueba();
+        }
+        this.idPrueba.setIdPrueba(legacyId);
     }
-
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((idPruebaJornada == null) ? 0 : idPruebaJornada.hashCode());
-        return result;
+        return Objects.hash(
+                idPrueba != null ? idPrueba.getIdPrueba() : null,
+                idJornada != null ? idJornada.getIdJornada() : null);
     }
 
     @Override
@@ -92,16 +90,15 @@ public class PruebaJornada implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         PruebaJornada other = (PruebaJornada) obj;
-        if (idPruebaJornada == null) {
-            if (other.idPruebaJornada != null)
-                return false;
-        } else if (!idPruebaJornada.equals(other.idPruebaJornada))
-            return false;
-        return true;
+        return Objects.equals(idPrueba != null ? idPrueba.getIdPrueba() : null,
+                other.idPrueba != null ? other.idPrueba.getIdPrueba() : null)
+                && Objects.equals(idJornada != null ? idJornada.getIdJornada() : null,
+                        other.idJornada != null ? other.idJornada.getIdJornada() : null);
     }
 
     @Override
     public String toString() {
-        return "PruebaJornada [idPruebaJornada=" + idPruebaJornada + "]";
+        return "PruebaJornada [idPrueba=" + (idPrueba != null ? idPrueba.getIdPrueba() : null)
+                + ", idJornada=" + (idJornada != null ? idJornada.getIdJornada() : null) + "]";
     }
 }

@@ -1,14 +1,11 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.UUID;
 
-import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -28,14 +25,7 @@ public class Distractor implements Serializable{
     @Column(name = "imagen_url")
     private String imagenUrl;
 
-    @OneToMany(mappedBy = "idDistractor")
-    private List<PruebaClaveAreaPreguntaDistractor> listPruebaClaveAreaPreguntaDistractor;
 
-    @OneToMany(mappedBy = "idDistractor")
-    private List<PreguntaDistractor> listPreguntaDistractor;
-
-    @OneToMany(mappedBy = "idDistractor")
-    private List<DistractorArea> listDistractorAreas;
 
     public Distractor(UUID idDistractor) {
         this.idDistractor = idDistractor;
@@ -73,36 +63,7 @@ public class Distractor implements Serializable{
 
     public void setImagenUrl(String imagenUrl) {
         this.imagenUrl = imagenUrl;
-    }
-
-    @JsonbTransient
-    public List<PruebaClaveAreaPreguntaDistractor> getListPruebaClaveAreaPreguntaDistractor() {
-        return listPruebaClaveAreaPreguntaDistractor;
-    }
-
-    public void setListPruebaClaveAreaPreguntaDistractor(List<PruebaClaveAreaPreguntaDistractor> listPruebaClaveAreaPreguntaDistractor) {
-        this.listPruebaClaveAreaPreguntaDistractor = listPruebaClaveAreaPreguntaDistractor;
-    }
-
-    @JsonbTransient
-    public List<PreguntaDistractor> getListPreguntaDistractor() {
-        return listPreguntaDistractor;
-    }
-
-    public void setListPreguntaDistractor(List<PreguntaDistractor> listPreguntaDistractor) {
-        this.listPreguntaDistractor = listPreguntaDistractor;
-    }
-
-    @JsonbTransient
-    public List<DistractorArea> getListDistractorAreas() {
-        return listDistractorAreas;
-    }
-
-    public void setListDistractorAreas(List<DistractorArea> listDistractorAreas) {
-        this.listDistractorAreas = listDistractorAreas;
-    }
-
-    @Override
+    }@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

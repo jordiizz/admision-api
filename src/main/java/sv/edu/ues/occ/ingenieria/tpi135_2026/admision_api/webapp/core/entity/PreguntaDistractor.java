@@ -1,48 +1,41 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 
 import java.io.Serializable;
-import java.util.UUID;
+import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
+@IdClass(PreguntaDistractorPK.class)
 @Table(name = "pregunta_distractor")
 public class PreguntaDistractor implements Serializable{
 
     @Id
-    @Column(name = "id_pregunta_distractor")
-    private UUID idPreguntaDistractor;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_pregunta")
+    @JoinColumn(name = "id_pregunta", nullable = false)
     private Pregunta idPregunta;
 
+    @Id
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_distractor")
+    @JoinColumn(name = "id_distractor", nullable = false)
     private Distractor idDistractor;
 
     @Column(name = "correcto", nullable = false)
     private Boolean correcto;
 
-    public PreguntaDistractor(UUID idPreguntaDistractor) {
-        this.idPreguntaDistractor = idPreguntaDistractor;
+    public PreguntaDistractor(Pregunta idPregunta, Distractor idDistractor) {
+        this.idPregunta = idPregunta;
+        this.idDistractor = idDistractor;
     }
 
     public PreguntaDistractor(){}
-
-    public UUID getIdPreguntaDistractor() {
-        return idPreguntaDistractor;
-    }
-
-    public void setIdPreguntaDistractor(UUID idPreguntaDistractor) {
-        this.idPreguntaDistractor = idPreguntaDistractor;
-    }
 
     public Pregunta getIdPregunta() {
         return idPregunta;
@@ -70,10 +63,9 @@ public class PreguntaDistractor implements Serializable{
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((idPreguntaDistractor == null) ? 0 : idPreguntaDistractor.hashCode());
-        return result;
+        return Objects.hash(
+                idPregunta != null ? idPregunta.getIdPregunta() : null,
+                idDistractor != null ? idDistractor.getIdDistractor() : null);
     }
 
     @Override
@@ -85,16 +77,17 @@ public class PreguntaDistractor implements Serializable{
         if (getClass() != obj.getClass())
             return false;
         PreguntaDistractor other = (PreguntaDistractor) obj;
-        if (idPreguntaDistractor == null) {
-            if (other.idPreguntaDistractor != null)
-                return false;
-        } else if (!idPreguntaDistractor.equals(other.idPreguntaDistractor))
-            return false;
-        return true;
+        return Objects.equals(idPregunta != null ? idPregunta.getIdPregunta() : null,
+                other.idPregunta != null ? other.idPregunta.getIdPregunta() : null)
+                && Objects.equals(idDistractor != null ? idDistractor.getIdDistractor() : null,
+                        other.idDistractor != null ? other.idDistractor.getIdDistractor() : null);
     }
 
     @Override
     public String toString() {
-        return "PreguntaDistractor [idPreguntaDistractor=" + idPreguntaDistractor + ", correcto=" + correcto + "]";
+        return "PreguntaDistractor [idPregunta="
+                + (idPregunta != null ? idPregunta.getIdPregunta() : null)
+                + ", idDistractor=" + (idDistractor != null ? idDistractor.getIdDistractor() : null)
+                + ", correcto=" + correcto + "]";
     }
 }

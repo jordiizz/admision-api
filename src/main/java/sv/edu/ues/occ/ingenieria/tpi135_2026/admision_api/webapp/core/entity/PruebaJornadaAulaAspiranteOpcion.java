@@ -2,54 +2,51 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
-import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
-import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @NamedQueries({
     @NamedQuery(
         name = "PruebaJornadaAulaAspiranteOpcion.buscarPorPruebaJornadaYJornadaAula",
-        query = "SELECT p FROM PruebaJornadaAulaAspiranteOpcion p WHERE p.idPruebaJornada.idPruebaJornada = :idPruebaJornada AND p.idJornadaAula.idJornadaAula = :idJornadaAula ORDER BY p.idPruebaJornadaAulaAspiranteOpcion"
+        query = "SELECT p FROM PruebaJornadaAulaAspiranteOpcion p WHERE p.idPrueba = :idPrueba AND p.idJornada = :idJornada AND p.idAula = :idAula ORDER BY p.idAspiranteOpcion"
     ),
     @NamedQuery(
         name = "PruebaJornadaAulaAspiranteOpcion.contarPorPruebaJornadaYJornadaAula",
-        query = "SELECT COUNT(p) FROM PruebaJornadaAulaAspiranteOpcion p WHERE p.idPruebaJornada.idPruebaJornada = :idPruebaJornada AND p.idJornadaAula.idJornadaAula = :idJornadaAula"
+        query = "SELECT COUNT(p) FROM PruebaJornadaAulaAspiranteOpcion p WHERE p.idPrueba = :idPrueba AND p.idJornada = :idJornada AND p.idAula = :idAula"
     ),
     @NamedQuery(
         name = "PruebaJornadaAulaAspiranteOpcion.buscarPorIdYPruebaJornadaYJornadaAula",
-        query = "SELECT p FROM PruebaJornadaAulaAspiranteOpcion p WHERE p.idPruebaJornadaAulaAspiranteOpcion = :idPruebaJornadaAulaAspiranteOpcion AND p.idPruebaJornada.idPruebaJornada = :idPruebaJornada AND p.idJornadaAula.idJornadaAula = :idJornadaAula"
+        query = "SELECT p FROM PruebaJornadaAulaAspiranteOpcion p WHERE p.idAspiranteOpcion = :idAspiranteOpcion AND p.idPrueba = :idPrueba AND p.idJornada = :idJornada AND p.idAula = :idAula"
     )
 })
 @Entity
+@IdClass(PruebaJornadaAulaAspiranteOpcionPK.class)
 @Table(name = "prueba_jornada_aula_aspirante_opcion")
 public class PruebaJornadaAulaAspiranteOpcion implements Serializable {
 
     @Id
-    @Column(name = "id_prueba_jornada_aula_aspirante_opcion", nullable = false)
-    private UUID idPruebaJornadaAulaAspiranteOpcion;
+    @Column(name = "id_prueba", nullable = false)
+    private UUID idPrueba;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_prueba_jornada", nullable = false)
-    private PruebaJornada idPruebaJornada;
+    @Id
+    @Column(name = "id_jornada", nullable = false)
+    private UUID idJornada;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_aspirante_opcion", nullable = false)
-    private AspiranteOpcion idAspiranteOpcion;
+    @Id
+    @Column(name = "id_aula", nullable = false, length = 100)
+    private String idAula;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_jornada_aula", nullable = false)
-    private JornadaAula idJornadaAula;
+    @Id
+    @Column(name = "id_aspirante_opcion", nullable = false)
+    private UUID idAspiranteOpcion;
 
     @Column(name = "fecha")
     private OffsetDateTime fecha;
@@ -57,38 +54,48 @@ public class PruebaJornadaAulaAspiranteOpcion implements Serializable {
     @Column(name = "activo")
     private Boolean activo;
 
-    @OneToMany(mappedBy = "idPruebaJornadaAulaAspiranteOpcion")
-    private List<PruebaJornadaAulaAspiranteOpcionExamen> listPruebaJornadaAulaAspiranteOpcionExamen;
-
     public PruebaJornadaAulaAspiranteOpcion() {}
 
-    public PruebaJornadaAulaAspiranteOpcion(UUID idPruebaJornadaAulaAspiranteOpcion) {
-        this.idPruebaJornadaAulaAspiranteOpcion = idPruebaJornadaAulaAspiranteOpcion;
+    public PruebaJornadaAulaAspiranteOpcion(UUID idPrueba, UUID idJornada, String idAula, UUID idAspiranteOpcion) {
+        this.idPrueba = idPrueba;
+        this.idJornada = idJornada;
+        this.idAula = idAula;
+        this.idAspiranteOpcion = idAspiranteOpcion;
     }
 
-    public UUID getIdPruebaJornadaAulaAspiranteOpcion() {
-        return idPruebaJornadaAulaAspiranteOpcion;
+    public PruebaJornadaAulaAspiranteOpcion(UUID legacyId) {
+        this.idAspiranteOpcion = legacyId;
     }
 
-    public void setIdPruebaJornadaAulaAspiranteOpcion(UUID idPruebaJornadaAulaAspiranteOpcion) {
-        this.idPruebaJornadaAulaAspiranteOpcion = idPruebaJornadaAulaAspiranteOpcion;
+    public UUID getIdPrueba() {
+        return idPrueba;
     }
 
-    
-    public PruebaJornada getIdPruebaJornada() {
-        return idPruebaJornada;
+    public void setIdPrueba(UUID idPrueba) {
+        this.idPrueba = idPrueba;
     }
 
-    public void setIdPruebaJornada(PruebaJornada idPruebaJornada) {
-        this.idPruebaJornada = idPruebaJornada;
+    public UUID getIdJornada() {
+        return idJornada;
     }
 
-    
-    public AspiranteOpcion getIdAspiranteOpcion() {
+    public void setIdJornada(UUID idJornada) {
+        this.idJornada = idJornada;
+    }
+
+    public String getIdAula() {
+        return idAula;
+    }
+
+    public void setIdAula(String idAula) {
+        this.idAula = idAula;
+    }
+
+    public UUID getIdAspiranteOpcion() {
         return idAspiranteOpcion;
     }
 
-    public void setIdAspiranteOpcion(AspiranteOpcion idAspiranteOpcion) {
+    public void setIdAspiranteOpcion(UUID idAspiranteOpcion) {
         this.idAspiranteOpcion = idAspiranteOpcion;
     }
 
@@ -107,24 +114,9 @@ public class PruebaJornadaAulaAspiranteOpcion implements Serializable {
     public void setActivo(Boolean activo) {
         this.activo = activo;
     }
-
-    @JsonbTransient
-    public List<PruebaJornadaAulaAspiranteOpcionExamen> getListPruebaJornadaAulaAspiranteOpcionExamen() {
-        return listPruebaJornadaAulaAspiranteOpcionExamen;
-    }
-
-    public void setListPruebaJornadaAulaAspiranteOpcionExamen(
-            List<PruebaJornadaAulaAspiranteOpcionExamen> listPruebaJornadaAulaAspiranteOpcionExamen) {
-        this.listPruebaJornadaAulaAspiranteOpcionExamen = listPruebaJornadaAulaAspiranteOpcionExamen;
-    }
-
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((idPruebaJornadaAulaAspiranteOpcion == null) ? 0
-                : idPruebaJornadaAulaAspiranteOpcion.hashCode());
-        return result;
+        return Objects.hash(idPrueba, idJornada, idAula, idAspiranteOpcion);
     }
 
     @Override
@@ -136,26 +128,16 @@ public class PruebaJornadaAulaAspiranteOpcion implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         PruebaJornadaAulaAspiranteOpcion other = (PruebaJornadaAulaAspiranteOpcion) obj;
-        if (idPruebaJornadaAulaAspiranteOpcion == null) {
-            if (other.idPruebaJornadaAulaAspiranteOpcion != null)
-                return false;
-        } else if (!idPruebaJornadaAulaAspiranteOpcion.equals(other.idPruebaJornadaAulaAspiranteOpcion))
-            return false;
-        return true;
+        return Objects.equals(idPrueba, other.idPrueba)
+                && Objects.equals(idJornada, other.idJornada)
+                && Objects.equals(idAula, other.idAula)
+            && Objects.equals(idAspiranteOpcion, other.idAspiranteOpcion);
     }
 
     @Override
     public String toString() {
-        return "PruebaJornadaAulaAspiranteOpcion [idPruebaJornadaAulaAspiranteOpcion="
-                + idPruebaJornadaAulaAspiranteOpcion + ", fecha=" + fecha
-                + ", activo=" + activo + "]";
-    }
-
-    public JornadaAula getIdJornadaAula() {
-        return idJornadaAula;
-    }
-
-    public void setIdJornadaAula(JornadaAula idJornadaAula) {
-        this.idJornadaAula = idJornadaAula;
+        return "PruebaJornadaAulaAspiranteOpcion [idPrueba=" + idPrueba + ", idJornada=" + idJornada
+            + ", idAula=" + idAula + ", idAspiranteOpcion=" + idAspiranteOpcion
+            + ", fecha=" + fecha + ", activo=" + activo + "]";
     }
 }

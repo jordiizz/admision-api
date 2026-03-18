@@ -1,45 +1,37 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 
 import java.io.Serializable;
-import java.util.UUID;
+import java.util.Objects;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
+@IdClass(DistractorAreaPK.class)
 @Table(name = "distractor_area")
 public class DistractorArea implements Serializable{
 
     @Id
-    @Column(name = "id_distractor_area")
-    private UUID idDistractorArea;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_distractor")
+    @JoinColumn(name = "id_distractor", nullable = false)
     private Distractor idDistractor;
 
+    @Id
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_area")
+    @JoinColumn(name = "id_area", nullable = false)
     private Area idArea;
 
-    public DistractorArea(UUID idDistractorArea) {
-        this.idDistractorArea = idDistractorArea;
+    public DistractorArea(Distractor idDistractor, Area idArea) {
+        this.idDistractor = idDistractor;
+        this.idArea = idArea;
     }
 
     public DistractorArea(){}
-
-    public UUID getIdDistractorArea() {
-        return idDistractorArea;
-    }
-
-    public void setIdDistractorArea(UUID idDistractorArea) {
-        this.idDistractorArea = idDistractorArea;
-    }
 
     public Distractor getIdDistractor() {
         return idDistractor;
@@ -59,10 +51,9 @@ public class DistractorArea implements Serializable{
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((idDistractorArea == null) ? 0 : idDistractorArea.hashCode());
-        return result;
+        return Objects.hash(
+                idDistractor != null ? idDistractor.getIdDistractor() : null,
+                idArea != null ? idArea.getIdArea() : null);
     }
 
     @Override
@@ -74,16 +65,16 @@ public class DistractorArea implements Serializable{
         if (getClass() != obj.getClass())
             return false;
         DistractorArea other = (DistractorArea) obj;
-        if (idDistractorArea == null) {
-            if (other.idDistractorArea != null)
-                return false;
-        } else if (!idDistractorArea.equals(other.idDistractorArea))
-            return false;
-        return true;
+        return Objects.equals(idDistractor != null ? idDistractor.getIdDistractor() : null,
+                other.idDistractor != null ? other.idDistractor.getIdDistractor() : null)
+                && Objects.equals(idArea != null ? idArea.getIdArea() : null,
+                        other.idArea != null ? other.idArea.getIdArea() : null);
     }
 
     @Override
     public String toString() {
-        return "DistractorArea [idDistractorArea=" + idDistractorArea + "]";
+        return "DistractorArea [idDistractor="
+                + (idDistractor != null ? idDistractor.getIdDistractor() : null)
+                + ", idArea=" + (idArea != null ? idArea.getIdArea() : null) + "]";
     }
 }

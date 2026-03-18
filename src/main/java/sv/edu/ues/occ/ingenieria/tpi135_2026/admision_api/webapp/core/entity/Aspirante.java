@@ -3,16 +3,13 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.json.bind.annotation.JsonbDateFormat;
-import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -42,9 +39,6 @@ public class Aspirante implements Serializable{
     @Column(name = "fecha_creacion", nullable = false)
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
     private OffsetDateTime fechaCreacion;
-
-    @OneToMany(mappedBy = "idAspirante")
-    private List<AspiranteOpcion> listAspiranteOpcion;
 
     public Aspirante(UUID idAspirante) {
         this.idAspirante = idAspirante;
@@ -107,16 +101,6 @@ public class Aspirante implements Serializable{
     public void setFechaCreacion(OffsetDateTime fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
     }
-
-    @JsonbTransient
-    public List<AspiranteOpcion> getListAspiranteOpcion() {
-        return listAspiranteOpcion;
-    }
-
-    public void setListAspiranteOpcion(List<AspiranteOpcion> listAspiranteOpcion) {
-        this.listAspiranteOpcion = listAspiranteOpcion;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;

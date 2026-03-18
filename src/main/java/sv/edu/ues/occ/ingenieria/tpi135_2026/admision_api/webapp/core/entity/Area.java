@@ -1,17 +1,14 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.UUID;
 
-import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -35,14 +32,7 @@ public class Area implements Serializable{
     @JoinColumn(name = "id_area_padre")
     private Area idAreaPadre;
 
-    @OneToMany(mappedBy = "idArea")
-    private List<PruebaClaveArea> listPruebaClaveArea;
 
-    @OneToMany(mappedBy = "idArea")
-    private List<PreguntaArea> listPreguntaArea;
-
-    @OneToMany(mappedBy = "idArea")
-    private List<DistractorArea> listDistractorArea;
 
     public Area(UUID idArea) {
         this.idArea = idArea;
@@ -88,33 +78,6 @@ public class Area implements Serializable{
 
     public void setActivo(Boolean activo) {
         this.activo = activo;
-    }
-
-    @JsonbTransient
-    public List<PruebaClaveArea> getListPruebaClaveArea() {
-        return listPruebaClaveArea;
-    }
-
-    public void setListPruebaClaveArea(List<PruebaClaveArea> listPruebaClaveArea) {
-        this.listPruebaClaveArea = listPruebaClaveArea;
-    }
-
-    @JsonbTransient
-    public List<PreguntaArea> getListPreguntaArea() {
-        return listPreguntaArea;
-    }
-
-    public void setListPreguntaArea(List<PreguntaArea> listPreguntaArea) {
-        this.listPreguntaArea = listPreguntaArea;
-    }
-
-    @JsonbTransient
-    public List<DistractorArea> getListDistractorArea() {
-        return listDistractorArea;
-    }
-
-    public void setListDistractorArea(List<DistractorArea> listDistractorArea) {
-        this.listDistractorArea = listDistractorArea;
     }
 
     @Override

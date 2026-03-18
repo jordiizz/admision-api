@@ -1,17 +1,14 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.UUID;
 
-import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -28,9 +25,6 @@ public class JornadaAula implements Serializable {
 
     @Column(name = "id_aula", nullable = false, length = 100)
     private String idAula;
-
-    @OneToMany(mappedBy = "idJornadaAula")
-    private List<PruebaJornadaAulaAspiranteOpcion> listPruebaJornadaAulaAspiranteOpcion;
 
     public JornadaAula() {}
 
@@ -92,16 +86,5 @@ public class JornadaAula implements Serializable {
     public String toString() {
         return "JornadaAula [idJornadaAula=" + idJornadaAula + ", idAula=" + idAula + "]";
     }
-
-    @JsonbTransient
-    public List<PruebaJornadaAulaAspiranteOpcion> getListPruebaJornadaAulaAspiranteOpcion() {
-        return listPruebaJornadaAulaAspiranteOpcion;
-    }
-
-    public void setListPruebaJornadaAulaAspiranteOpcion(
-            List<PruebaJornadaAulaAspiranteOpcion> listPruebaJornadaAulaAspiranteOpcion) {
-        this.listPruebaJornadaAulaAspiranteOpcion = listPruebaJornadaAulaAspiranteOpcion;
-    }
-
     
 }

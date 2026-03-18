@@ -2,70 +2,68 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
-import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.Table;
 
 @Entity
+@IdClass(PruebaClaveAreaPreguntaPK.class)
 @Table(name = "prueba_clave_area_pregunta")
 public class PruebaClaveAreaPregunta implements Serializable{
 
     @Id
-    @Column(name = "id_prueba_clave_area_pregunta")
-    private UUID idPruebaClaveAreaPregunta;
+    @Column(name = "id_prueba_clave", nullable = false)
+    private UUID idPruebaClave;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_prueba_clave_area", nullable = false)
-    private PruebaClaveArea idPruebaClaveArea;
+    @Id
+    @Column(name = "id_area", nullable = false)
+    private UUID idArea;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_pregunta", nullable = false)
-    private Pregunta idPregunta;
+    @Id
+    @Column(name = "id_pregunta", nullable = false)
+    private UUID idPregunta;
 
     @Column(name = "porcentaje", precision = 5, scale = 2, nullable = false)
     private BigDecimal porcentaje;
 
-    @OneToMany(mappedBy = "idPruebaClaveAreaPregunta")
-    private List<PruebaClaveAreaPreguntaDistractor> listPruebaClaveAreaPreguntaDistractor;
+    public PruebaClaveAreaPregunta(UUID idPruebaClave, UUID idArea, UUID idPregunta) {
+        this.idPruebaClave = idPruebaClave;
+        this.idArea = idArea;
+        this.idPregunta = idPregunta;
+    }
 
-    public PruebaClaveAreaPregunta(UUID idPruebaClaveAreaPregunta) {
-        this.idPruebaClaveAreaPregunta = idPruebaClaveAreaPregunta;
+    public PruebaClaveAreaPregunta(UUID legacyId) {
+        this.idPregunta = legacyId;
     }
 
     public PruebaClaveAreaPregunta(){}
 
-    public UUID getIdPruebaClaveAreaPregunta() {
-        return idPruebaClaveAreaPregunta;
+    public UUID getIdPruebaClave() {
+        return idPruebaClave;
     }
 
-    public void setIdPruebaClaveAreaPregunta(UUID idPruebaClaveAreaPregunta) {
-        this.idPruebaClaveAreaPregunta = idPruebaClaveAreaPregunta;
+    public void setIdPruebaClave(UUID idPruebaClave) {
+        this.idPruebaClave = idPruebaClave;
     }
 
-    
-    public PruebaClaveArea getIdPruebaClaveArea() {
-        return idPruebaClaveArea;
+    public UUID getIdArea() {
+        return idArea;
     }
 
-    public void setIdPruebaClaveArea(PruebaClaveArea idPruebaClaveArea) {
-        this.idPruebaClaveArea = idPruebaClaveArea;
+    public void setIdArea(UUID idArea) {
+        this.idArea = idArea;
     }
 
-    
-    public Pregunta getIdPregunta() {
+    public UUID getIdPregunta() {
         return idPregunta;
     }
 
-    public void setIdPregunta(Pregunta idPregunta) {
+    public void setIdPregunta(UUID idPregunta) {
         this.idPregunta = idPregunta;
     }
 
@@ -76,22 +74,9 @@ public class PruebaClaveAreaPregunta implements Serializable{
     public void setPorcentaje(BigDecimal porcentaje) {
         this.porcentaje = porcentaje;
     }
-
-    @JsonbTransient
-    public List<PruebaClaveAreaPreguntaDistractor> getListPruebaClaveAreaPreguntaDistractor() {
-        return listPruebaClaveAreaPreguntaDistractor;
-    }
-
-    public void setListPruebaClaveAreaPreguntaDistractor(List<PruebaClaveAreaPreguntaDistractor> listPruebaClaveAreaPreguntaDistractor) {
-        this.listPruebaClaveAreaPreguntaDistractor = listPruebaClaveAreaPreguntaDistractor;
-    }
-
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((idPruebaClaveAreaPregunta == null) ? 0 : idPruebaClaveAreaPregunta.hashCode());
-        return result;
+        return Objects.hash(idPruebaClave, idArea, idPregunta);
     }
 
     @Override
@@ -103,17 +88,15 @@ public class PruebaClaveAreaPregunta implements Serializable{
         if (getClass() != obj.getClass())
             return false;
         PruebaClaveAreaPregunta other = (PruebaClaveAreaPregunta) obj;
-        if (idPruebaClaveAreaPregunta == null) {
-            if (other.idPruebaClaveAreaPregunta != null)
-                return false;
-        } else if (!idPruebaClaveAreaPregunta.equals(other.idPruebaClaveAreaPregunta))
-            return false;
-        return true;
+        return Objects.equals(idPruebaClave, other.idPruebaClave)
+                && Objects.equals(idArea, other.idArea)
+            && Objects.equals(idPregunta, other.idPregunta);
     }
 
     @Override
     public String toString() {
-        return "PruebaClaveAreaPregunta [idPruebaClaveAreaPregunta=" + idPruebaClaveAreaPregunta + 
-               ", porcentaje=" + porcentaje + "]";
+        return "PruebaClaveAreaPregunta [idPruebaClave=" + idPruebaClave + ", idArea=" + idArea
+            + ", idPregunta=" + idPregunta
+                + ", porcentaje=" + porcentaje + "]";
     }
 }

@@ -1,45 +1,37 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 
 import java.io.Serializable;
-import java.util.UUID;
+import java.util.Objects;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
+@IdClass(PreguntaAreaPK.class)
 @Table(name = "pregunta_area")
 public class PreguntaArea implements Serializable{
 
     @Id
-    @Column(name = "id_pregunta_area")
-    private UUID idPreguntaArea;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_pregunta")
+    @JoinColumn(name = "id_pregunta", nullable = false)
     private Pregunta idPregunta;
 
+    @Id
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_area")
+    @JoinColumn(name = "id_area", nullable = false)
     private Area idArea;
 
-    public PreguntaArea(UUID idPreguntaArea) {
-        this.idPreguntaArea = idPreguntaArea;
+    public PreguntaArea(Pregunta idPregunta, Area idArea) {
+        this.idPregunta = idPregunta;
+        this.idArea = idArea;
     }
 
     public PreguntaArea(){}
-
-    public UUID getIdPreguntaArea() {
-        return idPreguntaArea;
-    }
-
-    public void setIdPreguntaArea(UUID idPreguntaArea) {
-        this.idPreguntaArea = idPreguntaArea;
-    }
 
     public Pregunta getIdPregunta() {
         return idPregunta;
@@ -59,10 +51,9 @@ public class PreguntaArea implements Serializable{
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((idPreguntaArea == null) ? 0 : idPreguntaArea.hashCode());
-        return result;
+        return Objects.hash(
+                idPregunta != null ? idPregunta.getIdPregunta() : null,
+                idArea != null ? idArea.getIdArea() : null);
     }
 
     @Override
@@ -74,16 +65,16 @@ public class PreguntaArea implements Serializable{
         if (getClass() != obj.getClass())
             return false;
         PreguntaArea other = (PreguntaArea) obj;
-        if (idPreguntaArea == null) {
-            if (other.idPreguntaArea != null)
-                return false;
-        } else if (!idPreguntaArea.equals(other.idPreguntaArea))
-            return false;
-        return true;
+        return Objects.equals(idPregunta != null ? idPregunta.getIdPregunta() : null,
+                other.idPregunta != null ? other.idPregunta.getIdPregunta() : null)
+                && Objects.equals(idArea != null ? idArea.getIdArea() : null,
+                        other.idArea != null ? other.idArea.getIdArea() : null);
     }
 
     @Override
     public String toString() {
-        return "PreguntaArea [idPreguntaArea=" + idPreguntaArea + "]";
+        return "PreguntaArea [idPregunta="
+                + (idPregunta != null ? idPregunta.getIdPregunta() : null)
+                + ", idArea=" + (idArea != null ? idArea.getIdArea() : null) + "]";
     }
 }

@@ -2,14 +2,11 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.UUID;
 
-import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -29,11 +26,6 @@ public class Jornada implements Serializable{
     @Column(name = "fecha_fin", nullable = false)
     private OffsetDateTime fechaFin;
 
-    @OneToMany(mappedBy = "idJornada")
-    private List<JornadaAula> listJornadaAula;
-
-    @OneToMany(mappedBy = "idJornada")
-    private List<PruebaJornada> listPruebaJornada;
 
     public Jornada(UUID idJornada) {
         this.idJornada = idJornada;
@@ -71,27 +63,7 @@ public class Jornada implements Serializable{
 
     public void setFechaFin(OffsetDateTime fechaFin) {
         this.fechaFin = fechaFin;
-    }
-
-    @JsonbTransient
-    public List<JornadaAula> getListJornadaAula() {
-        return listJornadaAula;
-    }
-
-    public void setListJornadaAula(List<JornadaAula> listJornadaAula) {
-        this.listJornadaAula = listJornadaAula;
-    }
-
-    @JsonbTransient
-    public List<PruebaJornada> getListPruebaJornada() {
-        return listPruebaJornada;
-    }
-
-    public void setListPruebaJornada(List<PruebaJornada> listPruebaJornada) {
-        this.listPruebaJornada = listPruebaJornada;
-    }
-
-    @Override
+    }@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

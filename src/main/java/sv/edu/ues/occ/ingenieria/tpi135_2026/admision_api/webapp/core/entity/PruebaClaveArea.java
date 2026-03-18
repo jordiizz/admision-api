@@ -2,25 +2,25 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
-import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.Transient;
 import jakarta.persistence.Table;
 
 @NamedQueries({
     @NamedQuery(
         name = "PruebaClaveArea.buscarPorPruebaClave",
-        query = "SELECT p FROM PruebaClaveArea p WHERE p.idPruebaClave.idPruebaClave = :idPruebaClave ORDER BY p.idPruebaClaveArea"
+        query = "SELECT p FROM PruebaClaveArea p WHERE p.idPruebaClave.idPruebaClave = :idPruebaClave ORDER BY p.idArea.idArea"
     ),
     @NamedQuery(
         name = "PruebaClaveArea.contarPorPruebaClave",
@@ -28,21 +28,20 @@ import jakarta.persistence.Table;
     ),
     @NamedQuery(
         name = "PruebaClaveArea.buscarPorIdYPruebaClave",
-        query = "SELECT p FROM PruebaClaveArea p WHERE p.idPruebaClaveArea = :idPruebaClaveArea AND p.idPruebaClave.idPruebaClave = :idPruebaClave"
+        query = "SELECT p FROM PruebaClaveArea p WHERE p.idArea.idArea = :idArea AND p.idPruebaClave.idPruebaClave = :idPruebaClave"
     )
 })
 @Entity
+@IdClass(PruebaClaveAreaPK.class)
 @Table(name = "prueba_clave_area")
 public class PruebaClaveArea implements Serializable{
 
     @Id
-    @Column(name = "id_prueba_clave_area")
-    private UUID idPruebaClaveArea;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_prueba_clave", nullable = false)
     private PruebaClave idPruebaClave;
 
+    @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_area", nullable = false)
     private Area idArea;
@@ -53,22 +52,18 @@ public class PruebaClaveArea implements Serializable{
     @Column(name = "porcentaje", precision = 5, scale = 2)
     private BigDecimal porcentaje;
 
-    @OneToMany(mappedBy = "idPruebaClaveArea")
-    private List<PruebaClaveAreaPregunta> listPruebaClaveAreaPregunta;
+    public PruebaClaveArea(PruebaClave idPruebaClave, Area idArea) {
+        this.idPruebaClave = idPruebaClave;
+        this.idArea = idArea;
+    }
 
-    public PruebaClaveArea(UUID idPruebaClaveArea) {
-        this.idPruebaClaveArea = idPruebaClaveArea;
+    public PruebaClaveArea(UUID legacyId) {
+        Area area = new Area();
+        area.setIdArea(legacyId);
+        this.idArea = area;
     }
 
     public PruebaClaveArea(){}
-
-    public UUID getIdPruebaClaveArea() {
-        return idPruebaClaveArea;
-    }
-
-    public void setIdPruebaClaveArea(UUID idPruebaClaveArea) {
-        this.idPruebaClaveArea = idPruebaClaveArea;
-    }
 
     
     public PruebaClave getIdPruebaClave() {
@@ -88,6 +83,22 @@ public class PruebaClaveArea implements Serializable{
         this.idArea = idArea;
     }
 
+    @Transient
+    public UUID getIdPruebaClaveArea() {
+        return idArea != null ? idArea.getIdArea() : null;
+    }
+
+    public void setIdPruebaClaveArea(UUID legacyId) {
+        if (legacyId == null) {
+            this.idArea = null;
+            return;
+        }
+        if (this.idArea == null) {
+            this.idArea = new Area();
+        }
+        this.idArea.setIdArea(legacyId);
+    }
+
     public Integer getCantidad() {
         return cantidad;
     }
@@ -103,22 +114,11 @@ public class PruebaClaveArea implements Serializable{
     public void setPorcentaje(BigDecimal porcentaje) {
         this.porcentaje = porcentaje;
     }
-
-    @JsonbTransient
-    public List<PruebaClaveAreaPregunta> getListPruebaClaveAreaPregunta() {
-        return listPruebaClaveAreaPregunta;
-    }
-
-    public void setListPruebaClaveAreaPregunta(List<PruebaClaveAreaPregunta> listPruebaClaveAreaPregunta) {
-        this.listPruebaClaveAreaPregunta = listPruebaClaveAreaPregunta;
-    }
-
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((idPruebaClaveArea == null) ? 0 : idPruebaClaveArea.hashCode());
-        return result;
+        return Objects.hash(
+                idPruebaClave != null ? idPruebaClave.getIdPruebaClave() : null,
+                idArea != null ? idArea.getIdArea() : null);
     }
 
     @Override
@@ -130,17 +130,17 @@ public class PruebaClaveArea implements Serializable{
         if (getClass() != obj.getClass())
             return false;
         PruebaClaveArea other = (PruebaClaveArea) obj;
-        if (idPruebaClaveArea == null) {
-            if (other.idPruebaClaveArea != null)
-                return false;
-        } else if (!idPruebaClaveArea.equals(other.idPruebaClaveArea))
-            return false;
-        return true;
+        return Objects.equals(idPruebaClave != null ? idPruebaClave.getIdPruebaClave() : null,
+                other.idPruebaClave != null ? other.idPruebaClave.getIdPruebaClave() : null)
+                && Objects.equals(idArea != null ? idArea.getIdArea() : null,
+                        other.idArea != null ? other.idArea.getIdArea() : null);
     }
 
     @Override
     public String toString() {
-        return "PruebaClaveArea [idPruebaClaveArea=" + idPruebaClaveArea + ", cantidad=" + cantidad + 
-               ", porcentaje=" + porcentaje + "]";
+        return "PruebaClaveArea [idPruebaClave="
+                + (idPruebaClave != null ? idPruebaClave.getIdPruebaClave() : null)
+                + ", idArea=" + (idArea != null ? idArea.getIdArea() : null)
+                + ", cantidad=" + cantidad + ", porcentaje=" + porcentaje + "]";
     }
 }

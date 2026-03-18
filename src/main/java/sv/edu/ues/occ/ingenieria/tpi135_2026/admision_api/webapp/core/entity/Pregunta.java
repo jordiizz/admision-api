@@ -1,14 +1,11 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.UUID;
 
-import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -28,14 +25,7 @@ public class Pregunta implements Serializable{
     @Column(name = "imagen_url")
     private String imagenUrl;
 
-    @OneToMany(mappedBy = "idPregunta")
-    private List<PruebaClaveAreaPregunta> listPruebaClaveAreaPregunta;
 
-    @OneToMany(mappedBy = "idPregunta")
-    private List<PreguntaDistractor> listPreguntaDistractor;
-
-    @OneToMany(mappedBy = "idPregunta")
-    private List<PreguntaArea> listPreguntaArea;
 
     public Pregunta(UUID idPregunta) {
         this.idPregunta = idPregunta;
@@ -73,36 +63,7 @@ public class Pregunta implements Serializable{
 
     public void setImagenUrl(String imagenUrl) {
         this.imagenUrl = imagenUrl;
-    }
-
-    @JsonbTransient
-    public List<PruebaClaveAreaPregunta> getListPruebaClaveAreaPregunta() {
-        return listPruebaClaveAreaPregunta;
-    }
-
-    public void setListPruebaClaveAreaPregunta(List<PruebaClaveAreaPregunta> listPruebaClaveAreaPregunta) {
-        this.listPruebaClaveAreaPregunta = listPruebaClaveAreaPregunta;
-    }
-
-    @JsonbTransient
-    public List<PreguntaDistractor> getListPreguntaDistractor() {
-        return listPreguntaDistractor;
-    }
-
-    public void setListPreguntaDistractor(List<PreguntaDistractor> listPreguntaDistractor) {
-        this.listPreguntaDistractor = listPreguntaDistractor;
-    }
-
-    @JsonbTransient
-    public List<PreguntaArea> getListPreguntaArea() {
-        return listPreguntaArea;
-    }
-
-    public void setListPreguntaArea(List<PreguntaArea> listPreguntaArea) {
-        this.listPreguntaArea = listPreguntaArea;
-    }
-
-    @Override
+    }@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

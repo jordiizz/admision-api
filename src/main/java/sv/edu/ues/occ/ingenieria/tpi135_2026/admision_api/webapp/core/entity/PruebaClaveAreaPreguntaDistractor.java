@@ -1,14 +1,13 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
@@ -16,92 +15,94 @@ import jakarta.persistence.Table;
 @NamedQueries({
     @NamedQuery(
         name = "PruebaClaveAreaPreguntaDistractor.buscarPorPadre",
-        query = "SELECT p FROM PruebaClaveAreaPreguntaDistractor p WHERE p.idPruebaClaveAreaPregunta.idPruebaClaveAreaPregunta = :idPruebaClaveAreaPregunta ORDER BY p.idPruebaClaveAreaPreguntaDistractor"
+        query = "SELECT p FROM PruebaClaveAreaPreguntaDistractor p WHERE p.idPruebaClave = :idPruebaClave AND p.idArea = :idArea AND p.idPregunta = :idPregunta ORDER BY p.idDistractor"
     ),
     @NamedQuery(
         name = "PruebaClaveAreaPreguntaDistractor.contarPorPadre",
-        query = "SELECT COUNT(p) FROM PruebaClaveAreaPreguntaDistractor p WHERE p.idPruebaClaveAreaPregunta.idPruebaClaveAreaPregunta = :idPruebaClaveAreaPregunta"
+        query = "SELECT COUNT(p) FROM PruebaClaveAreaPreguntaDistractor p WHERE p.idPruebaClave = :idPruebaClave AND p.idArea = :idArea AND p.idPregunta = :idPregunta"
     ),
     @NamedQuery(
         name = "PruebaClaveAreaPreguntaDistractor.buscarPorIdYPadre",
-        query = "SELECT p FROM PruebaClaveAreaPreguntaDistractor p WHERE p.idPruebaClaveAreaPreguntaDistractor = :idPruebaClaveAreaPreguntaDistractor AND p.idPruebaClaveAreaPregunta.idPruebaClaveAreaPregunta = :idPruebaClaveAreaPregunta"
+        query = "SELECT p FROM PruebaClaveAreaPreguntaDistractor p WHERE p.idDistractor = :idDistractor AND p.idPruebaClave = :idPruebaClave AND p.idArea = :idArea AND p.idPregunta = :idPregunta"
     )
 })
 @Entity
+@IdClass(PruebaClaveAreaPreguntaDistractorPK.class)
 @Table(name = "prueba_clave_area_pregunta_distractor")
-public class PruebaClaveAreaPreguntaDistractor implements Serializable{
+public class PruebaClaveAreaPreguntaDistractor implements Serializable {
 
     @Id
-    @Column(name = "id_prueba_clave_area_pregunta_distractor")
-    private UUID idPruebaClaveAreaPreguntaDistractor;
+    @Column(name = "id_prueba_clave", nullable = false)
+    private UUID idPruebaClave;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_prueba_clave_area_pregunta", nullable = false)
-    private PruebaClaveAreaPregunta idPruebaClaveAreaPregunta;
+    @Id
+    @Column(name = "id_area", nullable = false)
+    private UUID idArea;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_distractor", nullable = false)
-    private Distractor idDistractor;
+    @Id
+    @Column(name = "id_pregunta", nullable = false)
+    private UUID idPregunta;
 
-    public PruebaClaveAreaPreguntaDistractor(UUID idPruebaClaveAreaPreguntaDistractor) {
-        this.idPruebaClaveAreaPreguntaDistractor = idPruebaClaveAreaPreguntaDistractor;
-    }
+    @Id
+    @Column(name = "id_distractor", nullable = false)
+    private UUID idDistractor;
 
-    public PruebaClaveAreaPreguntaDistractor(){}
+    public PruebaClaveAreaPreguntaDistractor() {}
 
-    public UUID getIdPruebaClaveAreaPreguntaDistractor() {
-        return idPruebaClaveAreaPreguntaDistractor;
-    }
-
-    public void setIdPruebaClaveAreaPreguntaDistractor(UUID idPruebaClaveAreaPreguntaDistractor) {
-        this.idPruebaClaveAreaPreguntaDistractor = idPruebaClaveAreaPreguntaDistractor;
-    }
-
-    
-    public PruebaClaveAreaPregunta getIdPruebaClaveAreaPregunta() {
-        return idPruebaClaveAreaPregunta;
-    }
-
-    public void setIdPruebaClaveAreaPregunta(PruebaClaveAreaPregunta idPruebaClaveAreaPregunta) {
-        this.idPruebaClaveAreaPregunta = idPruebaClaveAreaPregunta;
-    }
-
-    
-    public Distractor getIdDistractor() {
-        return idDistractor;
-    }
-
-    public void setIdDistractor(Distractor idDistractor) {
+    public PruebaClaveAreaPreguntaDistractor(UUID idPruebaClave, UUID idArea, UUID idPregunta, UUID idDistractor) {
+        this.idPruebaClave = idPruebaClave;
+        this.idArea = idArea;
+        this.idPregunta = idPregunta;
         this.idDistractor = idDistractor;
     }
 
+    public UUID getIdPruebaClave() { 
+        return idPruebaClave; 
+    }
+
+    public void setIdPruebaClave(UUID idPruebaClave) { 
+        this.idPruebaClave = idPruebaClave; 
+    }
+
+    public UUID getIdArea() { 
+        return idArea; 
+    }
+    public void setIdArea(UUID idArea) { 
+        this.idArea = idArea; 
+    }
+
+    public UUID getIdPregunta() { 
+        return idPregunta; 
+    }
+
+    public void setIdPregunta(UUID idPregunta) { 
+        this.idPregunta = idPregunta; 
+    }
+
+    public UUID getIdDistractor() { return idDistractor; }
+    public void setIdDistractor(UUID idDistractor) { this.idDistractor = idDistractor; }
+
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((idPruebaClaveAreaPreguntaDistractor == null) ? 0 : idPruebaClaveAreaPreguntaDistractor.hashCode());
-        return result;
+        return Objects.hash(idPruebaClave, idArea, idPregunta, idDistractor);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
+        if (this == obj) return true;
+        if (!(obj instanceof PruebaClaveAreaPreguntaDistractor)) return false;
         PruebaClaveAreaPreguntaDistractor other = (PruebaClaveAreaPreguntaDistractor) obj;
-        if (idPruebaClaveAreaPreguntaDistractor == null) {
-            if (other.idPruebaClaveAreaPreguntaDistractor != null)
-                return false;
-        } else if (!idPruebaClaveAreaPreguntaDistractor.equals(other.idPruebaClaveAreaPreguntaDistractor))
-            return false;
-        return true;
+        return Objects.equals(idPruebaClave, other.idPruebaClave)
+            && Objects.equals(idArea, other.idArea)
+            && Objects.equals(idPregunta, other.idPregunta)
+            && Objects.equals(idDistractor, other.idDistractor);
     }
 
     @Override
     public String toString() {
-        return "PruebaClaveAreaPreguntaDistractor [idPruebaClaveAreaPreguntaDistractor=" + idPruebaClaveAreaPreguntaDistractor + "]";
+        return "PruebaClaveAreaPreguntaDistractor [idPruebaClave=" + idPruebaClave
+                + ", idArea=" + idArea
+                + ", idPregunta=" + idPregunta
+                + ", idDistractor=" + idDistractor + "]";
     }
 }

@@ -1,14 +1,11 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.UUID;
 
-import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -24,9 +21,6 @@ public class TipoPrueba implements Serializable{
 
     @Column(name = "activo")
     private Boolean activo;
-
-    @OneToMany(mappedBy = "idTipoPrueba")
-    private List<Prueba> listPrueba;
 
     public TipoPrueba(UUID idTipoPrueba) {
         this.idTipoPrueba = idTipoPrueba;
@@ -57,16 +51,6 @@ public class TipoPrueba implements Serializable{
     public void setActivo(Boolean activo) {
         this.activo = activo;
     }
-
-    @JsonbTransient
-    public List<Prueba> getListPrueba() {
-        return listPrueba;
-    }
-
-    public void setListPrueba(List<Prueba> listPrueba) {
-        this.listPrueba = listPrueba;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
