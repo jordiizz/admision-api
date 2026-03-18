@@ -38,18 +38,20 @@ public class PruebaClaveAreaPreguntaDistractorDAOTest {
 
         @Test
         public void buscarPorPadreRangoTest() {
-        UUID idPruebaClaveAreaPregunta = UUID.randomUUID();
+        UUID idPruebaClave = UUID.randomUUID();
+        UUID idArea = UUID.randomUUID();
+        UUID idPregunta = UUID.randomUUID();
         int first = 0;
         int max = 10;
         List<PruebaClaveAreaPreguntaDistractor> esperados = Arrays.asList(
-            new PruebaClaveAreaPreguntaDistractor(UUID.randomUUID()),
-            new PruebaClaveAreaPreguntaDistractor(UUID.randomUUID())
+            new PruebaClaveAreaPreguntaDistractor(idPruebaClave, idArea, idPregunta, UUID.randomUUID()),
+            new PruebaClaveAreaPreguntaDistractor(idPruebaClave, idArea, idPregunta, UUID.randomUUID())
         );
 
         PruebaClaveAreaPreguntaDistractorDAO cut = new PruebaClaveAreaPreguntaDistractorDAO();
 
         NullPointerException npe = assertThrows(NullPointerException.class,
-            () -> cut.buscarPorPadreRango(idPruebaClaveAreaPregunta, first, max));
+            () -> cut.buscarPorPadreRango(idPruebaClave, idArea, idPregunta, first, max));
         assertNotNull(npe);
 
         EntityManager mockEM = Mockito.mock(EntityManager.class);
@@ -59,17 +61,21 @@ public class PruebaClaveAreaPreguntaDistractorDAOTest {
         Mockito.when(mockEM.createNamedQuery(
             "PruebaClaveAreaPreguntaDistractor.buscarPorPadre",
             PruebaClaveAreaPreguntaDistractor.class)).thenReturn(mockQuery);
-        Mockito.when(mockQuery.setParameter("idPruebaClaveAreaPregunta", idPruebaClaveAreaPregunta)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idPruebaClave", idPruebaClave)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idArea", idArea)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idPregunta", idPregunta)).thenReturn(mockQuery);
         Mockito.when(mockQuery.setFirstResult(first)).thenReturn(mockQuery);
         Mockito.when(mockQuery.setMaxResults(max)).thenReturn(mockQuery);
         Mockito.when(mockQuery.getResultList()).thenReturn(esperados);
 
         cut.em = mockEM;
-        List<PruebaClaveAreaPreguntaDistractor> resultado = cut.buscarPorPadreRango(idPruebaClaveAreaPregunta, first, max);
+        List<PruebaClaveAreaPreguntaDistractor> resultado = cut.buscarPorPadreRango(idPruebaClave, idArea, idPregunta, first, max);
 
         assertNotNull(resultado);
         assertEquals(esperados.size(), resultado.size());
-        Mockito.verify(mockQuery).setParameter("idPruebaClaveAreaPregunta", idPruebaClaveAreaPregunta);
+        Mockito.verify(mockQuery).setParameter("idPruebaClave", idPruebaClave);
+        Mockito.verify(mockQuery).setParameter("idArea", idArea);
+        Mockito.verify(mockQuery).setParameter("idPregunta", idPregunta);
         Mockito.verify(mockQuery).setFirstResult(first);
         Mockito.verify(mockQuery).setMaxResults(max);
         Mockito.verify(mockQuery).getResultList();
@@ -77,12 +83,14 @@ public class PruebaClaveAreaPreguntaDistractorDAOTest {
 
         @Test
         public void contarPorPadreTest() {
-        UUID idPruebaClaveAreaPregunta = UUID.randomUUID();
+        UUID idPruebaClave = UUID.randomUUID();
+        UUID idArea = UUID.randomUUID();
+        UUID idPregunta = UUID.randomUUID();
 
         PruebaClaveAreaPreguntaDistractorDAO cut = new PruebaClaveAreaPreguntaDistractorDAO();
 
         NullPointerException npe = assertThrows(NullPointerException.class,
-            () -> cut.contarPorPadre(idPruebaClaveAreaPregunta));
+            () -> cut.contarPorPadre(idPruebaClave, idArea, idPregunta));
         assertNotNull(npe);
 
         EntityManager mockEM = Mockito.mock(EntityManager.class);
@@ -92,28 +100,35 @@ public class PruebaClaveAreaPreguntaDistractorDAOTest {
         Mockito.when(mockEM.createNamedQuery(
             "PruebaClaveAreaPreguntaDistractor.contarPorPadre",
             Long.class)).thenReturn(mockQuery);
-        Mockito.when(mockQuery.setParameter("idPruebaClaveAreaPregunta", idPruebaClaveAreaPregunta)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idPruebaClave", idPruebaClave)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idArea", idArea)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idPregunta", idPregunta)).thenReturn(mockQuery);
         Mockito.when(mockQuery.getSingleResult()).thenReturn(3L);
 
         cut.em = mockEM;
-        Long resultado = cut.contarPorPadre(idPruebaClaveAreaPregunta);
+        Long resultado = cut.contarPorPadre(idPruebaClave, idArea, idPregunta);
 
         assertNotNull(resultado);
         assertEquals(3L, resultado);
-        Mockito.verify(mockQuery).setParameter("idPruebaClaveAreaPregunta", idPruebaClaveAreaPregunta);
+        Mockito.verify(mockQuery).setParameter("idPruebaClave", idPruebaClave);
+        Mockito.verify(mockQuery).setParameter("idArea", idArea);
+        Mockito.verify(mockQuery).setParameter("idPregunta", idPregunta);
         Mockito.verify(mockQuery).getSingleResult();
         }
 
         @Test
         public void buscarPorIdYPadreEncontradoTest() {
-        UUID id = UUID.randomUUID();
-        UUID idPruebaClaveAreaPregunta = UUID.randomUUID();
-        PruebaClaveAreaPreguntaDistractor esperado = new PruebaClaveAreaPreguntaDistractor(id);
+        UUID idPruebaClave = UUID.randomUUID();
+        UUID idArea = UUID.randomUUID();
+        UUID idPregunta = UUID.randomUUID();
+        UUID idDistractor = UUID.randomUUID();
+        PruebaClaveAreaPreguntaDistractor esperado =
+            new PruebaClaveAreaPreguntaDistractor(idPruebaClave, idArea, idPregunta, idDistractor);
 
         PruebaClaveAreaPreguntaDistractorDAO cut = new PruebaClaveAreaPreguntaDistractorDAO();
 
         NullPointerException npe = assertThrows(NullPointerException.class,
-            () -> cut.buscarPorIdYPadre(id, idPruebaClaveAreaPregunta));
+            () -> cut.buscarPorIdYPadre(idDistractor, idPruebaClave, idArea, idPregunta));
         assertNotNull(npe);
 
         EntityManager mockEM = Mockito.mock(EntityManager.class);
@@ -123,26 +138,32 @@ public class PruebaClaveAreaPreguntaDistractorDAOTest {
         Mockito.when(mockEM.createNamedQuery(
             "PruebaClaveAreaPreguntaDistractor.buscarPorIdYPadre",
             PruebaClaveAreaPreguntaDistractor.class)).thenReturn(mockQuery);
-        Mockito.when(mockQuery.setParameter("idPruebaClaveAreaPreguntaDistractor", id)).thenReturn(mockQuery);
-        Mockito.when(mockQuery.setParameter("idPruebaClaveAreaPregunta", idPruebaClaveAreaPregunta)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idDistractor", idDistractor)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idPruebaClave", idPruebaClave)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idArea", idArea)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idPregunta", idPregunta)).thenReturn(mockQuery);
         Mockito.when(mockQuery.setMaxResults(1)).thenReturn(mockQuery);
         Mockito.when(mockQuery.getResultList()).thenReturn(List.of(esperado));
 
         cut.em = mockEM;
-        PruebaClaveAreaPreguntaDistractor resultado = cut.buscarPorIdYPadre(id, idPruebaClaveAreaPregunta);
+        PruebaClaveAreaPreguntaDistractor resultado = cut.buscarPorIdYPadre(idDistractor, idPruebaClave, idArea, idPregunta);
 
         assertNotNull(resultado);
-        assertEquals(id, resultado.getIdPruebaClaveAreaPreguntaDistractor());
-        Mockito.verify(mockQuery).setParameter("idPruebaClaveAreaPreguntaDistractor", id);
-        Mockito.verify(mockQuery).setParameter("idPruebaClaveAreaPregunta", idPruebaClaveAreaPregunta);
+        assertEquals(idDistractor, resultado.getIdDistractor());
+        Mockito.verify(mockQuery).setParameter("idDistractor", idDistractor);
+        Mockito.verify(mockQuery).setParameter("idPruebaClave", idPruebaClave);
+        Mockito.verify(mockQuery).setParameter("idArea", idArea);
+        Mockito.verify(mockQuery).setParameter("idPregunta", idPregunta);
         Mockito.verify(mockQuery).setMaxResults(1);
         Mockito.verify(mockQuery).getResultList();
         }
 
         @Test
         public void buscarPorIdYPadreNoEncontradoTest() {
-        UUID id = UUID.randomUUID();
-        UUID idPruebaClaveAreaPregunta = UUID.randomUUID();
+        UUID idPruebaClave = UUID.randomUUID();
+        UUID idArea = UUID.randomUUID();
+        UUID idPregunta = UUID.randomUUID();
+        UUID idDistractor = UUID.randomUUID();
 
         PruebaClaveAreaPreguntaDistractorDAO cut = new PruebaClaveAreaPreguntaDistractorDAO();
         EntityManager mockEM = Mockito.mock(EntityManager.class);
@@ -152,17 +173,21 @@ public class PruebaClaveAreaPreguntaDistractorDAOTest {
         Mockito.when(mockEM.createNamedQuery(
             "PruebaClaveAreaPreguntaDistractor.buscarPorIdYPadre",
             PruebaClaveAreaPreguntaDistractor.class)).thenReturn(mockQuery);
-        Mockito.when(mockQuery.setParameter("idPruebaClaveAreaPreguntaDistractor", id)).thenReturn(mockQuery);
-        Mockito.when(mockQuery.setParameter("idPruebaClaveAreaPregunta", idPruebaClaveAreaPregunta)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idDistractor", idDistractor)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idPruebaClave", idPruebaClave)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idArea", idArea)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idPregunta", idPregunta)).thenReturn(mockQuery);
         Mockito.when(mockQuery.setMaxResults(1)).thenReturn(mockQuery);
         Mockito.when(mockQuery.getResultList()).thenReturn(List.of());
 
         cut.em = mockEM;
-        PruebaClaveAreaPreguntaDistractor resultado = cut.buscarPorIdYPadre(id, idPruebaClaveAreaPregunta);
+        PruebaClaveAreaPreguntaDistractor resultado = cut.buscarPorIdYPadre(idDistractor, idPruebaClave, idArea, idPregunta);
 
         assertNull(resultado);
-        Mockito.verify(mockQuery).setParameter("idPruebaClaveAreaPreguntaDistractor", id);
-        Mockito.verify(mockQuery).setParameter("idPruebaClaveAreaPregunta", idPruebaClaveAreaPregunta);
+        Mockito.verify(mockQuery).setParameter("idDistractor", idDistractor);
+        Mockito.verify(mockQuery).setParameter("idPruebaClave", idPruebaClave);
+        Mockito.verify(mockQuery).setParameter("idArea", idArea);
+        Mockito.verify(mockQuery).setParameter("idPregunta", idPregunta);
         Mockito.verify(mockQuery).setMaxResults(1);
         Mockito.verify(mockQuery).getResultList();
         }

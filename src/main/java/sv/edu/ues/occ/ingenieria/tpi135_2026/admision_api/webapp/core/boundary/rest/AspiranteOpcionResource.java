@@ -26,7 +26,7 @@ import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.As
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Aspirante;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.AspiranteOpcion;
 
-@Path("aspirante/{idAspirante}/opcion")
+@Path("aspirante/{id_aspirante}/opcion")
 public class AspiranteOpcionResource implements Serializable {
 
     @Inject
@@ -39,7 +39,7 @@ public class AspiranteOpcionResource implements Serializable {
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
     public Response crear(
-            @PathParam("idAspirante") UUID idAspirante,
+            @PathParam("id_aspirante") UUID idAspirante,
             AspiranteOpcion aspiranteOpcion,
             @Context UriInfo uriInfo) {
         if (aspiranteOpcion == null || idAspirante == null) {
@@ -66,7 +66,7 @@ public class AspiranteOpcionResource implements Serializable {
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public Response buscarPorRango(
-            @PathParam("idAspirante") UUID idAspirante,
+            @PathParam("id_aspirante") UUID idAspirante,
             @QueryParam("first") @DefaultValue("0") int firstResult,
             @QueryParam("max") @DefaultValue("50") int maxResults) {
         if (idAspirante == null || firstResult < 0 || maxResults <= 0 || maxResults > 50) {
@@ -87,7 +87,7 @@ public class AspiranteOpcionResource implements Serializable {
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response buscarPorId(
-            @PathParam("idAspirante") UUID idAspirante,
+            @PathParam("id_aspirante") UUID idAspirante,
             @PathParam("id") UUID id) {
         if (id == null || idAspirante == null) {
             return Response.status(422).header(ResponseHeaders.WRONG_PARAMETER.toString(), "idAspirante e id no pueden ser nulos").build();
@@ -108,7 +108,7 @@ public class AspiranteOpcionResource implements Serializable {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response actualizar(
-            @PathParam("idAspirante") UUID idAspirante,
+            @PathParam("id_aspirante") UUID idAspirante,
             @PathParam("id") UUID id,
             AspiranteOpcion aspiranteOpcion) {
         if (aspiranteOpcion == null || idAspirante == null || id == null) {
@@ -134,7 +134,7 @@ public class AspiranteOpcionResource implements Serializable {
     @DELETE
     @Path("{id}")
     public Response eliminar(
-            @PathParam("idAspirante") UUID idAspirante,
+            @PathParam("id_aspirante") UUID idAspirante,
             @PathParam("id") UUID id) {
         if (id == null || idAspirante == null) {
             return Response.status(422).header(ResponseHeaders.WRONG_PARAMETER.toString(), "idAspirante e id no pueden ser nulos").build();

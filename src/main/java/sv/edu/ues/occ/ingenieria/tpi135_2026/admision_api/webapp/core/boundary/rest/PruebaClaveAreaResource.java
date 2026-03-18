@@ -25,7 +25,7 @@ import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.Pr
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClave;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveArea;
 
-@Path("prueba-clave/{idPruebaClave}/area")
+@Path("prueba-clave/{id_prueba_clave}/area")
 public class PruebaClaveAreaResource implements Serializable {
 
     @Inject
@@ -38,7 +38,7 @@ public class PruebaClaveAreaResource implements Serializable {
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
     public Response crear(
-            @PathParam("idPruebaClave") UUID idPruebaClave,
+            @PathParam("id_prueba_clave") UUID idPruebaClave,
             PruebaClaveArea pruebaClaveArea,
             @Context UriInfo uriInfo) {
         if (pruebaClaveArea != null && idPruebaClave != null) {
@@ -47,11 +47,13 @@ public class PruebaClaveAreaResource implements Serializable {
                 if (pruebaClave == null) {
                     return Response.status(404).header(ResponseHeaders.NOT_FOUND.toString(), "PruebaClave no encontrada").build();
                 }
-                pruebaClaveArea.setIdPruebaClaveArea(UUID.randomUUID());
                 pruebaClaveArea.setIdPruebaClave(pruebaClave);
                 pruebaClaveAreaDAO.crear(pruebaClaveArea);
                 UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
-                uriBuilder.path(pruebaClaveArea.getIdPruebaClaveArea().toString());
+                UUID idArea = pruebaClaveArea.getIdPruebaClaveArea();
+                if (idArea != null) {
+                    uriBuilder.path(idArea.toString());
+                }
                 return Response.created(uriBuilder.build()).entity(pruebaClaveArea).build();
             } catch (IllegalArgumentException | IllegalStateException e) {
                 return Response.status(500).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
@@ -63,7 +65,7 @@ public class PruebaClaveAreaResource implements Serializable {
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public Response buscarPorRango(
-            @PathParam("idPruebaClave") UUID idPruebaClave,
+            @PathParam("id_prueba_clave") UUID idPruebaClave,
             @QueryParam("first") @DefaultValue("0") int firstResult,
             @QueryParam("max") @DefaultValue("50") int maxResults) {
         try {
@@ -83,14 +85,14 @@ public class PruebaClaveAreaResource implements Serializable {
     }
 
     @GET
-    @Path("{id}")
+        @Path("{id_area}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response buscarPorId(
-            @PathParam("idPruebaClave") UUID idPruebaClave,
-            @PathParam("id") UUID id) {
-        if (id != null && idPruebaClave != null) {
+            @PathParam("id_prueba_clave") UUID idPruebaClave,
+            @PathParam("id_area") UUID idArea) {
+        if (idArea != null && idPruebaClave != null) {
             try {
-                PruebaClaveArea encontrado = pruebaClaveAreaDAO.buscarPorIdYPruebaClave(id, idPruebaClave);
+                PruebaClaveArea encontrado = pruebaClaveAreaDAO.buscarPorIdYPruebaClave(idArea, idPruebaClave);
                 if (encontrado != null) {
                     return Response.ok(encontrado).type(MediaType.APPLICATION_JSON).build();
                 }
@@ -103,18 +105,18 @@ public class PruebaClaveAreaResource implements Serializable {
     }
 
     @PUT
-    @Path("{id}")
+        @Path("{id_area}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response actualizar(
-            @PathParam("idPruebaClave") UUID idPruebaClave,
-            @PathParam("id") UUID id,
+            @PathParam("id_prueba_clave") UUID idPruebaClave,
+            @PathParam("id_area") UUID idArea,
             PruebaClaveArea pruebaClaveArea) {
-        if (pruebaClaveArea != null && idPruebaClave != null && id != null) {
+        if (pruebaClaveArea != null && idPruebaClave != null && idArea != null) {
             try {
-                PruebaClaveArea existente = pruebaClaveAreaDAO.buscarPorIdYPruebaClave(id, idPruebaClave);
+                PruebaClaveArea existente = pruebaClaveAreaDAO.buscarPorIdYPruebaClave(idArea, idPruebaClave);
                 if (existente != null) {
-                    pruebaClaveArea.setIdPruebaClaveArea(id);
+                    pruebaClaveArea.setIdArea(existente.getIdArea());
                     pruebaClaveArea.setIdPruebaClave(existente.getIdPruebaClave());
                     pruebaClaveAreaDAO.actualizar(pruebaClaveArea);
                     return Response.ok(pruebaClaveArea).build();
@@ -128,13 +130,13 @@ public class PruebaClaveAreaResource implements Serializable {
     }
 
     @DELETE
-    @Path("{id}")
+        @Path("{id_area}")
     public Response eliminar(
-            @PathParam("idPruebaClave") UUID idPruebaClave,
-            @PathParam("id") UUID id) {
-        if (id != null && idPruebaClave != null) {
+            @PathParam("id_prueba_clave") UUID idPruebaClave,
+            @PathParam("id_area") UUID idArea) {
+        if (idArea != null && idPruebaClave != null) {
             try {
-                PruebaClaveArea pruebaClaveArea = pruebaClaveAreaDAO.buscarPorIdYPruebaClave(id, idPruebaClave);
+                PruebaClaveArea pruebaClaveArea = pruebaClaveAreaDAO.buscarPorIdYPruebaClave(idArea, idPruebaClave);
                 if (pruebaClaveArea != null) {
                     pruebaClaveAreaDAO.eliminar(pruebaClaveArea);
                     return Response.noContent().build();

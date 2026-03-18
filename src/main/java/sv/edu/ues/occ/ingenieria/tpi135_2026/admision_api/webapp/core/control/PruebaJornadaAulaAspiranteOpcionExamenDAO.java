@@ -28,31 +28,39 @@ public class PruebaJornadaAulaAspiranteOpcionExamenDAO
     }
 
     public List<PruebaJornadaAulaAspiranteOpcionExamen> buscarPorPadreRango(
-            UUID idPruebaJornadaAulaAspiranteOpcion, int first, int max) {
+            UUID idPrueba, UUID idJornada, String idAula, UUID idAspiranteOpcion, int first, int max) {
         return em.createNamedQuery(
                 "PruebaJornadaAulaAspiranteOpcionExamen.buscarPorPadre",
                 PruebaJornadaAulaAspiranteOpcionExamen.class)
-                .setParameter("idPruebaJornadaAulaAspiranteOpcion", idPruebaJornadaAulaAspiranteOpcion)
+            .setParameter("idPrueba", idPrueba)
+            .setParameter("idJornada", idJornada)
+            .setParameter("idAula", idAula)
+            .setParameter("idAspiranteOpcion", idAspiranteOpcion)
                 .setFirstResult(first)
                 .setMaxResults(max)
                 .getResultList();
     }
 
-    public Long contarPorPadre(UUID idPruebaJornadaAulaAspiranteOpcion) {
+    public Long contarPorPadre(UUID idPrueba, UUID idJornada, String idAula, UUID idAspiranteOpcion) {
         return em.createNamedQuery(
                 "PruebaJornadaAulaAspiranteOpcionExamen.contarPorPadre", Long.class)
-                .setParameter("idPruebaJornadaAulaAspiranteOpcion", idPruebaJornadaAulaAspiranteOpcion)
+            .setParameter("idPrueba", idPrueba)
+            .setParameter("idJornada", idJornada)
+            .setParameter("idAula", idAula)
+            .setParameter("idAspiranteOpcion", idAspiranteOpcion)
                 .getSingleResult();
     }
 
-    public PruebaJornadaAulaAspiranteOpcionExamen buscarPorIdYPadre(
-            UUID id, UUID idPruebaJornadaAulaAspiranteOpcion) {
+        public PruebaJornadaAulaAspiranteOpcionExamen buscarPorPadre(
+            UUID idPrueba, UUID idJornada, String idAula, UUID idAspiranteOpcion) {
         List<PruebaJornadaAulaAspiranteOpcionExamen> resultados = em
-                .createNamedQuery(
-                        "PruebaJornadaAulaAspiranteOpcionExamen.buscarPorIdYPadre",
-                        PruebaJornadaAulaAspiranteOpcionExamen.class)
-                .setParameter("idPruebaJornadaAulaAspiranteOpcionExamen", id)
-                .setParameter("idPruebaJornadaAulaAspiranteOpcion", idPruebaJornadaAulaAspiranteOpcion)
+            .createNamedQuery(
+            "PruebaJornadaAulaAspiranteOpcionExamen.buscarUnicoPorPadre",
+                PruebaJornadaAulaAspiranteOpcionExamen.class)
+            .setParameter("idPrueba", idPrueba)
+            .setParameter("idJornada", idJornada)
+            .setParameter("idAula", idAula)
+            .setParameter("idAspiranteOpcion", idAspiranteOpcion)
                 .setMaxResults(1)
                 .getResultList();
         return resultados.isEmpty() ? null : resultados.get(0);

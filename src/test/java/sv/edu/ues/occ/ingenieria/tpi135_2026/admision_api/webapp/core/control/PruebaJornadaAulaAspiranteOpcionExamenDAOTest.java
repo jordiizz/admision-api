@@ -39,7 +39,10 @@ public class PruebaJornadaAulaAspiranteOpcionExamenDAOTest {
     @Test
     public void buscarPorPadreRangoTest() {
         System.out.println("PruebaJornadaAulaAspiranteOpcionExamenDAOTest.buscarPorPadreRangoTest");
-        UUID idPruebaJornadaAulaAspiranteOpcion = UUID.randomUUID();
+                UUID idPrueba = UUID.randomUUID();
+                UUID idJornada = UUID.randomUUID();
+                String idAula = "A-01";
+                UUID idAspiranteOpcion = UUID.randomUUID();
         int first = 0;
         int max = 10;
         List<PruebaJornadaAulaAspiranteOpcionExamen> esperados = Arrays.asList(
@@ -50,7 +53,7 @@ public class PruebaJornadaAulaAspiranteOpcionExamenDAOTest {
         PruebaJornadaAulaAspiranteOpcionExamenDAO cut = new PruebaJornadaAulaAspiranteOpcionExamenDAO();
 
         NullPointerException npe = assertThrows(NullPointerException.class,
-                () -> cut.buscarPorPadreRango(idPruebaJornadaAulaAspiranteOpcion, first, max));
+                () -> cut.buscarPorPadreRango(idPrueba, idJornada, idAula, idAspiranteOpcion, first, max));
         assertNotNull(npe);
 
         EntityManager mockEM = Mockito.mock(EntityManager.class);
@@ -60,20 +63,24 @@ public class PruebaJornadaAulaAspiranteOpcionExamenDAOTest {
         Mockito.when(mockEM.createNamedQuery(
                 "PruebaJornadaAulaAspiranteOpcionExamen.buscarPorPadre",
                 PruebaJornadaAulaAspiranteOpcionExamen.class)).thenReturn(mockQuery);
-        Mockito.when(mockQuery.setParameter("idPruebaJornadaAulaAspiranteOpcion",
-                idPruebaJornadaAulaAspiranteOpcion)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idPrueba", idPrueba)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idJornada", idJornada)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idAula", idAula)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idAspiranteOpcion", idAspiranteOpcion)).thenReturn(mockQuery);
         Mockito.when(mockQuery.setFirstResult(first)).thenReturn(mockQuery);
         Mockito.when(mockQuery.setMaxResults(max)).thenReturn(mockQuery);
         Mockito.when(mockQuery.getResultList()).thenReturn(esperados);
 
         cut.em = mockEM;
         List<PruebaJornadaAulaAspiranteOpcionExamen> resultado =
-                cut.buscarPorPadreRango(idPruebaJornadaAulaAspiranteOpcion, first, max);
+                cut.buscarPorPadreRango(idPrueba, idJornada, idAula, idAspiranteOpcion, first, max);
 
         assertNotNull(resultado);
         assertEquals(esperados.size(), resultado.size());
-        Mockito.verify(mockQuery).setParameter("idPruebaJornadaAulaAspiranteOpcion",
-                idPruebaJornadaAulaAspiranteOpcion);
+        Mockito.verify(mockQuery).setParameter("idPrueba", idPrueba);
+        Mockito.verify(mockQuery).setParameter("idJornada", idJornada);
+        Mockito.verify(mockQuery).setParameter("idAula", idAula);
+        Mockito.verify(mockQuery).setParameter("idAspiranteOpcion", idAspiranteOpcion);
         Mockito.verify(mockQuery).setFirstResult(first);
         Mockito.verify(mockQuery).setMaxResults(max);
         Mockito.verify(mockQuery).getResultList();
@@ -83,12 +90,15 @@ public class PruebaJornadaAulaAspiranteOpcionExamenDAOTest {
     @Test
     public void contarPorPadreTest() {
         System.out.println("PruebaJornadaAulaAspiranteOpcionExamenDAOTest.contarPorPadreTest");
-        UUID idPruebaJornadaAulaAspiranteOpcion = UUID.randomUUID();
+                UUID idPrueba = UUID.randomUUID();
+                UUID idJornada = UUID.randomUUID();
+                String idAula = "A-01";
+                UUID idAspiranteOpcion = UUID.randomUUID();
 
         PruebaJornadaAulaAspiranteOpcionExamenDAO cut = new PruebaJornadaAulaAspiranteOpcionExamenDAO();
 
         NullPointerException npe = assertThrows(NullPointerException.class,
-                () -> cut.contarPorPadre(idPruebaJornadaAulaAspiranteOpcion));
+                () -> cut.contarPorPadre(idPrueba, idJornada, idAula, idAspiranteOpcion));
         assertNotNull(npe);
 
         EntityManager mockEM = Mockito.mock(EntityManager.class);
@@ -98,32 +108,38 @@ public class PruebaJornadaAulaAspiranteOpcionExamenDAOTest {
         Mockito.when(mockEM.createNamedQuery(
                 "PruebaJornadaAulaAspiranteOpcionExamen.contarPorPadre",
                 Long.class)).thenReturn(mockQuery);
-        Mockito.when(mockQuery.setParameter("idPruebaJornadaAulaAspiranteOpcion",
-                idPruebaJornadaAulaAspiranteOpcion)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idPrueba", idPrueba)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idJornada", idJornada)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idAula", idAula)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idAspiranteOpcion", idAspiranteOpcion)).thenReturn(mockQuery);
         Mockito.when(mockQuery.getSingleResult()).thenReturn(3L);
 
         cut.em = mockEM;
-        Long resultado = cut.contarPorPadre(idPruebaJornadaAulaAspiranteOpcion);
+        Long resultado = cut.contarPorPadre(idPrueba, idJornada, idAula, idAspiranteOpcion);
 
         assertNotNull(resultado);
         assertEquals(3L, resultado);
-        Mockito.verify(mockQuery).setParameter("idPruebaJornadaAulaAspiranteOpcion",
-                idPruebaJornadaAulaAspiranteOpcion);
+        Mockito.verify(mockQuery).setParameter("idPrueba", idPrueba);
+        Mockito.verify(mockQuery).setParameter("idJornada", idJornada);
+        Mockito.verify(mockQuery).setParameter("idAula", idAula);
+        Mockito.verify(mockQuery).setParameter("idAspiranteOpcion", idAspiranteOpcion);
         Mockito.verify(mockQuery).getSingleResult();
         System.out.println("PruebaJornadaAulaAspiranteOpcionExamenDAOTest.contarPorPadreTest - finalizado");
     }
 
     @Test
-    public void buscarPorIdYPadreEncontradoTest() {
-        System.out.println("PruebaJornadaAulaAspiranteOpcionExamenDAOTest.buscarPorIdYPadreEncontradoTest");
-        UUID id = UUID.randomUUID();
-        UUID idPruebaJornadaAulaAspiranteOpcion = UUID.randomUUID();
-        PruebaJornadaAulaAspiranteOpcionExamen esperado = new PruebaJornadaAulaAspiranteOpcionExamen(id);
+    public void buscarPorPadreEncontradoTest() {
+        System.out.println("PruebaJornadaAulaAspiranteOpcionExamenDAOTest.buscarPorPadreEncontradoTest");
+        UUID idPrueba = UUID.randomUUID();
+        UUID idJornada = UUID.randomUUID();
+        String idAula = "A-01";
+        UUID idAspiranteOpcion = UUID.randomUUID();
+        PruebaJornadaAulaAspiranteOpcionExamen esperado = new PruebaJornadaAulaAspiranteOpcionExamen(idAspiranteOpcion);
 
         PruebaJornadaAulaAspiranteOpcionExamenDAO cut = new PruebaJornadaAulaAspiranteOpcionExamenDAO();
 
         NullPointerException npe = assertThrows(NullPointerException.class,
-                () -> cut.buscarPorIdYPadre(id, idPruebaJornadaAulaAspiranteOpcion));
+                () -> cut.buscarPorPadre(idPrueba, idJornada, idAula, idAspiranteOpcion));
         assertNotNull(npe);
 
         EntityManager mockEM = Mockito.mock(EntityManager.class);
@@ -131,34 +147,37 @@ public class PruebaJornadaAulaAspiranteOpcionExamenDAOTest {
         TypedQuery<PruebaJornadaAulaAspiranteOpcionExamen> mockQuery = Mockito.mock(TypedQuery.class);
 
         Mockito.when(mockEM.createNamedQuery(
-                "PruebaJornadaAulaAspiranteOpcionExamen.buscarPorIdYPadre",
+                "PruebaJornadaAulaAspiranteOpcionExamen.buscarUnicoPorPadre",
                 PruebaJornadaAulaAspiranteOpcionExamen.class)).thenReturn(mockQuery);
-        Mockito.when(mockQuery.setParameter("idPruebaJornadaAulaAspiranteOpcionExamen", id))
-                .thenReturn(mockQuery);
-        Mockito.when(mockQuery.setParameter("idPruebaJornadaAulaAspiranteOpcion",
-                idPruebaJornadaAulaAspiranteOpcion)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idPrueba", idPrueba)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idJornada", idJornada)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idAula", idAula)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idAspiranteOpcion", idAspiranteOpcion)).thenReturn(mockQuery);
         Mockito.when(mockQuery.setMaxResults(1)).thenReturn(mockQuery);
         Mockito.when(mockQuery.getResultList()).thenReturn(List.of(esperado));
 
         cut.em = mockEM;
         PruebaJornadaAulaAspiranteOpcionExamen resultado =
-                cut.buscarPorIdYPadre(id, idPruebaJornadaAulaAspiranteOpcion);
+                cut.buscarPorPadre(idPrueba, idJornada, idAula, idAspiranteOpcion);
 
         assertNotNull(resultado);
-        assertEquals(id, resultado.getIdPruebaJornadaAulaAspiranteOpcionExamen());
-        Mockito.verify(mockQuery).setParameter("idPruebaJornadaAulaAspiranteOpcionExamen", id);
-        Mockito.verify(mockQuery).setParameter("idPruebaJornadaAulaAspiranteOpcion",
-                idPruebaJornadaAulaAspiranteOpcion);
+        assertEquals(idAspiranteOpcion, resultado.getIdAspiranteOpcion());
+        Mockito.verify(mockQuery).setParameter("idPrueba", idPrueba);
+        Mockito.verify(mockQuery).setParameter("idJornada", idJornada);
+        Mockito.verify(mockQuery).setParameter("idAula", idAula);
+        Mockito.verify(mockQuery).setParameter("idAspiranteOpcion", idAspiranteOpcion);
         Mockito.verify(mockQuery).setMaxResults(1);
         Mockito.verify(mockQuery).getResultList();
-        System.out.println("PruebaJornadaAulaAspiranteOpcionExamenDAOTest.buscarPorIdYPadreEncontradoTest - finalizado");
+                System.out.println("PruebaJornadaAulaAspiranteOpcionExamenDAOTest.buscarPorPadreEncontradoTest - finalizado");
     }
 
     @Test
-    public void buscarPorIdYPadreNoEncontradoTest() {
-        System.out.println("PruebaJornadaAulaAspiranteOpcionExamenDAOTest.buscarPorIdYPadreNoEncontradoTest");
-        UUID id = UUID.randomUUID();
-        UUID idPruebaJornadaAulaAspiranteOpcion = UUID.randomUUID();
+        public void buscarPorPadreNoEncontradoTest() {
+                System.out.println("PruebaJornadaAulaAspiranteOpcionExamenDAOTest.buscarPorPadreNoEncontradoTest");
+                UUID idPrueba = UUID.randomUUID();
+                UUID idJornada = UUID.randomUUID();
+                String idAula = "A-01";
+                UUID idAspiranteOpcion = UUID.randomUUID();
 
         PruebaJornadaAulaAspiranteOpcionExamenDAO cut = new PruebaJornadaAulaAspiranteOpcionExamenDAO();
         EntityManager mockEM = Mockito.mock(EntityManager.class);
@@ -166,25 +185,26 @@ public class PruebaJornadaAulaAspiranteOpcionExamenDAOTest {
         TypedQuery<PruebaJornadaAulaAspiranteOpcionExamen> mockQuery = Mockito.mock(TypedQuery.class);
 
         Mockito.when(mockEM.createNamedQuery(
-                "PruebaJornadaAulaAspiranteOpcionExamen.buscarPorIdYPadre",
+                "PruebaJornadaAulaAspiranteOpcionExamen.buscarUnicoPorPadre",
                 PruebaJornadaAulaAspiranteOpcionExamen.class)).thenReturn(mockQuery);
-        Mockito.when(mockQuery.setParameter("idPruebaJornadaAulaAspiranteOpcionExamen", id))
-                .thenReturn(mockQuery);
-        Mockito.when(mockQuery.setParameter("idPruebaJornadaAulaAspiranteOpcion",
-                idPruebaJornadaAulaAspiranteOpcion)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idPrueba", idPrueba)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idJornada", idJornada)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idAula", idAula)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idAspiranteOpcion", idAspiranteOpcion)).thenReturn(mockQuery);
         Mockito.when(mockQuery.setMaxResults(1)).thenReturn(mockQuery);
         Mockito.when(mockQuery.getResultList()).thenReturn(List.of());
 
         cut.em = mockEM;
         PruebaJornadaAulaAspiranteOpcionExamen resultado =
-                cut.buscarPorIdYPadre(id, idPruebaJornadaAulaAspiranteOpcion);
+                cut.buscarPorPadre(idPrueba, idJornada, idAula, idAspiranteOpcion);
 
         assertNull(resultado);
-        Mockito.verify(mockQuery).setParameter("idPruebaJornadaAulaAspiranteOpcionExamen", id);
-        Mockito.verify(mockQuery).setParameter("idPruebaJornadaAulaAspiranteOpcion",
-                idPruebaJornadaAulaAspiranteOpcion);
+        Mockito.verify(mockQuery).setParameter("idPrueba", idPrueba);
+        Mockito.verify(mockQuery).setParameter("idJornada", idJornada);
+        Mockito.verify(mockQuery).setParameter("idAula", idAula);
+        Mockito.verify(mockQuery).setParameter("idAspiranteOpcion", idAspiranteOpcion);
         Mockito.verify(mockQuery).setMaxResults(1);
         Mockito.verify(mockQuery).getResultList();
-        System.out.println("PruebaJornadaAulaAspiranteOpcionExamenDAOTest.buscarPorIdYPadreNoEncontradoTest - finalizado");
+                System.out.println("PruebaJornadaAulaAspiranteOpcionExamenDAOTest.buscarPorPadreNoEncontradoTest - finalizado");
     }
 }

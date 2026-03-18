@@ -40,10 +40,10 @@ public class PruebaClaveAreaDAO extends DefaultDAO<PruebaClaveArea> implements S
                 .getSingleResult();
     }
 
-    public PruebaClaveArea buscarPorIdYPruebaClave(UUID idPruebaClaveArea, UUID idPruebaClave) {
+    public PruebaClaveArea buscarPorIdYPruebaClave(UUID idArea, UUID idPruebaClave) {
         List<PruebaClaveArea> resultados = em
                 .createNamedQuery("PruebaClaveArea.buscarPorIdYPruebaClave", PruebaClaveArea.class)
-                .setParameter("idPruebaClaveArea", idPruebaClaveArea)
+                .setParameter("idArea", idArea)
                 .setParameter("idPruebaClave", idPruebaClave)
                 .setMaxResults(1)
                 .getResultList();

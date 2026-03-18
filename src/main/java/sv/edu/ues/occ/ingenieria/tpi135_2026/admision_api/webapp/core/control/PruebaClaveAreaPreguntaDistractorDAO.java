@@ -27,31 +27,37 @@ public class PruebaClaveAreaPreguntaDistractorDAO extends DefaultDAO<PruebaClave
     }
 
     public List<PruebaClaveAreaPreguntaDistractor> buscarPorPadreRango(
-            UUID idPruebaClaveAreaPregunta, int first, int max) {
+            UUID idPruebaClave, UUID idArea, UUID idPregunta, int first, int max) {
         return em.createNamedQuery(
                 "PruebaClaveAreaPreguntaDistractor.buscarPorPadre",
                 PruebaClaveAreaPreguntaDistractor.class)
-                .setParameter("idPruebaClaveAreaPregunta", idPruebaClaveAreaPregunta)
+            .setParameter("idPruebaClave", idPruebaClave)
+            .setParameter("idArea", idArea)
+            .setParameter("idPregunta", idPregunta)
                 .setFirstResult(first)
                 .setMaxResults(max)
                 .getResultList();
     }
 
-    public Long contarPorPadre(UUID idPruebaClaveAreaPregunta) {
+    public Long contarPorPadre(UUID idPruebaClave, UUID idArea, UUID idPregunta) {
         return em.createNamedQuery(
                 "PruebaClaveAreaPreguntaDistractor.contarPorPadre", Long.class)
-                .setParameter("idPruebaClaveAreaPregunta", idPruebaClaveAreaPregunta)
+            .setParameter("idPruebaClave", idPruebaClave)
+            .setParameter("idArea", idArea)
+            .setParameter("idPregunta", idPregunta)
                 .getSingleResult();
     }
 
     public PruebaClaveAreaPreguntaDistractor buscarPorIdYPadre(
-            UUID id, UUID idPruebaClaveAreaPregunta) {
+            UUID idDistractor, UUID idPruebaClave, UUID idArea, UUID idPregunta) {
         List<PruebaClaveAreaPreguntaDistractor> resultados = em
                 .createNamedQuery(
                         "PruebaClaveAreaPreguntaDistractor.buscarPorIdYPadre",
                         PruebaClaveAreaPreguntaDistractor.class)
-                .setParameter("idPruebaClaveAreaPreguntaDistractor", id)
-                .setParameter("idPruebaClaveAreaPregunta", idPruebaClaveAreaPregunta)
+            .setParameter("idDistractor", idDistractor)
+            .setParameter("idPruebaClave", idPruebaClave)
+            .setParameter("idArea", idArea)
+            .setParameter("idPregunta", idPregunta)
                 .setMaxResults(1)
                 .getResultList();
         return resultados.isEmpty() ? null : resultados.get(0);

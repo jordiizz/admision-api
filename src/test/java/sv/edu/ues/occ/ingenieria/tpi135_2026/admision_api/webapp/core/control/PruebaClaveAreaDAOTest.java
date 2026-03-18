@@ -125,7 +125,7 @@ public class PruebaClaveAreaDAOTest {
 
         Mockito.when(mockEM.createNamedQuery("PruebaClaveArea.buscarPorIdYPruebaClave", PruebaClaveArea.class))
                 .thenReturn(mockQuery);
-        Mockito.when(mockQuery.setParameter("idPruebaClaveArea", idPruebaClaveArea)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idArea", idPruebaClaveArea)).thenReturn(mockQuery);
         Mockito.when(mockQuery.setParameter("idPruebaClave", idPruebaClave)).thenReturn(mockQuery);
         Mockito.when(mockQuery.setMaxResults(1)).thenReturn(mockQuery);
         Mockito.when(mockQuery.getResultList()).thenReturn(List.of(esperado));
@@ -135,7 +135,7 @@ public class PruebaClaveAreaDAOTest {
 
         assertNotNull(resultado);
         assertEquals(idPruebaClaveArea, resultado.getIdPruebaClaveArea());
-        Mockito.verify(mockQuery, Mockito.times(1)).setParameter("idPruebaClaveArea", idPruebaClaveArea);
+        Mockito.verify(mockQuery, Mockito.times(1)).setParameter("idArea", idPruebaClaveArea);
         Mockito.verify(mockQuery, Mockito.times(1)).setParameter("idPruebaClave", idPruebaClave);
         Mockito.verify(mockQuery, Mockito.times(1)).setMaxResults(1);
         Mockito.verify(mockQuery, Mockito.times(1)).getResultList();
@@ -155,7 +155,7 @@ public class PruebaClaveAreaDAOTest {
 
         Mockito.when(mockEM.createNamedQuery("PruebaClaveArea.buscarPorIdYPruebaClave", PruebaClaveArea.class))
                 .thenReturn(mockQuery);
-        Mockito.when(mockQuery.setParameter("idPruebaClaveArea", idPruebaClaveArea)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idArea", idPruebaClaveArea)).thenReturn(mockQuery);
         Mockito.when(mockQuery.setParameter("idPruebaClave", idPruebaClave)).thenReturn(mockQuery);
         Mockito.when(mockQuery.setMaxResults(1)).thenReturn(mockQuery);
         Mockito.when(mockQuery.getResultList()).thenReturn(List.of());
@@ -164,7 +164,7 @@ public class PruebaClaveAreaDAOTest {
         PruebaClaveArea resultado = cut.buscarPorIdYPruebaClave(idPruebaClaveArea, idPruebaClave);
 
         assertNull(resultado);
-        Mockito.verify(mockQuery, Mockito.times(1)).setParameter("idPruebaClaveArea", idPruebaClaveArea);
+        Mockito.verify(mockQuery, Mockito.times(1)).setParameter("idArea", idPruebaClaveArea);
         Mockito.verify(mockQuery, Mockito.times(1)).setParameter("idPruebaClave", idPruebaClave);
         Mockito.verify(mockQuery, Mockito.times(1)).setMaxResults(1);
         Mockito.verify(mockQuery, Mockito.times(1)).getResultList();

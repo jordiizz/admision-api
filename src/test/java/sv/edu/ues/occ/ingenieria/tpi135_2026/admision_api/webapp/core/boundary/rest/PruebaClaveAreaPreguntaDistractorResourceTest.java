@@ -18,6 +18,7 @@ import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.Pr
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Distractor;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveAreaPregunta;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveAreaPreguntaDistractor;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveAreaPreguntaPK;
 
 public class PruebaClaveAreaPreguntaDistractorResourceTest {
 
@@ -26,7 +27,9 @@ public class PruebaClaveAreaPreguntaDistractorResourceTest {
     private PruebaClaveAreaPreguntaDAO mockPruebaClaveAreaPreguntaDAO;
     private DistractorDAO mockDistractorDAO;
     private PruebaClaveAreaPreguntaDistractorResource cut;
-    private UUID idPadre;
+    private UUID idPruebaClave;
+    private UUID idArea;
+    private UUID idPregunta;
 
     @BeforeEach
     public void setup() {
@@ -40,7 +43,9 @@ public class PruebaClaveAreaPreguntaDistractorResourceTest {
         Mockito.when(mockUriBuilder.path(Mockito.anyString())).thenReturn(mockUriBuilder);
         Mockito.when(mockUriBuilder.build()).thenReturn(URI.create("http://localhost/1"));
 
-        idPadre = UUID.randomUUID();
+        idPruebaClave = UUID.randomUUID();
+        idArea = UUID.randomUUID();
+        idPregunta = UUID.randomUUID();
         cut = new PruebaClaveAreaPreguntaDistractorResource();
         cut.pruebaClaveAreaPreguntaDistractorDAO = mockDAO;
         cut.pruebaClaveAreaPreguntaDAO = mockPruebaClaveAreaPreguntaDAO;
@@ -51,13 +56,13 @@ public class PruebaClaveAreaPreguntaDistractorResourceTest {
     public void crearExitosoTest() {
         UUID idDistractor = UUID.randomUUID();
         PruebaClaveAreaPreguntaDistractor entity = new PruebaClaveAreaPreguntaDistractor();
-        entity.setIdDistractor(new Distractor(idDistractor));
+        entity.setIdDistractor(idDistractor);
 
-        Mockito.when(mockPruebaClaveAreaPreguntaDAO.buscarPorId(idPadre))
-                .thenReturn(new PruebaClaveAreaPregunta(idPadre));
+        Mockito.when(mockPruebaClaveAreaPreguntaDAO.buscarPorId(new PruebaClaveAreaPreguntaPK(idPruebaClave, idArea, idPregunta)))
+            .thenReturn(new PruebaClaveAreaPregunta(idPruebaClave, idArea, idPregunta));
         Mockito.when(mockDistractorDAO.buscarPorId(idDistractor)).thenReturn(new Distractor(idDistractor));
 
-        Response res = cut.crear(idPadre, entity, mockUriInfo);
+        Response res = cut.crear(idPruebaClave, idArea, idPregunta, entity, mockUriInfo);
         assertEquals(201, res.getStatus());
         Mockito.verify(mockDAO).crear(entity);
     }
@@ -65,28 +70,28 @@ public class PruebaClaveAreaPreguntaDistractorResourceTest {
     @Test
     public void crearValidacionFallidaTest() {
         PruebaClaveAreaPreguntaDistractor entityValida = new PruebaClaveAreaPreguntaDistractor();
-        entityValida.setIdDistractor(new Distractor(UUID.randomUUID()));
+        entityValida.setIdDistractor(UUID.randomUUID());
 
         PruebaClaveAreaPreguntaDistractor entitySinDistractor = new PruebaClaveAreaPreguntaDistractor();
 
-        assertEquals(422, cut.crear(null, entityValida, mockUriInfo).getStatus());
-        assertEquals(422, cut.crear(idPadre, null, mockUriInfo).getStatus());
-        assertEquals(422, cut.crear(idPadre, entitySinDistractor, mockUriInfo).getStatus());
+        assertEquals(422, cut.crear(null, idArea, idPregunta, entityValida, mockUriInfo).getStatus());
+        assertEquals(422, cut.crear(idPruebaClave, idArea, idPregunta, null, mockUriInfo).getStatus());
+        assertEquals(422, cut.crear(idPruebaClave, idArea, idPregunta, entitySinDistractor, mockUriInfo).getStatus());
 
         PruebaClaveAreaPreguntaDistractor entityDistractorSinId = new PruebaClaveAreaPreguntaDistractor();
-        entityDistractorSinId.setIdDistractor(new Distractor());
-        assertEquals(422, cut.crear(idPadre, entityDistractorSinId, mockUriInfo).getStatus());
+        entityDistractorSinId.setIdDistractor(null);
+        assertEquals(422, cut.crear(idPruebaClave, idArea, idPregunta, entityDistractorSinId, mockUriInfo).getStatus());
     }
 
     @Test
     public void crearPadreNoEncontradoTest() {
         UUID idDistractor = UUID.randomUUID();
         PruebaClaveAreaPreguntaDistractor entity = new PruebaClaveAreaPreguntaDistractor();
-        entity.setIdDistractor(new Distractor(idDistractor));
+        entity.setIdDistractor(idDistractor);
 
-        Mockito.when(mockPruebaClaveAreaPreguntaDAO.buscarPorId(idPadre)).thenReturn(null);
+        Mockito.when(mockPruebaClaveAreaPreguntaDAO.buscarPorId(new PruebaClaveAreaPreguntaPK(idPruebaClave, idArea, idPregunta))).thenReturn(null);
 
-        Response res = cut.crear(idPadre, entity, mockUriInfo);
+        Response res = cut.crear(idPruebaClave, idArea, idPregunta, entity, mockUriInfo);
         assertEquals(404, res.getStatus());
     }
 
@@ -94,85 +99,85 @@ public class PruebaClaveAreaPreguntaDistractorResourceTest {
     public void crearDistractorNoEncontradoTest() {
         UUID idDistractor = UUID.randomUUID();
         PruebaClaveAreaPreguntaDistractor entity = new PruebaClaveAreaPreguntaDistractor();
-        entity.setIdDistractor(new Distractor(idDistractor));
+        entity.setIdDistractor(idDistractor);
 
-        Mockito.when(mockPruebaClaveAreaPreguntaDAO.buscarPorId(idPadre))
-                .thenReturn(new PruebaClaveAreaPregunta(idPadre));
+        Mockito.when(mockPruebaClaveAreaPreguntaDAO.buscarPorId(new PruebaClaveAreaPreguntaPK(idPruebaClave, idArea, idPregunta)))
+            .thenReturn(new PruebaClaveAreaPregunta(idPruebaClave, idArea, idPregunta));
         Mockito.when(mockDistractorDAO.buscarPorId(idDistractor)).thenReturn(null);
 
-        Response res = cut.crear(idPadre, entity, mockUriInfo);
+        Response res = cut.crear(idPruebaClave, idArea, idPregunta, entity, mockUriInfo);
         assertEquals(404, res.getStatus());
     }
 
     @Test
     public void crearExcepcionTest() {
         PruebaClaveAreaPreguntaDistractor entity = new PruebaClaveAreaPreguntaDistractor();
-        entity.setIdDistractor(new Distractor(UUID.randomUUID()));
+        entity.setIdDistractor(UUID.randomUUID());
 
-        Mockito.when(mockPruebaClaveAreaPreguntaDAO.buscarPorId(Mockito.any()))
+        Mockito.when(mockPruebaClaveAreaPreguntaDAO.buscarPorId(Mockito.any(PruebaClaveAreaPreguntaPK.class)))
                 .thenThrow(new RuntimeException("Error BD"));
-        Response res = cut.crear(idPadre, entity, mockUriInfo);
+        Response res = cut.crear(idPruebaClave, idArea, idPregunta, entity, mockUriInfo);
         assertEquals(500, res.getStatus());
     }
 
     @Test
     public void buscarPorRangoExitosoTest() {
-        Mockito.when(mockDAO.buscarPorPadreRango(idPadre, 0, 50)).thenReturn(List.of());
-        Mockito.when(mockDAO.contarPorPadre(idPadre)).thenReturn(0L);
+        Mockito.when(mockDAO.buscarPorPadreRango(idPruebaClave, idArea, idPregunta, 0, 50)).thenReturn(List.of());
+        Mockito.when(mockDAO.contarPorPadre(idPruebaClave, idArea, idPregunta)).thenReturn(0L);
 
-        Response res = cut.buscarPorRango(idPadre, 0, 50);
+        Response res = cut.buscarPorRango(idPruebaClave, idArea, idPregunta, 0, 50);
         assertEquals(200, res.getStatus());
     }
 
     @Test
     public void buscarPorRangoValidacionFallidaTest() {
-        assertEquals(422, cut.buscarPorRango(null, 0, 50).getStatus());
-        assertEquals(422, cut.buscarPorRango(idPadre, -1, 50).getStatus());
-        assertEquals(422, cut.buscarPorRango(idPadre, 0, 0).getStatus());
-        assertEquals(422, cut.buscarPorRango(idPadre, 0, 51).getStatus());
+        assertEquals(422, cut.buscarPorRango(null, idArea, idPregunta, 0, 50).getStatus());
+        assertEquals(422, cut.buscarPorRango(idPruebaClave, idArea, idPregunta, -1, 50).getStatus());
+        assertEquals(422, cut.buscarPorRango(idPruebaClave, idArea, idPregunta, 0, 0).getStatus());
+        assertEquals(422, cut.buscarPorRango(idPruebaClave, idArea, idPregunta, 0, 51).getStatus());
     }
 
     @Test
     public void buscarPorRangoExcepcionTest() {
-        Mockito.when(mockDAO.buscarPorPadreRango(Mockito.any(), Mockito.anyInt(), Mockito.anyInt()))
+        Mockito.when(mockDAO.buscarPorPadreRango(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.anyInt(), Mockito.anyInt()))
                 .thenThrow(new RuntimeException("Error BD"));
 
-        Response res = cut.buscarPorRango(idPadre, 0, 50);
+        Response res = cut.buscarPorRango(idPruebaClave, idArea, idPregunta, 0, 50);
         assertEquals(500, res.getStatus());
     }
 
     @Test
     public void buscarPorIdExitosoTest() {
         UUID id = UUID.randomUUID();
-        Mockito.when(mockDAO.buscarPorIdYPadre(id, idPadre))
-                .thenReturn(new PruebaClaveAreaPreguntaDistractor(id));
+        Mockito.when(mockDAO.buscarPorIdYPadre(id, idPruebaClave, idArea, idPregunta))
+            .thenReturn(new PruebaClaveAreaPreguntaDistractor(UUID.randomUUID(), UUID.randomUUID(), idPregunta, id));
 
-        Response res = cut.buscarPorId(idPadre, id);
+        Response res = cut.buscarPorId(idPruebaClave, idArea, idPregunta, id);
         assertEquals(200, res.getStatus());
     }
 
     @Test
     public void buscarPorIdNoEncontradoTest() {
         UUID id = UUID.randomUUID();
-        Mockito.when(mockDAO.buscarPorIdYPadre(id, idPadre)).thenReturn(null);
+        Mockito.when(mockDAO.buscarPorIdYPadre(id, idPruebaClave, idArea, idPregunta)).thenReturn(null);
 
-        Response res = cut.buscarPorId(idPadre, id);
+        Response res = cut.buscarPorId(idPruebaClave, idArea, idPregunta, id);
         assertEquals(404, res.getStatus());
     }
 
     @Test
     public void buscarPorIdValidacionFallidaTest() {
         UUID id = UUID.randomUUID();
-        assertEquals(422, cut.buscarPorId(null, id).getStatus());
-        assertEquals(422, cut.buscarPorId(idPadre, null).getStatus());
+        assertEquals(422, cut.buscarPorId(null, idArea, idPregunta, id).getStatus());
+        assertEquals(422, cut.buscarPorId(idPruebaClave, idArea, idPregunta, null).getStatus());
     }
 
     @Test
     public void buscarPorIdExcepcionTest() {
-        Mockito.when(mockDAO.buscarPorIdYPadre(Mockito.any(), Mockito.any()))
+        Mockito.when(mockDAO.buscarPorIdYPadre(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenThrow(new RuntimeException("Error BD"));
 
-        Response res = cut.buscarPorId(idPadre, UUID.randomUUID());
+        Response res = cut.buscarPorId(idPruebaClave, idArea, idPregunta, UUID.randomUUID());
         assertEquals(500, res.getStatus());
     }
 
@@ -181,16 +186,19 @@ public class PruebaClaveAreaPreguntaDistractorResourceTest {
         UUID id = UUID.randomUUID();
         UUID idDistractor = UUID.randomUUID();
 
-        PruebaClaveAreaPreguntaDistractor entity = new PruebaClaveAreaPreguntaDistractor(id);
-        entity.setIdDistractor(new Distractor(idDistractor));
+        PruebaClaveAreaPreguntaDistractor entity = new PruebaClaveAreaPreguntaDistractor();
+        entity.setIdDistractor(idDistractor);
 
-        PruebaClaveAreaPreguntaDistractor existente = new PruebaClaveAreaPreguntaDistractor(id);
-        existente.setIdPruebaClaveAreaPregunta(new PruebaClaveAreaPregunta(idPadre));
+        PruebaClaveAreaPreguntaDistractor existente = new PruebaClaveAreaPreguntaDistractor();
+        existente.setIdPruebaClave(UUID.randomUUID());
+        existente.setIdArea(UUID.randomUUID());
+        existente.setIdPregunta(idPregunta);
+        existente.setIdDistractor(UUID.randomUUID());
 
-        Mockito.when(mockDAO.buscarPorIdYPadre(id, idPadre)).thenReturn(existente);
+        Mockito.when(mockDAO.buscarPorIdYPadre(id, idPruebaClave, idArea, idPregunta)).thenReturn(existente);
         Mockito.when(mockDistractorDAO.buscarPorId(idDistractor)).thenReturn(new Distractor(idDistractor));
 
-        Response res = cut.actualizar(idPadre, id, entity);
+        Response res = cut.actualizar(idPruebaClave, idArea, idPregunta, id, entity);
         assertEquals(200, res.getStatus());
         Mockito.verify(mockDAO).actualizar(entity);
     }
@@ -198,22 +206,24 @@ public class PruebaClaveAreaPreguntaDistractorResourceTest {
     @Test
     public void actualizarSustituyeIdBodyPorIdPathTest() {
         UUID idPath = UUID.randomUUID();
-        UUID idBody = UUID.randomUUID();
         UUID idDistractor = UUID.randomUUID();
 
-        PruebaClaveAreaPreguntaDistractor entity = new PruebaClaveAreaPreguntaDistractor(idBody);
-        entity.setIdDistractor(new Distractor(idDistractor));
+        PruebaClaveAreaPreguntaDistractor entity = new PruebaClaveAreaPreguntaDistractor();
+        entity.setIdDistractor(idDistractor);
 
-        PruebaClaveAreaPreguntaDistractor existente = new PruebaClaveAreaPreguntaDistractor(idPath);
-        existente.setIdPruebaClaveAreaPregunta(new PruebaClaveAreaPregunta(idPadre));
+        PruebaClaveAreaPreguntaDistractor existente = new PruebaClaveAreaPreguntaDistractor();
+        existente.setIdPruebaClave(UUID.randomUUID());
+        existente.setIdArea(UUID.randomUUID());
+        existente.setIdPregunta(idPregunta);
+        existente.setIdDistractor(idPath);
 
-        Mockito.when(mockDAO.buscarPorIdYPadre(idPath, idPadre)).thenReturn(existente);
+        Mockito.when(mockDAO.buscarPorIdYPadre(idPath, idPruebaClave, idArea, idPregunta)).thenReturn(existente);
         Mockito.when(mockDistractorDAO.buscarPorId(idDistractor)).thenReturn(new Distractor(idDistractor));
 
-        Response res = cut.actualizar(idPadre, idPath, entity);
+        Response res = cut.actualizar(idPruebaClave, idArea, idPregunta, idPath, entity);
 
         assertEquals(200, res.getStatus());
-        assertEquals(idPath, entity.getIdPruebaClaveAreaPreguntaDistractor());
+        assertEquals(idDistractor, entity.getIdDistractor());
         Mockito.verify(mockDAO).actualizar(entity);
     }
 
@@ -222,18 +232,20 @@ public class PruebaClaveAreaPreguntaDistractorResourceTest {
         UUID id = UUID.randomUUID();
         UUID idDistractorExistente = UUID.randomUUID();
 
-        PruebaClaveAreaPreguntaDistractor entity = new PruebaClaveAreaPreguntaDistractor(id);
+        PruebaClaveAreaPreguntaDistractor entity = new PruebaClaveAreaPreguntaDistractor();
         entity.setIdDistractor(null);
 
-        PruebaClaveAreaPreguntaDistractor existente = new PruebaClaveAreaPreguntaDistractor(id);
-        existente.setIdPruebaClaveAreaPregunta(new PruebaClaveAreaPregunta(idPadre));
-        existente.setIdDistractor(new Distractor(idDistractorExistente));
+        PruebaClaveAreaPreguntaDistractor existente = new PruebaClaveAreaPreguntaDistractor();
+        existente.setIdPruebaClave(UUID.randomUUID());
+        existente.setIdArea(UUID.randomUUID());
+        existente.setIdPregunta(idPregunta);
+        existente.setIdDistractor(idDistractorExistente);
 
-        Mockito.when(mockDAO.buscarPorIdYPadre(id, idPadre)).thenReturn(existente);
+        Mockito.when(mockDAO.buscarPorIdYPadre(id, idPruebaClave, idArea, idPregunta)).thenReturn(existente);
 
-        Response res = cut.actualizar(idPadre, id, entity);
+        Response res = cut.actualizar(idPruebaClave, idArea, idPregunta, id, entity);
         assertEquals(200, res.getStatus());
-        assertEquals(idDistractorExistente, entity.getIdDistractor().getIdDistractor());
+        assertEquals(idDistractorExistente, entity.getIdDistractor());
         Mockito.verify(mockDAO).actualizar(entity);
         Mockito.verify(mockDistractorDAO, Mockito.never()).buscarPorId(Mockito.any());
     }
@@ -243,18 +255,20 @@ public class PruebaClaveAreaPreguntaDistractorResourceTest {
         UUID id = UUID.randomUUID();
         UUID idDistractorExistente = UUID.randomUUID();
 
-        PruebaClaveAreaPreguntaDistractor entity = new PruebaClaveAreaPreguntaDistractor(id);
-        entity.setIdDistractor(new Distractor());
+        PruebaClaveAreaPreguntaDistractor entity = new PruebaClaveAreaPreguntaDistractor();
+        entity.setIdDistractor(null);
 
-        PruebaClaveAreaPreguntaDistractor existente = new PruebaClaveAreaPreguntaDistractor(id);
-        existente.setIdPruebaClaveAreaPregunta(new PruebaClaveAreaPregunta(idPadre));
-        existente.setIdDistractor(new Distractor(idDistractorExistente));
+        PruebaClaveAreaPreguntaDistractor existente = new PruebaClaveAreaPreguntaDistractor();
+        existente.setIdPruebaClave(UUID.randomUUID());
+        existente.setIdArea(UUID.randomUUID());
+        existente.setIdPregunta(idPregunta);
+        existente.setIdDistractor(idDistractorExistente);
 
-        Mockito.when(mockDAO.buscarPorIdYPadre(id, idPadre)).thenReturn(existente);
+        Mockito.when(mockDAO.buscarPorIdYPadre(id, idPruebaClave, idArea, idPregunta)).thenReturn(existente);
 
-        Response res = cut.actualizar(idPadre, id, entity);
+        Response res = cut.actualizar(idPruebaClave, idArea, idPregunta, id, entity);
         assertEquals(200, res.getStatus());
-        assertEquals(idDistractorExistente, entity.getIdDistractor().getIdDistractor());
+        assertEquals(idDistractorExistente, entity.getIdDistractor());
         Mockito.verify(mockDAO).actualizar(entity);
         Mockito.verify(mockDistractorDAO, Mockito.never()).buscarPorId(Mockito.any());
     }
@@ -264,56 +278,59 @@ public class PruebaClaveAreaPreguntaDistractorResourceTest {
         UUID id = UUID.randomUUID();
         UUID idDistractor = UUID.randomUUID();
 
-        PruebaClaveAreaPreguntaDistractor entity = new PruebaClaveAreaPreguntaDistractor(id);
-        entity.setIdDistractor(new Distractor(idDistractor));
+        PruebaClaveAreaPreguntaDistractor entity = new PruebaClaveAreaPreguntaDistractor();
+        entity.setIdDistractor(idDistractor);
 
-        PruebaClaveAreaPreguntaDistractor existente = new PruebaClaveAreaPreguntaDistractor(id);
-        existente.setIdPruebaClaveAreaPregunta(new PruebaClaveAreaPregunta(idPadre));
+        PruebaClaveAreaPreguntaDistractor existente = new PruebaClaveAreaPreguntaDistractor();
+        existente.setIdPruebaClave(UUID.randomUUID());
+        existente.setIdArea(UUID.randomUUID());
+        existente.setIdPregunta(idPregunta);
+        existente.setIdDistractor(UUID.randomUUID());
 
-        Mockito.when(mockDAO.buscarPorIdYPadre(id, idPadre)).thenReturn(existente);
+        Mockito.when(mockDAO.buscarPorIdYPadre(id, idPruebaClave, idArea, idPregunta)).thenReturn(existente);
         Mockito.when(mockDistractorDAO.buscarPorId(idDistractor)).thenReturn(null);
 
-        Response res = cut.actualizar(idPadre, id, entity);
+        Response res = cut.actualizar(idPruebaClave, idArea, idPregunta, id, entity);
         assertEquals(404, res.getStatus());
     }
 
     @Test
     public void actualizarValidacionFallidaTest() {
-        PruebaClaveAreaPreguntaDistractor entityValida = new PruebaClaveAreaPreguntaDistractor(UUID.randomUUID());
+        PruebaClaveAreaPreguntaDistractor entityValida = new PruebaClaveAreaPreguntaDistractor();
 
-        assertEquals(422, cut.actualizar(null, null, entityValida).getStatus());
-        assertEquals(422, cut.actualizar(idPadre, UUID.randomUUID(), null).getStatus());
-        assertEquals(422, cut.actualizar(idPadre, null, entityValida).getStatus());
+        assertEquals(422, cut.actualizar(null, idArea, idPregunta, null, entityValida).getStatus());
+        assertEquals(422, cut.actualizar(idPruebaClave, idArea, idPregunta, UUID.randomUUID(), null).getStatus());
+        assertEquals(422, cut.actualizar(idPruebaClave, idArea, idPregunta, null, entityValida).getStatus());
     }
 
     @Test
     public void actualizarNoEncontradoTest() {
         UUID id = UUID.randomUUID();
-        Mockito.when(mockDAO.buscarPorIdYPadre(id, idPadre)).thenReturn(null);
+        Mockito.when(mockDAO.buscarPorIdYPadre(id, idPruebaClave, idArea, idPregunta)).thenReturn(null);
 
-        Response res = cut.actualizar(idPadre, id, new PruebaClaveAreaPreguntaDistractor(id));
+        Response res = cut.actualizar(idPruebaClave, idArea, idPregunta, id, new PruebaClaveAreaPreguntaDistractor());
         assertEquals(404, res.getStatus());
     }
 
     @Test
     public void actualizarExcepcionTest() {
         UUID id = UUID.randomUUID();
-        PruebaClaveAreaPreguntaDistractor entity = new PruebaClaveAreaPreguntaDistractor(id);
+        PruebaClaveAreaPreguntaDistractor entity = new PruebaClaveAreaPreguntaDistractor();
 
-        Mockito.when(mockDAO.buscarPorIdYPadre(Mockito.any(), Mockito.any()))
+        Mockito.when(mockDAO.buscarPorIdYPadre(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenThrow(new RuntimeException("Error BD"));
 
-        Response res = cut.actualizar(idPadre, id, entity);
+        Response res = cut.actualizar(idPruebaClave, idArea, idPregunta, id, entity);
         assertEquals(500, res.getStatus());
     }
 
     @Test
     public void eliminarExitosoTest() {
         UUID id = UUID.randomUUID();
-        PruebaClaveAreaPreguntaDistractor existente = new PruebaClaveAreaPreguntaDistractor(id);
-        Mockito.when(mockDAO.buscarPorIdYPadre(id, idPadre)).thenReturn(existente);
+        PruebaClaveAreaPreguntaDistractor existente = new PruebaClaveAreaPreguntaDistractor();
+        Mockito.when(mockDAO.buscarPorIdYPadre(id, idPruebaClave, idArea, idPregunta)).thenReturn(existente);
 
-        Response res = cut.eliminar(idPadre, id);
+        Response res = cut.eliminar(idPruebaClave, idArea, idPregunta, id);
         assertEquals(204, res.getStatus());
         Mockito.verify(mockDAO).eliminar(existente);
     }
@@ -321,25 +338,25 @@ public class PruebaClaveAreaPreguntaDistractorResourceTest {
     @Test
     public void eliminarValidacionFallidaTest() {
         UUID id = UUID.randomUUID();
-        assertEquals(422, cut.eliminar(null, id).getStatus());
-        assertEquals(422, cut.eliminar(idPadre, null).getStatus());
+        assertEquals(422, cut.eliminar(null, idArea, idPregunta, id).getStatus());
+        assertEquals(422, cut.eliminar(idPruebaClave, idArea, idPregunta, null).getStatus());
     }
 
     @Test
     public void eliminarNoEncontradoTest() {
         UUID id = UUID.randomUUID();
-        Mockito.when(mockDAO.buscarPorIdYPadre(id, idPadre)).thenReturn(null);
+        Mockito.when(mockDAO.buscarPorIdYPadre(id, idPruebaClave, idArea, idPregunta)).thenReturn(null);
 
-        Response res = cut.eliminar(idPadre, id);
+        Response res = cut.eliminar(idPruebaClave, idArea, idPregunta, id);
         assertEquals(404, res.getStatus());
     }
 
     @Test
     public void eliminarExcepcionTest() {
-        Mockito.when(mockDAO.buscarPorIdYPadre(Mockito.any(), Mockito.any()))
+        Mockito.when(mockDAO.buscarPorIdYPadre(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenThrow(new RuntimeException("Error BD"));
 
-        Response res = cut.eliminar(idPadre, UUID.randomUUID());
+        Response res = cut.eliminar(idPruebaClave, idArea, idPregunta, UUID.randomUUID());
         assertEquals(500, res.getStatus());
     }
 }

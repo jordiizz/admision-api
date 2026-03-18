@@ -1,6 +1,8 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.UUID;
 
 import jakarta.ejb.LocalBean;
 import jakarta.ejb.Stateless;
@@ -22,5 +24,15 @@ public class JornadaAulaDAO extends DefaultDAO<JornadaAula> implements Serializa
     @Override
     public EntityManager getEntityManager() {
         return em;
+    }
+
+    public JornadaAula buscarPorJornadaYAula(UUID idJornada, String idAula) {
+        List<JornadaAula> resultados = em
+                .createQuery("SELECT j FROM JornadaAula j WHERE j.idJornada.idJornada = :idJornada AND j.idAula = :idAula", JornadaAula.class)
+                .setParameter("idJornada", idJornada)
+                .setParameter("idAula", idAula)
+                .setMaxResults(1)
+                .getResultList();
+        return resultados.isEmpty() ? null : resultados.get(0);
     }
 }

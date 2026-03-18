@@ -25,8 +25,9 @@ import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.Pr
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Distractor;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveAreaPregunta;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveAreaPreguntaDistractor;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveAreaPreguntaPK;
 
-@Path("prueba-clave-area-pregunta/{idPruebaClaveAreaPregunta}/distractor")
+@Path("prueba-clave/{id_prueba_clave}/area/{id_area}/pregunta/{id_pregunta}/distractor")
 public class PruebaClaveAreaPreguntaDistractorResource implements Serializable {
 
     @Inject
@@ -42,32 +43,35 @@ public class PruebaClaveAreaPreguntaDistractorResource implements Serializable {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response crear(
-            @PathParam("idPruebaClaveAreaPregunta") UUID idPadre,
+            @PathParam("id_prueba_clave") UUID idPruebaClave,
+            @PathParam("id_area") UUID idArea,
+            @PathParam("id_pregunta") UUID idPregunta,
             PruebaClaveAreaPreguntaDistractor entity,
             @Context UriInfo uriInfo) {
 
-        if (idPadre == null || entity == null || entity.getIdDistractor() == null
-            || entity.getIdDistractor().getIdDistractor() == null) {
+        if (idPruebaClave == null || idArea == null || idPregunta == null || entity == null || entity.getIdDistractor() == null) {
             return Response.status(422)
                 .header(ResponseHeaders.WRONG_PARAMETER.toString(), "ID padre, cuerpo o distractor faltantes")
                 .build();
         }
 
         try {
-            PruebaClaveAreaPregunta padre = pruebaClaveAreaPreguntaDAO.buscarPorId(idPadre);
-            Distractor distractor = distractorDAO.buscarPorId(entity.getIdDistractor().getIdDistractor());
+            PruebaClaveAreaPregunta padre = pruebaClaveAreaPreguntaDAO.buscarPorId(
+                    new PruebaClaveAreaPreguntaPK(idPruebaClave, idArea, idPregunta));
+            Distractor distractor = distractorDAO.buscarPorId(entity.getIdDistractor());
             if (padre == null || distractor == null) {
                 String message = (padre == null) ? "Padre no encontrado" : "Distractor no encontrado";
                 return Response.status(404).header(ResponseHeaders.NOT_FOUND.toString(), message).build();
             }
 
-            entity.setIdPruebaClaveAreaPreguntaDistractor(UUID.randomUUID());
-            entity.setIdPruebaClaveAreaPregunta(padre);
-            entity.setIdDistractor(distractor);
+            entity.setIdPruebaClave(idPruebaClave);
+            entity.setIdArea(idArea);
+            entity.setIdPregunta(idPregunta);
+            entity.setIdDistractor(distractor.getIdDistractor());
             pruebaClaveAreaPreguntaDistractorDAO.crear(entity);
 
             return Response.created(uriInfo.getAbsolutePathBuilder()
-                            .path(entity.getIdPruebaClaveAreaPreguntaDistractor().toString()).build())
+                            .path(entity.getIdDistractor().toString()).build())
                             .entity(entity)
                             .build();
         } catch (Exception e) {
@@ -78,18 +82,20 @@ public class PruebaClaveAreaPreguntaDistractorResource implements Serializable {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response buscarPorRango(
-            @PathParam("idPruebaClaveAreaPregunta") UUID idPadre,
+            @PathParam("id_prueba_clave") UUID idPruebaClave,
+            @PathParam("id_area") UUID idArea,
+            @PathParam("id_pregunta") UUID idPregunta,
             @QueryParam("first") @DefaultValue("0") int first,
             @QueryParam("max") @DefaultValue("50") int max) {
 
-        if (idPadre == null || first < 0 || max <= 0 || max > 50) {
+        if (idPruebaClave == null || idArea == null || idPregunta == null || first < 0 || max <= 0 || max > 50) {
             return Response.status(422).header(ResponseHeaders.WRONG_PARAMETER.toString(), "Parámetros inválidos").build();
         }
 
         try {
             List<PruebaClaveAreaPreguntaDistractor> registros =
-                    pruebaClaveAreaPreguntaDistractorDAO.buscarPorPadreRango(idPadre, first, max);
-            Long total = pruebaClaveAreaPreguntaDistractorDAO.contarPorPadre(idPadre);
+                    pruebaClaveAreaPreguntaDistractorDAO.buscarPorPadreRango(idPruebaClave, idArea, idPregunta, first, max);
+            Long total = pruebaClaveAreaPreguntaDistractorDAO.contarPorPadre(idPruebaClave, idArea, idPregunta);
             return Response.ok(registros).header(ResponseHeaders.TOTAL_RECORDS.toString(), total).build();
         } catch (Exception e) {
             return Response.status(500).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
@@ -100,16 +106,18 @@ public class PruebaClaveAreaPreguntaDistractorResource implements Serializable {
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response buscarPorId(
-            @PathParam("idPruebaClaveAreaPregunta") UUID idPadre,
-            @PathParam("id") UUID id) {
+            @PathParam("id_prueba_clave") UUID idPruebaClave,
+            @PathParam("id_area") UUID idArea,
+            @PathParam("id_pregunta") UUID idPregunta,
+            @PathParam("id") UUID idDistractor) {
 
-        if (idPadre == null || id == null) {
+        if (idPruebaClave == null || idArea == null || idPregunta == null || idDistractor == null) {
             return Response.status(422).header(ResponseHeaders.WRONG_PARAMETER.toString(), "IDs requeridos").build();
         }
 
         try {
             PruebaClaveAreaPreguntaDistractor encontrado =
-                    pruebaClaveAreaPreguntaDistractorDAO.buscarPorIdYPadre(id, idPadre);
+                    pruebaClaveAreaPreguntaDistractorDAO.buscarPorIdYPadre(idDistractor, idPruebaClave, idArea, idPregunta);
             return (encontrado != null)
                     ? Response.ok(encontrado).build()
                     : Response.status(404).header(ResponseHeaders.NOT_FOUND.toString(), "No encontrado").build();
@@ -123,32 +131,36 @@ public class PruebaClaveAreaPreguntaDistractorResource implements Serializable {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response actualizar(
-            @PathParam("idPruebaClaveAreaPregunta") UUID idPadre,
-            @PathParam("id") UUID id,
+            @PathParam("id_prueba_clave") UUID idPruebaClave,
+            @PathParam("id_area") UUID idArea,
+            @PathParam("id_pregunta") UUID idPregunta,
+            @PathParam("id") UUID idDistractor,
             PruebaClaveAreaPreguntaDistractor entity) {
 
-        if (idPadre == null || id == null || entity == null) {
+        if (idPruebaClave == null || idArea == null || idPregunta == null || idDistractor == null || entity == null) {
             return Response.status(422).header(ResponseHeaders.WRONG_PARAMETER.toString(), "Datos insuficientes para actualizar").build();
         }
 
         try {
             PruebaClaveAreaPreguntaDistractor existente =
-                    pruebaClaveAreaPreguntaDistractorDAO.buscarPorIdYPadre(id, idPadre);
+                    pruebaClaveAreaPreguntaDistractorDAO.buscarPorIdYPadre(idDistractor, idPruebaClave, idArea, idPregunta);
             if (existente == null) {
                 return Response.status(404).header(ResponseHeaders.NOT_FOUND.toString(), "No encontrado").build();
             }
 
-            Distractor distractor = existente.getIdDistractor();
-            if (entity.getIdDistractor() != null && entity.getIdDistractor().getIdDistractor() != null) {
-                distractor = distractorDAO.buscarPorId(entity.getIdDistractor().getIdDistractor());
+            UUID distractorId = existente.getIdDistractor();
+            if (entity.getIdDistractor() != null) {
+                Distractor distractor = distractorDAO.buscarPorId(entity.getIdDistractor());
                 if (distractor == null) {
                     return Response.status(404).header(ResponseHeaders.NOT_FOUND.toString(), "Distractor no encontrado").build();
                 }
+                distractorId = distractor.getIdDistractor();
             }
 
-            entity.setIdDistractor(distractor);
-            entity.setIdPruebaClaveAreaPreguntaDistractor(id);
-            entity.setIdPruebaClaveAreaPregunta(existente.getIdPruebaClaveAreaPregunta());
+            entity.setIdDistractor(distractorId);
+            entity.setIdPruebaClave(existente.getIdPruebaClave());
+            entity.setIdArea(existente.getIdArea());
+            entity.setIdPregunta(existente.getIdPregunta());
 
             pruebaClaveAreaPreguntaDistractorDAO.actualizar(entity);
             return Response.ok(entity).build();
@@ -160,16 +172,18 @@ public class PruebaClaveAreaPreguntaDistractorResource implements Serializable {
     @DELETE
     @Path("{id}")
     public Response eliminar(
-            @PathParam("idPruebaClaveAreaPregunta") UUID idPadre,
-            @PathParam("id") UUID id) {
+            @PathParam("id_prueba_clave") UUID idPruebaClave,
+            @PathParam("id_area") UUID idArea,
+            @PathParam("id_pregunta") UUID idPregunta,
+            @PathParam("id") UUID idDistractor) {
 
-        if (idPadre == null || id == null) {
+        if (idPruebaClave == null || idArea == null || idPregunta == null || idDistractor == null) {
             return Response.status(422).header(ResponseHeaders.WRONG_PARAMETER.toString(), "IDs requeridos").build();
         }
 
         try {
             PruebaClaveAreaPreguntaDistractor existente =
-                    pruebaClaveAreaPreguntaDistractorDAO.buscarPorIdYPadre(id, idPadre);
+                    pruebaClaveAreaPreguntaDistractorDAO.buscarPorIdYPadre(idDistractor, idPruebaClave, idArea, idPregunta);
             if (existente == null) {
                 return Response.status(404).header(ResponseHeaders.NOT_FOUND.toString(), "No encontrado").build();
             }
@@ -180,4 +194,5 @@ public class PruebaClaveAreaPreguntaDistractorResource implements Serializable {
             return Response.status(500).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
         }
     }
+
 }
