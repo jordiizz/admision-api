@@ -18,6 +18,7 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriInfo;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.AspiranteOpcionDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.JornadaAulaDAO;
@@ -70,10 +71,11 @@ public class PruebaJornadaAulaAspiranteOpcionResource implements Serializable {
             entity.setIdPrueba(idPrueba);
             entity.setIdJornada(idJornada);
             entity.setIdAula(idAula);
-            entity.setIdAspiranteOpcion(aspirante.getIdAspiranteOpcion());
             
             pruebaJornadaAulaAspiranteOpcionDAO.crear(entity);
-            return Response.created(uriInfo.getAbsolutePathBuilder().path(aspirante.getIdAspiranteOpcion().toString()).build()).entity(entity).build();
+            UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
+            uriBuilder.path(aspirante.getIdAspiranteOpcion().toString());
+            return Response.created(uriBuilder.build()).entity(entity).build();
         } catch (Exception e) {
             return Response.status(500).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
         }
@@ -154,9 +156,9 @@ public class PruebaJornadaAulaAspiranteOpcionResource implements Serializable {
                 entity.setIdAspiranteOpcion(existente.getIdAspiranteOpcion());
             }
 
-            entity.setIdPrueba(existente.getIdPrueba());
-            entity.setIdJornada(existente.getIdJornada());
-            entity.setIdAula(existente.getIdAula());
+            entity.setIdPrueba(idPrueba);
+            entity.setIdJornada(idJornada);
+            entity.setIdAula(idAula);
             
             pruebaJornadaAulaAspiranteOpcionDAO.actualizar(entity);
             return Response.ok(entity).build();

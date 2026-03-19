@@ -22,6 +22,7 @@ import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriInfo;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PruebaClaveAreaDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PruebaClaveDAO;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Area;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClave;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveArea;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveAreaPK;
@@ -117,8 +118,8 @@ public class PruebaClaveAreaResource implements Serializable {
             try {
                 PruebaClaveArea existente = pruebaClaveAreaDAO.buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea));
                 if (existente != null) {
-                    pruebaClaveArea.setIdArea(existente.getIdArea());
-                    pruebaClaveArea.setIdPruebaClave(existente.getIdPruebaClave());
+                    pruebaClaveArea.setIdArea(new Area(idArea));
+                    pruebaClaveArea.setIdPruebaClave(new PruebaClave(idPruebaClave));
                     pruebaClaveAreaDAO.actualizar(pruebaClaveArea);
                     return Response.ok(pruebaClaveArea).build();
                 }

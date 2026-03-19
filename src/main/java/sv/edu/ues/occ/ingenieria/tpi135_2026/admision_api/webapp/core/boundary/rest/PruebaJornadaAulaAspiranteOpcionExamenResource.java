@@ -78,7 +78,6 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResource implements Serializa
             entity.setIdJornada(idJornada);
             entity.setIdAula(idAula);
             entity.setIdAspiranteOpcion(idAspiranteOpcion);
-            entity.setIdPruebaClave(pruebaClave.getIdPruebaClave());
             pruebaJornadaAulaAspiranteOpcionExamenDAO.crear(entity);
 
             UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
@@ -145,10 +144,10 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResource implements Serializa
                 entity.setIdPruebaClave(existente.getIdPruebaClave());
             }
 
-            entity.setIdPrueba(existente.getIdPrueba());
-            entity.setIdJornada(existente.getIdJornada());
-            entity.setIdAula(existente.getIdAula());
-            entity.setIdAspiranteOpcion(existente.getIdAspiranteOpcion());
+            entity.setIdPrueba(idPrueba);
+            entity.setIdJornada(idJornada);
+            entity.setIdAula(idAula);
+            entity.setIdAspiranteOpcion(idAspiranteOpcion);
             pruebaJornadaAulaAspiranteOpcionExamenDAO.actualizar(entity);
             return Response.ok(entity).build();
         } catch (Exception e) {
