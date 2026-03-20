@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import jakarta.inject.Inject;
-import jakarta.websocket.server.PathParam;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.DefaultValue;

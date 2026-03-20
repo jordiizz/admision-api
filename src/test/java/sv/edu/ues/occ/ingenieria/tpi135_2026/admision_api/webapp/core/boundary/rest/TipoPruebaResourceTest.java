@@ -31,8 +31,6 @@ public class TipoPruebaResourceTest {
         cut.tpDAO = mockTpDAO; // Inyectar el mock en la clase bajo prueba
         mockUriInfo = Mockito.mock(UriInfo.class);
         mockUriBuilder = Mockito.mock(UriBuilder.class);
-        mockUriInfo = Mockito.mock(UriInfo.class);
-        mockUriBuilder = Mockito.mock(UriBuilder.class);
           
     }
     
