@@ -1,0 +1,123 @@
+package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.boundary.rest;
+
+import java.io.Serializable;
+import java.util.UUID;
+import java.util.List;
+
+import jakarta.ws.rs.core.Context;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriInfo;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PruebaDAO;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Prueba;
+
+
+@Path("prueba")
+public class PruebaResource implements Serializable {
+
+    @Inject
+    PruebaDAO pDAO;
+
+    @POST 
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response crear(Prueba p, @Context UriInfo uriInfo) {
+        if(p != null) {
+            try {
+                p.setIdPrueba(UUID.randomUUID());
+                pDAO.crear(p);
+                UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
+                uriBuilder.path(p.getIdPrueba().toString());
+                return Response.created(uriBuilder.build()).entity(p).build();
+            } catch (Exception e) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
+            }
+        }
+        return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "PRUEBA").build();
+    }
+
+    @DELETE
+    @Path("({id})")
+    public Response eliminar(@PathParam("id") UUID idPrueba) {
+        if(idPrueba != null) {
+            try {
+                Prueba p = pDAO.buscarPorId(idPrueba);
+                if(p != null) {
+                    pDAO.eliminar(p);
+                    return Response.status(Response.Status.NO_CONTENT).build();
+                }
+                return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "PRUEBA").build();
+            } catch (Exception e) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();   
+            }
+          
+        }
+        return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "ID").build();
+    }
+
+    @PUT
+    @Path("({id})")
+    @Consumes({MediaType.APPLICATION_JSON})
+    public Response actualizar(@PathParam("id") UUID idPrueba, Prueba p) {
+        if(p != null) {
+            try {
+                Prueba pruebaExistente = pDAO.buscarPorId(idPrueba);
+                if(pruebaExistente != null) {
+                    // Actualizar los campos de la prueba existente con los valores del objeto p
+                    pDAO.actualizar(p);
+                    return Response.status(Response.Status.OK).build();
+                }
+                return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "PRUEBA").build();
+            } catch (Exception e) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
+            }
+        }
+        return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "ID").build();
+    }   
+
+    @GET
+    @Path("({id})")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response buscarPorId(@PathParam("id") UUID idPrueba) {
+        if(idPrueba != null) {
+            try {
+                Prueba p = pDAO.buscarPorId(idPrueba);
+                if(p != null) {
+                    return Response.status(Response.Status.OK).entity(p).build();
+                }
+                return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "PRUEBA").build();
+            } catch (Exception e) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
+            }
+        }
+        return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "ID").build();
+    }
+
+    @GET 
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response buscarPorRango(@PathParam("first") @DefaultValue("0") int first, @PathParam("max") @DefaultValue("50") int max) {
+        if(first >= 0 && max > 0) {
+            try {
+                List<Prueba> pruebas = pDAO.buscarPorRango(first, max);
+                if(pruebas != null && !pruebas.isEmpty()) {
+                    return Response.status(Response.Status.OK).entity(pruebas).build();
+                }
+                return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "PRUEBA").build();
+            } catch (Exception e) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
+            }
+        }
+        return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "FIRST O MAX").build();
+    }
+}
