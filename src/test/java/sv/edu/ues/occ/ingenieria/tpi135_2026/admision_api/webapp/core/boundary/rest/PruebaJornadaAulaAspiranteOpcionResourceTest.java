@@ -89,18 +89,18 @@ public class PruebaJornadaAulaAspiranteOpcionResourceTest {
 
     @Test
     public void crearValidacionFallidaTest() {
-        assertEquals(422, cut.crear(null, idJornada, idAula, new PruebaJornadaAulaAspiranteOpcion(), mockUriInfo).getStatus());
-        assertEquals(422, cut.crear(idPrueba, null, idAula, new PruebaJornadaAulaAspiranteOpcion(), mockUriInfo).getStatus());
-        assertEquals(422, cut.crear(idPrueba, idJornada, null, new PruebaJornadaAulaAspiranteOpcion(), mockUriInfo).getStatus());
-        assertEquals(422, cut.crear(idPrueba, idJornada, idAula, null, mockUriInfo).getStatus());
+        assertEquals(400, cut.crear(null, idJornada, idAula, new PruebaJornadaAulaAspiranteOpcion(), mockUriInfo).getStatus());
+        assertEquals(400, cut.crear(idPrueba, null, idAula, new PruebaJornadaAulaAspiranteOpcion(), mockUriInfo).getStatus());
+        assertEquals(400, cut.crear(idPrueba, idJornada, null, new PruebaJornadaAulaAspiranteOpcion(), mockUriInfo).getStatus());
+        assertEquals(400, cut.crear(idPrueba, idJornada, idAula, null, mockUriInfo).getStatus());
 
         // AspiranteOpcion nulo o con ID interno nulo
         PruebaJornadaAulaAspiranteOpcion entitySinAO = new PruebaJornadaAulaAspiranteOpcion();
-        assertEquals(422, cut.crear(idPrueba, idJornada, idAula, entitySinAO, mockUriInfo).getStatus());
+        assertEquals(400, cut.crear(idPrueba, idJornada, idAula, entitySinAO, mockUriInfo).getStatus());
 
         PruebaJornadaAulaAspiranteOpcion entityConAOSinId = new PruebaJornadaAulaAspiranteOpcion();
         entityConAOSinId.setIdAspiranteOpcion(null);
-        assertEquals(422, cut.crear(idPrueba, idJornada, idAula, entityConAOSinId, mockUriInfo).getStatus());
+        assertEquals(400, cut.crear(idPrueba, idJornada, idAula, entityConAOSinId, mockUriInfo).getStatus());
     }
 
     @Test
@@ -197,12 +197,12 @@ public class PruebaJornadaAulaAspiranteOpcionResourceTest {
 
     @Test
     public void buscarPorRangoValidacionFallidaTest() {
-        assertEquals(422, cut.buscarPorRango(null, idJornada, idAula, 0, 50).getStatus());
-        assertEquals(422, cut.buscarPorRango(idPrueba, null, idAula, 0, 50).getStatus());
-        assertEquals(422, cut.buscarPorRango(idPrueba, idJornada, null, 0, 50).getStatus());
-        assertEquals(422, cut.buscarPorRango(idPrueba, idJornada, idAula, -1, 50).getStatus());
-        assertEquals(422, cut.buscarPorRango(idPrueba, idJornada, idAula, 0, 0).getStatus());
-        assertEquals(422, cut.buscarPorRango(idPrueba, idJornada, idAula, 0, 51).getStatus());
+        assertEquals(400, cut.buscarPorRango(null, idJornada, idAula, 0, 50).getStatus());
+        assertEquals(400, cut.buscarPorRango(idPrueba, null, idAula, 0, 50).getStatus());
+        assertEquals(400, cut.buscarPorRango(idPrueba, idJornada, null, 0, 50).getStatus());
+        assertEquals(400, cut.buscarPorRango(idPrueba, idJornada, idAula, -1, 50).getStatus());
+        assertEquals(400, cut.buscarPorRango(idPrueba, idJornada, idAula, 0, 0).getStatus());
+        assertEquals(400, cut.buscarPorRango(idPrueba, idJornada, idAula, 0, 51).getStatus());
     }
 
     @Test
@@ -226,10 +226,10 @@ public class PruebaJornadaAulaAspiranteOpcionResourceTest {
 
     @Test
     public void buscarPorIdValidacionFallidaTest() {
-        assertEquals(422, cut.buscarPorId(null, idJornada, idAula, UUID.randomUUID()).getStatus());
-        assertEquals(422, cut.buscarPorId(idPrueba, null, idAula, UUID.randomUUID()).getStatus());
-        assertEquals(422, cut.buscarPorId(idPrueba, idJornada, null, UUID.randomUUID()).getStatus());
-        assertEquals(422, cut.buscarPorId(idPrueba, idJornada, idAula, null).getStatus());
+        assertEquals(400, cut.buscarPorId(null, idJornada, idAula, UUID.randomUUID()).getStatus());
+        assertEquals(400, cut.buscarPorId(idPrueba, null, idAula, UUID.randomUUID()).getStatus());
+        assertEquals(400, cut.buscarPorId(idPrueba, idJornada, null, UUID.randomUUID()).getStatus());
+        assertEquals(400, cut.buscarPorId(idPrueba, idJornada, idAula, null).getStatus());
     }
 
     @Test
@@ -307,11 +307,11 @@ public class PruebaJornadaAulaAspiranteOpcionResourceTest {
 
     @Test
     public void actualizarValidacionFallidaTest() {
-        assertEquals(422, cut.actualizar(null, idJornada, idAula, UUID.randomUUID(), new PruebaJornadaAulaAspiranteOpcion(UUID.randomUUID())).getStatus());
-        assertEquals(422, cut.actualizar(idPrueba, null, idAula, UUID.randomUUID(), new PruebaJornadaAulaAspiranteOpcion(UUID.randomUUID())).getStatus());
-        assertEquals(422, cut.actualizar(idPrueba, idJornada, null, UUID.randomUUID(), new PruebaJornadaAulaAspiranteOpcion(UUID.randomUUID())).getStatus());
-        assertEquals(422, cut.actualizar(idPrueba, idJornada, idAula, UUID.randomUUID(), null).getStatus());
-        assertEquals(422, cut.actualizar(idPrueba, idJornada, idAula, null, new PruebaJornadaAulaAspiranteOpcion()).getStatus());
+        assertEquals(400, cut.actualizar(null, idJornada, idAula, UUID.randomUUID(), new PruebaJornadaAulaAspiranteOpcion(UUID.randomUUID())).getStatus());
+        assertEquals(400, cut.actualizar(idPrueba, null, idAula, UUID.randomUUID(), new PruebaJornadaAulaAspiranteOpcion(UUID.randomUUID())).getStatus());
+        assertEquals(400, cut.actualizar(idPrueba, idJornada, null, UUID.randomUUID(), new PruebaJornadaAulaAspiranteOpcion(UUID.randomUUID())).getStatus());
+        assertEquals(400, cut.actualizar(idPrueba, idJornada, idAula, UUID.randomUUID(), null).getStatus());
+        assertEquals(400, cut.actualizar(idPrueba, idJornada, idAula, null, new PruebaJornadaAulaAspiranteOpcion()).getStatus());
     }
 
     @Test
@@ -363,10 +363,10 @@ public class PruebaJornadaAulaAspiranteOpcionResourceTest {
 
     @Test
     public void eliminarValidacionFallidaTest() {
-        assertEquals(422, cut.eliminar(null, idJornada, idAula, UUID.randomUUID()).getStatus());
-        assertEquals(422, cut.eliminar(idPrueba, null, idAula, UUID.randomUUID()).getStatus());
-        assertEquals(422, cut.eliminar(idPrueba, idJornada, null, UUID.randomUUID()).getStatus());
-        assertEquals(422, cut.eliminar(idPrueba, idJornada, idAula, null).getStatus());
+        assertEquals(400, cut.eliminar(null, idJornada, idAula, UUID.randomUUID()).getStatus());
+        assertEquals(400, cut.eliminar(idPrueba, null, idAula, UUID.randomUUID()).getStatus());
+        assertEquals(400, cut.eliminar(idPrueba, idJornada, null, UUID.randomUUID()).getStatus());
+        assertEquals(400, cut.eliminar(idPrueba, idJornada, idAula, null).getStatus());
     }
 
     @Test

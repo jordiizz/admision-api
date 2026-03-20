@@ -52,7 +52,7 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResource implements Serializa
         if (idPrueba == null || idJornada == null || idAula == null || idAspiranteOpcion == null
                 || entity == null || entity.getResultado() == null
             || entity.getIdPruebaClave() == null) {
-            return Response.status(422)
+            return Response.status(Response.Status.BAD_REQUEST)
                     .header(ResponseHeaders.WRONG_PARAMETER.toString(), "ID Padre, cuerpo o resultado faltantes")
                     .build();
         }
@@ -62,16 +62,16 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResource implements Serializa
                     .buscarPorId(new PruebaJornadaAulaAspiranteOpcionPK(idPrueba, idJornada, idAula, idAspiranteOpcion));
             PruebaClave pruebaClave = pruebaClaveDAO.buscarPorId(entity.getIdPruebaClave());
             if (padre == null) {
-                return Response.status(404).header(ResponseHeaders.NOT_FOUND.toString(), "Padre no encontrado").build();
+                return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "Padre no encontrado").build();
             }
                 if (pruebaJornadaAulaAspiranteOpcionExamenDAO
                     .buscarPorId(new PruebaJornadaAulaAspiranteOpcionExamenPK(idPrueba, idJornada, idAula, idAspiranteOpcion)) != null) {
-                return Response.status(409)
+                return Response.status(Response.Status.CONFLICT)
                         .header(ResponseHeaders.WRONG_PARAMETER.toString(), "Ya existe examen para este aspirante")
                         .build();
             }
             if (pruebaClave == null) {
-                return Response.status(404).header(ResponseHeaders.NOT_FOUND.toString(), "Prueba clave no encontrada").build();
+                return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "Prueba clave no encontrada").build();
             }
 
             entity.setIdPrueba(idPrueba);
@@ -86,7 +86,7 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResource implements Serializa
                     .entity(entity)
                     .build();
         } catch (Exception e) {
-            return Response.status(500).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
         }
     }
 
@@ -99,7 +99,7 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResource implements Serializa
             @PathParam("id_aspirante_opcion") UUID idAspiranteOpcion) {
 
         if (idPrueba == null || idJornada == null || idAula == null || idAspiranteOpcion == null) {
-            return Response.status(422).header(ResponseHeaders.WRONG_PARAMETER.toString(), "IDs requeridos").build();
+            return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "IDs requeridos").build();
         }
 
         try {
@@ -107,9 +107,9 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResource implements Serializa
                     .buscarPorId(new PruebaJornadaAulaAspiranteOpcionExamenPK(idPrueba, idJornada, idAula, idAspiranteOpcion));
             return encontrado != null
                     ? Response.ok(encontrado).build()
-                    : Response.status(404).header(ResponseHeaders.NOT_FOUND.toString(), "No encontrado").build();
+                    : Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "No encontrado").build();
         } catch (Exception e) {
-            return Response.status(500).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
         }
     }
 
@@ -124,20 +124,20 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResource implements Serializa
             PruebaJornadaAulaAspiranteOpcionExamen entity) {
 
         if (idPrueba == null || idJornada == null || idAula == null || idAspiranteOpcion == null || entity == null) {
-            return Response.status(422).header(ResponseHeaders.WRONG_PARAMETER.toString(), "Datos insuficientes para actualizar").build();
+            return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "Datos insuficientes para actualizar").build();
         }
 
         try {
             PruebaJornadaAulaAspiranteOpcionExamen existente = pruebaJornadaAulaAspiranteOpcionExamenDAO
                     .buscarPorId(new PruebaJornadaAulaAspiranteOpcionExamenPK(idPrueba, idJornada, idAula, idAspiranteOpcion));
             if (existente == null) {
-                return Response.status(404).header(ResponseHeaders.NOT_FOUND.toString(), "No encontrado").build();
+                return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "No encontrado").build();
             }
 
             if (entity.getIdPruebaClave() != null) {
                 PruebaClave pruebaClave = pruebaClaveDAO.buscarPorId(entity.getIdPruebaClave());
                 if (pruebaClave == null) {
-                    return Response.status(404).header(ResponseHeaders.NOT_FOUND.toString(), "Prueba clave no encontrada").build();
+                    return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "Prueba clave no encontrada").build();
                 }
                 entity.setIdPruebaClave(pruebaClave.getIdPruebaClave());
             } else {
@@ -151,7 +151,7 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResource implements Serializa
             pruebaJornadaAulaAspiranteOpcionExamenDAO.actualizar(entity);
             return Response.ok(entity).build();
         } catch (Exception e) {
-            return Response.status(500).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
         }
     }
 
@@ -163,19 +163,19 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResource implements Serializa
             @PathParam("id_aspirante_opcion") UUID idAspiranteOpcion) {
 
         if (idPrueba == null || idJornada == null || idAula == null || idAspiranteOpcion == null) {
-            return Response.status(422).header(ResponseHeaders.WRONG_PARAMETER.toString(), "IDs requeridos").build();
+            return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "IDs requeridos").build();
         }
 
         try {
             PruebaJornadaAulaAspiranteOpcionExamen existente = pruebaJornadaAulaAspiranteOpcionExamenDAO
                     .buscarPorId(new PruebaJornadaAulaAspiranteOpcionExamenPK(idPrueba, idJornada, idAula, idAspiranteOpcion));
             if (existente == null) {
-                return Response.status(404).header(ResponseHeaders.NOT_FOUND.toString(), "No encontrado").build();
+                return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "No encontrado").build();
             }
             pruebaJornadaAulaAspiranteOpcionExamenDAO.eliminar(existente);
             return Response.noContent().build();
         } catch (Exception e) {
-            return Response.status(500).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
         }
     }
 

@@ -101,7 +101,7 @@ public class PruebaClaveAreaResourceTest {
     public void crearNullTest() {
         System.out.println("Ejecutando test: crearNullTest en PruebaClaveAreaResource");
         Response resultado = cut.crear(idPruebaClave, null, mockUriInfo);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockDAO);
         Mockito.verifyNoInteractions(mockPCD);
     }
@@ -124,7 +124,7 @@ public class PruebaClaveAreaResourceTest {
         System.out.println("Ejecutando test: crearIdPruebaClaveNullTest en PruebaClaveAreaResource");
         PruebaClaveArea nueva = new PruebaClaveArea();
         Response resultado = cut.crear(null, nueva, mockUriInfo);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockDAO);
         Mockito.verifyNoInteractions(mockPCD);
     }
@@ -163,7 +163,7 @@ public class PruebaClaveAreaResourceTest {
     public void buscarPorRangoParametrosInvalidosTest() {
         System.out.println("Ejecutando test: buscarPorRangoParametrosInvalidosTest en PruebaClaveAreaResource");
         Response resultado = cut.buscarPorRango(idPruebaClave, -1, 0);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockDAO);
     }
 
@@ -171,7 +171,7 @@ public class PruebaClaveAreaResourceTest {
     public void buscarPorRangoMaxCeroTest() {
         System.out.println("Ejecutando test: buscarPorRangoMaxCeroTest en PruebaClaveAreaResource");
         Response resultado = cut.buscarPorRango(idPruebaClave, 0, 0);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockDAO);
     }
 
@@ -179,7 +179,7 @@ public class PruebaClaveAreaResourceTest {
     public void buscarPorRangoMaxMayorACincuentaTest() {
         System.out.println("Ejecutando test: buscarPorRangoMaxMayorACincuentaTest en PruebaClaveAreaResource");
         Response resultado = cut.buscarPorRango(idPruebaClave, 0, 51);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockDAO);
     }
 
@@ -187,7 +187,7 @@ public class PruebaClaveAreaResourceTest {
     public void buscarPorRangoIdPruebaClaveNullTest() {
         System.out.println("Ejecutando test: buscarPorRangoIdPruebaClaveNullTest en PruebaClaveAreaResource");
         Response resultado = cut.buscarPorRango(null, 0, 50);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockDAO);
     }
 
@@ -245,7 +245,7 @@ public class PruebaClaveAreaResourceTest {
     public void buscarPorIdNullTest() {
         System.out.println("Ejecutando test: buscarPorIdNullTest en PruebaClaveAreaResource");
         Response resultado = cut.buscarPorId(idPruebaClave, null);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockDAO);
     }
 
@@ -253,7 +253,7 @@ public class PruebaClaveAreaResourceTest {
     public void buscarPorIdIdPruebaClaveNullTest() {
         System.out.println("Ejecutando test: buscarPorIdIdPruebaClaveNullTest en PruebaClaveAreaResource");
         Response resultado = cut.buscarPorId(null, UUID.randomUUID());
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockDAO);
     }
 
@@ -312,7 +312,7 @@ public class PruebaClaveAreaResourceTest {
     public void actualizarNullTest() {
         System.out.println("Ejecutando test: actualizarNullTest en PruebaClaveAreaResource");
         Response resultado = cut.actualizar(idPruebaClave, UUID.randomUUID(), null);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockDAO);
     }
 
@@ -320,7 +320,7 @@ public class PruebaClaveAreaResourceTest {
     public void actualizarSinIdEnBodyTest() {
         System.out.println("Ejecutando test: actualizarSinIdEnBodyTest en PruebaClaveAreaResource");
         Response resultado = cut.actualizar(idPruebaClave, null, new PruebaClaveArea());
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         assertEquals("El recurso no puede ser nulo y idPruebaClave no puede ser nulo",
                 resultado.getHeaderString(ResponseHeaders.WRONG_PARAMETER.toString()));
         Mockito.verifyNoInteractions(mockDAO);
@@ -330,7 +330,7 @@ public class PruebaClaveAreaResourceTest {
     public void actualizarIdPruebaClaveNullTest() {
         System.out.println("Ejecutando test: actualizarIdPruebaClaveNullTest en PruebaClaveAreaResource");
         Response resultado = cut.actualizar(null, UUID.randomUUID(), new PruebaClaveArea(UUID.randomUUID()));
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockDAO);
     }
 
@@ -395,7 +395,7 @@ public class PruebaClaveAreaResourceTest {
     public void eliminarIdNullTest() {
         System.out.println("Ejecutando test: eliminarIdNullTest en PruebaClaveAreaResource");
         Response resultado = cut.eliminar(idPruebaClave, null);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockDAO);
     }
 
@@ -403,7 +403,7 @@ public class PruebaClaveAreaResourceTest {
     public void eliminarIdPruebaClaveNullTest() {
         System.out.println("Ejecutando test: eliminarIdPruebaClaveNullTest en PruebaClaveAreaResource");
         Response resultado = cut.eliminar(null, UUID.randomUUID());
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockDAO);
     }
 }

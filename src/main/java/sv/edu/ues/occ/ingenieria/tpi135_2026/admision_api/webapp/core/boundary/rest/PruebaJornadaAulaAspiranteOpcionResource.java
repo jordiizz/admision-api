@@ -50,7 +50,7 @@ public class PruebaJornadaAulaAspiranteOpcionResource implements Serializable {
 
         if (idPrueba == null || idJornada == null || idAula == null || entity == null
                 || entity.getIdAspiranteOpcion() == null) {
-            return Response.status(422).header(ResponseHeaders.WRONG_PARAMETER.toString(), "IDs de ruta o AspiranteOpcion faltantes").build();
+            return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "IDs de ruta o AspiranteOpcion faltantes").build();
         }
 
         try {
@@ -59,7 +59,7 @@ public class PruebaJornadaAulaAspiranteOpcionResource implements Serializable {
             AspiranteOpcion aspirante = aspiranteOpcionDAO.buscarPorId(entity.getIdAspiranteOpcion());
 
             if (prueba == null || aula == null || aspirante == null) {
-                return Response.status(404).header(ResponseHeaders.NOT_FOUND.toString(), "Dependencia no encontrada").build();
+                return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "Dependencia no encontrada").build();
             }
 
             // Validación de pertenencia a la misma jornada
@@ -77,7 +77,7 @@ public class PruebaJornadaAulaAspiranteOpcionResource implements Serializable {
             uriBuilder.path(aspirante.getIdAspiranteOpcion().toString());
             return Response.created(uriBuilder.build()).entity(entity).build();
         } catch (Exception e) {
-            return Response.status(500).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
         }
     }
 
@@ -91,7 +91,7 @@ public class PruebaJornadaAulaAspiranteOpcionResource implements Serializable {
             @QueryParam("max") @DefaultValue("50") int max) {
 
         if (idPrueba == null || idJornada == null || idAula == null || first < 0 || max <= 0 || max > 50) {
-            return Response.status(422).header(ResponseHeaders.WRONG_PARAMETER.toString(), "Parámetros inválidos").build();
+            return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "Parámetros inválidos").build();
         }
 
         try {
@@ -99,7 +99,7 @@ public class PruebaJornadaAulaAspiranteOpcionResource implements Serializable {
             Long total = pruebaJornadaAulaAspiranteOpcionDAO.contarPorPruebaJornadaYJornadaAula(idPrueba, idJornada, idAula);
             return Response.ok(registros).header(ResponseHeaders.TOTAL_RECORDS.toString(), total).build();
         } catch (Exception e) {
-            return Response.status(500).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
         }
     }
 
@@ -113,18 +113,18 @@ public class PruebaJornadaAulaAspiranteOpcionResource implements Serializable {
             @PathParam("id") UUID idAspiranteOpcion) {
 
         if (idPrueba == null || idJornada == null || idAula == null || idAspiranteOpcion == null) {
-            return Response.status(422).header(ResponseHeaders.WRONG_PARAMETER.toString(), "IDs requeridos").build();
+            return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "IDs requeridos").build();
         }
 
         try {
             PruebaJornadaAulaAspiranteOpcion encontrado = pruebaJornadaAulaAspiranteOpcionDAO.buscarPorIdYPruebaJornadaYJornadaAula(idAspiranteOpcion, idPrueba, idJornada, idAula);
             return (encontrado != null)
                     ? Response.ok(encontrado).build()
-                    : Response.status(404)
+                    : Response.status(Response.Status.NOT_FOUND)
                             .header(ResponseHeaders.NOT_FOUND.toString(), "Recurso no encontrado")
                             .build();
         } catch (Exception e) {
-            return Response.status(500).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
         }
     }
 
@@ -140,17 +140,17 @@ public class PruebaJornadaAulaAspiranteOpcionResource implements Serializable {
             PruebaJornadaAulaAspiranteOpcion entity) {
 
         if (idPrueba == null || idJornada == null || idAula == null || entity == null || idAspiranteOpcion == null) {
-            return Response.status(422).header(ResponseHeaders.WRONG_PARAMETER.toString(), "Datos incompletos").build();
+            return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "Datos incompletos").build();
         }
 
         try {
             PruebaJornadaAulaAspiranteOpcion existente = pruebaJornadaAulaAspiranteOpcionDAO.buscarPorIdYPruebaJornadaYJornadaAula(idAspiranteOpcion, idPrueba, idJornada, idAula);
-            if (existente == null) return Response.status(404).build();
+            if (existente == null) return Response.status(Response.Status.NOT_FOUND).build();
 
             // Lógica simplificada de AspiranteOpcion
             if (entity.getIdAspiranteOpcion() != null) {
                 AspiranteOpcion aspirante = aspiranteOpcionDAO.buscarPorId(entity.getIdAspiranteOpcion());
-                if (aspirante == null) return Response.status(404).header(ResponseHeaders.NOT_FOUND.toString(), "AspiranteOpcion no encontrada").build();
+                if (aspirante == null) return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "AspiranteOpcion no encontrada").build();
                 entity.setIdAspiranteOpcion(aspirante.getIdAspiranteOpcion());
             } else {
                 entity.setIdAspiranteOpcion(existente.getIdAspiranteOpcion());
@@ -163,7 +163,7 @@ public class PruebaJornadaAulaAspiranteOpcionResource implements Serializable {
             pruebaJornadaAulaAspiranteOpcionDAO.actualizar(entity);
             return Response.ok(entity).build();
         } catch (Exception e) {
-            return Response.status(500).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
         }
     }
 
@@ -176,17 +176,17 @@ public class PruebaJornadaAulaAspiranteOpcionResource implements Serializable {
             @PathParam("id") UUID idAspiranteOpcion) {
 
         if (idPrueba == null || idJornada == null || idAula == null || idAspiranteOpcion == null) {
-            return Response.status(422).header(ResponseHeaders.WRONG_PARAMETER.toString(), "IDs faltantes").build();
+            return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "IDs faltantes").build();
         }
 
         try {
             PruebaJornadaAulaAspiranteOpcion existente = pruebaJornadaAulaAspiranteOpcionDAO.buscarPorIdYPruebaJornadaYJornadaAula(idAspiranteOpcion, idPrueba, idJornada, idAula);
-            if (existente == null) return Response.status(404).build();
+            if (existente == null) return Response.status(Response.Status.NOT_FOUND).build();
             
             pruebaJornadaAulaAspiranteOpcionDAO.eliminar(existente);
             return Response.noContent().build();
         } catch (Exception e) {
-            return Response.status(500).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
         }
     }
 

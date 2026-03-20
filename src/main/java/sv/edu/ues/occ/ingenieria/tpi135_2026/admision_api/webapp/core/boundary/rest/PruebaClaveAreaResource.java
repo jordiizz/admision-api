@@ -47,7 +47,7 @@ public class PruebaClaveAreaResource implements Serializable {
             try {
                 PruebaClave pruebaClave = pruebaClaveDAO.buscarPorId(idPruebaClave);
                 if (pruebaClave == null) {
-                    return Response.status(404).header(ResponseHeaders.NOT_FOUND.toString(), "PruebaClave no encontrada").build();
+                    return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "PruebaClave no encontrada").build();
                 }
                 pruebaClaveArea.setIdPruebaClave(pruebaClave);
                 pruebaClaveAreaDAO.crear(pruebaClaveArea);
@@ -58,10 +58,10 @@ public class PruebaClaveAreaResource implements Serializable {
                 }
                 return Response.created(uriBuilder.build()).entity(pruebaClaveArea).build();
             } catch (IllegalArgumentException | IllegalStateException e) {
-                return Response.status(500).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
             }
         }
-        return Response.status(422).header(ResponseHeaders.WRONG_PARAMETER.toString(), "El recurso no puede ser nulo y idPruebaClave no puede ser nulo").build();
+        return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "El recurso no puede ser nulo y idPruebaClave no puede ser nulo").build();
     }
 
     @GET
@@ -79,10 +79,10 @@ public class PruebaClaveAreaResource implements Serializable {
                         .type(MediaType.APPLICATION_JSON)
                         .build();
             } else {
-                return Response.status(422).header(ResponseHeaders.WRONG_PARAMETER.toString(), "Los parámetros 'first' debe ser >= 0 y 'max' debe ser > 0 y <= 50").build();
+                return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "Los parámetros 'first' debe ser >= 0 y 'max' debe ser > 0 y <= 50").build();
             }
         } catch (Exception e) {
-            return Response.status(500).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
         }
     }
 
@@ -98,12 +98,12 @@ public class PruebaClaveAreaResource implements Serializable {
                 if (encontrado != null) {
                     return Response.ok(encontrado).type(MediaType.APPLICATION_JSON).build();
                 }
-                return Response.status(404).header(ResponseHeaders.NOT_FOUND.toString(), "Recurso no encontrado").build();
+                return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "Recurso no encontrado").build();
             } catch (Exception e) {
-                return Response.status(500).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
             }
         }
-        return Response.status(422).header(ResponseHeaders.WRONG_PARAMETER.toString(), "idPruebaClave e id no pueden ser nulos").build();
+        return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "idPruebaClave e id no pueden ser nulos").build();
     }
 
     @PUT
@@ -123,12 +123,12 @@ public class PruebaClaveAreaResource implements Serializable {
                     pruebaClaveAreaDAO.actualizar(pruebaClaveArea);
                     return Response.ok(pruebaClaveArea).build();
                 }
-                return Response.status(404).header(ResponseHeaders.NOT_FOUND.toString(), "Recurso no encontrado").build();
+                return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "Recurso no encontrado").build();
             } catch (IllegalArgumentException | IllegalStateException e) {
-                return Response.status(500).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
             }
         }
-        return Response.status(422).header(ResponseHeaders.WRONG_PARAMETER.toString(), "El recurso no puede ser nulo y idPruebaClave no puede ser nulo").build();
+        return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "El recurso no puede ser nulo y idPruebaClave no puede ser nulo").build();
     }
 
     @DELETE
@@ -143,11 +143,11 @@ public class PruebaClaveAreaResource implements Serializable {
                     pruebaClaveAreaDAO.eliminar(pruebaClaveArea);
                     return Response.noContent().build();
                 }
-                return Response.status(404).header(ResponseHeaders.NOT_FOUND.toString(), "Recurso no encontrado").build();
+                return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "Recurso no encontrado").build();
             } catch (Exception e) {
-                return Response.status(500).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
             }
         }
-        return Response.status(422).header(ResponseHeaders.WRONG_PARAMETER.toString(), "idPruebaClave e id no pueden ser nulos").build();
+        return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "idPruebaClave e id no pueden ser nulos").build();
     }
 }

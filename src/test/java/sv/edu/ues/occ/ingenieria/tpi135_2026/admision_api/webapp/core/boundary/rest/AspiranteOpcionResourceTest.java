@@ -104,10 +104,10 @@ public class AspiranteOpcionResourceTest {
     public void crearNullTest() {
         System.out.println("Ejecutando test: crearNullTest en AspiranteOpcionResource");
         Response resultado = cut.crear(null, new AspiranteOpcion(), mockUriInfo);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         
         resultado = cut.crear(UUID.randomUUID(), null, mockUriInfo);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
     }
 
     @Test
@@ -128,16 +128,16 @@ public class AspiranteOpcionResourceTest {
     public void buscarPorRangoParametrosInvalidosTest() {
         System.out.println("Ejecutando test: buscarPorRangoParametrosInvalidosTest en AspiranteOpcionResource");
         Response resultado = cut.buscarPorRango(null, 0, 10);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
 
         resultado = cut.buscarPorRango(UUID.randomUUID(), -1, 10);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
 
         resultado = cut.buscarPorRango(UUID.randomUUID(), 0, 0); // max <= 0
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
 
         resultado = cut.buscarPorRango(UUID.randomUUID(), 0, 51); // max > 50
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
     }
 
     @Test
@@ -167,10 +167,10 @@ public class AspiranteOpcionResourceTest {
     public void buscarPorIdNullTest() {
         System.out.println("Ejecutando test: buscarPorIdNullTest en AspiranteOpcionResource");
         Response resultado = cut.buscarPorId(null, UUID.randomUUID());
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
 
         resultado = cut.buscarPorId(UUID.randomUUID(), null);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
     }
 
     @Test
@@ -239,13 +239,13 @@ public class AspiranteOpcionResourceTest {
     public void actualizarParametrosInvalidosTest() {
         System.out.println("Ejecutando test: actualizarParametrosInvalidosTest en AspiranteOpcionResource");
         Response resultado = cut.actualizar(null, null, new AspiranteOpcion(UUID.randomUUID()));
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
 
         resultado = cut.actualizar(UUID.randomUUID(), UUID.randomUUID(), null);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
 
         resultado = cut.actualizar(UUID.randomUUID(), null, new AspiranteOpcion()); 
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
     }
 
     @Test
@@ -289,10 +289,10 @@ public class AspiranteOpcionResourceTest {
     public void eliminarParametrosInvalidosTest() {
         System.out.println("Ejecutando test: eliminarParametrosInvalidosTest en AspiranteOpcionResource");
         Response resultado = cut.eliminar(null, UUID.randomUUID());
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
 
         resultado = cut.eliminar(UUID.randomUUID(), null);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
     }
 
     @Test

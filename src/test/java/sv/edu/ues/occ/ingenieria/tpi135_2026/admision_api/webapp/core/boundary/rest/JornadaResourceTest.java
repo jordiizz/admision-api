@@ -78,7 +78,7 @@ public class JornadaResourceTest {
         System.out.println("Ejecutando test: crearNullTest en JornadaResource");
         Response resultado = cut.crear(null, mockUriInfo);
 
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockJD);
     }
 
@@ -87,7 +87,7 @@ public class JornadaResourceTest {
         System.out.println("Ejecutando test: crearConIdTest en JornadaResource");
         Jornada nuevo = new Jornada(UUID.randomUUID());
         Response resultado = cut.crear(nuevo, mockUriInfo);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockJD);
     }
 
@@ -137,7 +137,7 @@ public class JornadaResourceTest {
     public void eliminarIdNullTest() {
         System.out.println("Ejecutando test: eliminarIdNullTest en JornadaResource");
         Response resultado = cut.eliminar(null);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockJD);
     }
 
@@ -157,7 +157,7 @@ public class JornadaResourceTest {
     public void buscarPorRangoParametrosInvalidosTest() {
         System.out.println("Ejecutando test: buscarPorRangoParametrosInvalidosTest en JornadaResource");
         Response resultado = cut.buscarPorRango(-1, 0);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockJD);
     }
 
@@ -165,7 +165,7 @@ public class JornadaResourceTest {
     public void buscarPorRangoMaxCeroTest() {
         System.out.println("Ejecutando test: buscarPorRangoMaxCeroTest en JornadaResource");
         Response resultado = cut.buscarPorRango(0, 0);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockJD);
     }
 
@@ -173,7 +173,7 @@ public class JornadaResourceTest {
     public void buscarPorRangoMaxMayorACincuentaTest() {
         System.out.println("Ejecutando test: buscarPorRangoMaxMayorACincuentaTest en JornadaResource");
         Response resultado = cut.buscarPorRango(0, 51);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockJD);
     }
 
@@ -221,7 +221,7 @@ public class JornadaResourceTest {
     public void buscarPorIdNullTest() {
         System.out.println("Ejecutando test: buscarPorIdNullTest en JornadaResource");
         Response resultado = cut.buscarPorId(null);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockJD);
     }
 
@@ -272,7 +272,7 @@ public class JornadaResourceTest {
     public void actualizarNullTest() {
         System.out.println("Ejecutando test: actualizarNullTest en JornadaResource");
         Response resultado = cut.actualizar(null, null);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockJD);
     }
 
@@ -281,7 +281,7 @@ public class JornadaResourceTest {
         System.out.println("Ejecutando test: actualizarSinIdTest en JornadaResource");
         Jornada jornada = new Jornada();
         Response resultado = cut.actualizar(jornada.getIdJornada(), jornada);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockJD);
     }
 }

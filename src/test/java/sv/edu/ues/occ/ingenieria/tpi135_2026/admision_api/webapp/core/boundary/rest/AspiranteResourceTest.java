@@ -72,7 +72,7 @@ public class AspiranteResourceTest {
         System.out.println("Ejecutando test: crearNullTest en AspiranteResource");
         Response resultado = cut.crear(null, mockUriInfo);
 
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockAD);
     }
 
@@ -81,7 +81,7 @@ public class AspiranteResourceTest {
         System.out.println("Ejecutando test: crearConIdTest en AspiranteResource");
         Aspirante nuevo = new Aspirante(UUID.randomUUID());
         Response resultado = cut.crear(nuevo, mockUriInfo);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockAD);
     }
 
@@ -131,7 +131,7 @@ public class AspiranteResourceTest {
     public void eliminarIdNullTest(){
         System.out.println("Ejecutando test: eliminarIdNullTest en AspiranteResource");
         Response resultado = cut.eliminar(null);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockAD);
     }
 
@@ -151,7 +151,7 @@ public class AspiranteResourceTest {
     public void buscarPorRangoParametrosInvalidosTest() {
         System.out.println("Ejecutando test: buscarPorRangoParametrosInvalidosTest en AspiranteResource");
         Response resultado = cut.buscarPorRango(-1, 0);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockAD);
     }
 
@@ -159,7 +159,7 @@ public class AspiranteResourceTest {
     public void buscarPorRangoMaxCeroTest() {
         System.out.println("Ejecutando test: buscarPorRangoMaxCeroTest en AspiranteResource");
         Response resultado = cut.buscarPorRango(0, 0);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockAD);
     }
 
@@ -167,7 +167,7 @@ public class AspiranteResourceTest {
     public void buscarPorRangoMaxMayorACincuentaTest() {
         System.out.println("Ejecutando test: buscarPorRangoMaxMayorACincuentaTest en AspiranteResource");
         Response resultado = cut.buscarPorRango(0, 51);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockAD);
     }
 
@@ -215,7 +215,7 @@ public class AspiranteResourceTest {
     public void buscarPorIdNullTest() {
         System.out.println("Ejecutando test: buscarPorIdNullTest en AspiranteResource");
         Response resultado = cut.buscarPorId(null);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockAD);
     }
 
@@ -266,7 +266,7 @@ public class AspiranteResourceTest {
     public void actualizarNullTest() {
         System.out.println("Ejecutando test: actualizarNullTest en AspiranteResource");
         Response resultado = cut.actualizar(null, null);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockAD);
     }
 
@@ -275,7 +275,7 @@ public class AspiranteResourceTest {
         System.out.println("Ejecutando test: actualizarSinIdTest en AspiranteResource");
         Aspirante aspirante = new Aspirante();
         Response resultado = cut.actualizar(aspirante.getIdAspirante(), aspirante);
-        assertEquals(422, resultado.getStatus());
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockAD);
     }
 

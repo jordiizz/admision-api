@@ -87,7 +87,7 @@ class PruebaClaveAreaPreguntaDistractorResourceTest {
     void crearDatosInvalidosTest() {
         System.out.println("Ejecutando test: crearDatosInvalidosTest en PruebaClaveAreaPreguntaDistractorResource");
         Response response = resource.crear(null, null, null, null, null);
-        assertEquals(422, response.getStatus());
+        assertEquals(400, response.getStatus());
     }
 
     @Test
@@ -97,7 +97,7 @@ class PruebaClaveAreaPreguntaDistractorResourceTest {
         entity.setIdDistractor(idDistractor);
 
         Response response = resource.crear(idPruebaClave, null, idPregunta, entity, mock(UriInfo.class));
-        assertEquals(422, response.getStatus());
+        assertEquals(400, response.getStatus());
     }
 
     @Test
@@ -107,14 +107,14 @@ class PruebaClaveAreaPreguntaDistractorResourceTest {
         entity.setIdDistractor(idDistractor);
 
         Response response = resource.crear(idPruebaClave, idArea, null, entity, mock(UriInfo.class));
-        assertEquals(422, response.getStatus());
+        assertEquals(400, response.getStatus());
     }
 
     @Test
     void crearConEntityNullTest() {
         System.out.println("Ejecutando test: crearConEntityNullTest en PruebaClaveAreaPreguntaDistractorResource");
         Response response = resource.crear(idPruebaClave, idArea, idPregunta, null, mock(UriInfo.class));
-        assertEquals(422, response.getStatus());
+        assertEquals(400, response.getStatus());
     }
 
     @Test
@@ -124,7 +124,7 @@ class PruebaClaveAreaPreguntaDistractorResourceTest {
 
         Response response = resource.crear(idPruebaClave, idArea, idPregunta, entity, mock(UriInfo.class));
 
-        assertEquals(422, response.getStatus());
+        assertEquals(400, response.getStatus());
     }
 
     @Test
@@ -189,42 +189,42 @@ class PruebaClaveAreaPreguntaDistractorResourceTest {
     void buscarPorRangoParametrosInvalidosTest() {
         System.out.println("Ejecutando test: buscarPorRangoParametrosInvalidosTest en PruebaClaveAreaPreguntaDistractorResource");
         Response response = resource.buscarPorRango(null, null, null, -1, 100);
-        assertEquals(422, response.getStatus());
+        assertEquals(400, response.getStatus());
     }
 
     @Test
     void buscarPorRangoConIdAreaNullTest() {
         System.out.println("Ejecutando test: buscarPorRangoConIdAreaNullTest en PruebaClaveAreaPreguntaDistractorResource");
         Response response = resource.buscarPorRango(idPruebaClave, null, idPregunta, 0, 10);
-        assertEquals(422, response.getStatus());
+        assertEquals(400, response.getStatus());
     }
 
     @Test
     void buscarPorRangoConIdPreguntaNullTest() {
         System.out.println("Ejecutando test: buscarPorRangoConIdPreguntaNullTest en PruebaClaveAreaPreguntaDistractorResource");
         Response response = resource.buscarPorRango(idPruebaClave, idArea, null, 0, 10);
-        assertEquals(422, response.getStatus());
+        assertEquals(400, response.getStatus());
     }
 
     @Test
     void buscarPorRangoConFirstNegativoTest() {
         System.out.println("Ejecutando test: buscarPorRangoConFirstNegativoTest en PruebaClaveAreaPreguntaDistractorResource");
         Response response = resource.buscarPorRango(idPruebaClave, idArea, idPregunta, -1, 10);
-        assertEquals(422, response.getStatus());
+        assertEquals(400, response.getStatus());
     }
 
     @Test
     void buscarPorRangoMaxCeroTest() {
         System.out.println("Ejecutando test: buscarPorRangoMaxCeroTest en PruebaClaveAreaPreguntaDistractorResource");
         Response response = resource.buscarPorRango(idPruebaClave, idArea, idPregunta, 0, 0);
-        assertEquals(422, response.getStatus());
+        assertEquals(400, response.getStatus());
     }
 
     @Test
     void buscarPorRangoMaxMayorACincuentaTest() {
         System.out.println("Ejecutando test: buscarPorRangoMaxMayorACincuentaTest en PruebaClaveAreaPreguntaDistractorResource");
         Response response = resource.buscarPorRango(idPruebaClave, idArea, idPregunta, 0, 51);
-        assertEquals(422, response.getStatus());
+        assertEquals(400, response.getStatus());
     }
 
     @Test
@@ -270,28 +270,28 @@ class PruebaClaveAreaPreguntaDistractorResourceTest {
     void buscarPorIdParametrosInvalidosTest() {
         System.out.println("Ejecutando test: buscarPorIdParametrosInvalidosTest en PruebaClaveAreaPreguntaDistractorResource");
         Response response = resource.buscarPorId(null, null, null, null);
-        assertEquals(422, response.getStatus());
+        assertEquals(400, response.getStatus());
     }
 
     @Test
     void buscarPorIdConIdAreaNullTest() {
         System.out.println("Ejecutando test: buscarPorIdConIdAreaNullTest en PruebaClaveAreaPreguntaDistractorResource");
         Response response = resource.buscarPorId(idPruebaClave, null, idPregunta, idDistractor);
-        assertEquals(422, response.getStatus());
+        assertEquals(400, response.getStatus());
     }
 
     @Test
     void buscarPorIdConIdPreguntaNullTest() {
         System.out.println("Ejecutando test: buscarPorIdConIdPreguntaNullTest en PruebaClaveAreaPreguntaDistractorResource");
         Response response = resource.buscarPorId(idPruebaClave, idArea, null, idDistractor);
-        assertEquals(422, response.getStatus());
+        assertEquals(400, response.getStatus());
     }
 
     @Test
     void buscarPorIdConIdDistractorNullTest() {
         System.out.println("Ejecutando test: buscarPorIdConIdDistractorNullTest en PruebaClaveAreaPreguntaDistractorResource");
         Response response = resource.buscarPorId(idPruebaClave, idArea, idPregunta, null);
-        assertEquals(422, response.getStatus());
+        assertEquals(400, response.getStatus());
     }
 
     @Test
@@ -397,35 +397,35 @@ class PruebaClaveAreaPreguntaDistractorResourceTest {
     void actualizarParametrosInvalidosTest() {
         System.out.println("Ejecutando test: actualizarParametrosInvalidosTest en PruebaClaveAreaPreguntaDistractorResource");
         Response response = resource.actualizar(null, null, null, null, null);
-        assertEquals(422, response.getStatus());
+        assertEquals(400, response.getStatus());
     }
 
     @Test
     void actualizarConIdAreaNullTest() {
         System.out.println("Ejecutando test: actualizarConIdAreaNullTest en PruebaClaveAreaPreguntaDistractorResource");
         Response response = resource.actualizar(idPruebaClave, null, idPregunta, idDistractor, new PruebaClaveAreaPreguntaDistractor());
-        assertEquals(422, response.getStatus());
+        assertEquals(400, response.getStatus());
     }
 
     @Test
     void actualizarConIdPreguntaNullTest() {
         System.out.println("Ejecutando test: actualizarConIdPreguntaNullTest en PruebaClaveAreaPreguntaDistractorResource");
         Response response = resource.actualizar(idPruebaClave, idArea, null, idDistractor, new PruebaClaveAreaPreguntaDistractor());
-        assertEquals(422, response.getStatus());
+        assertEquals(400, response.getStatus());
     }
 
     @Test
     void actualizarConIdDistractorPathNullTest() {
         System.out.println("Ejecutando test: actualizarConIdDistractorPathNullTest en PruebaClaveAreaPreguntaDistractorResource");
         Response response = resource.actualizar(idPruebaClave, idArea, idPregunta, null, new PruebaClaveAreaPreguntaDistractor());
-        assertEquals(422, response.getStatus());
+        assertEquals(400, response.getStatus());
     }
 
     @Test
     void actualizarConEntityNullTest() {
         System.out.println("Ejecutando test: actualizarConEntityNullTest en PruebaClaveAreaPreguntaDistractorResource");
         Response response = resource.actualizar(idPruebaClave, idArea, idPregunta, idDistractor, null);
-        assertEquals(422, response.getStatus());
+        assertEquals(400, response.getStatus());
     }
 
     @Test
@@ -469,28 +469,28 @@ class PruebaClaveAreaPreguntaDistractorResourceTest {
     void eliminarParametrosInvalidosTest() {
         System.out.println("Ejecutando test: eliminarParametrosInvalidosTest en PruebaClaveAreaPreguntaDistractorResource");
         Response response = resource.eliminar(null, null, null, null);
-        assertEquals(422, response.getStatus());
+        assertEquals(400, response.getStatus());
     }
 
     @Test
     void eliminarConIdAreaNullTest() {
         System.out.println("Ejecutando test: eliminarConIdAreaNullTest en PruebaClaveAreaPreguntaDistractorResource");
         Response response = resource.eliminar(idPruebaClave, null, idPregunta, idDistractor);
-        assertEquals(422, response.getStatus());
+        assertEquals(400, response.getStatus());
     }
 
     @Test
     void eliminarConIdPreguntaNullTest() {
         System.out.println("Ejecutando test: eliminarConIdPreguntaNullTest en PruebaClaveAreaPreguntaDistractorResource");
         Response response = resource.eliminar(idPruebaClave, idArea, null, idDistractor);
-        assertEquals(422, response.getStatus());
+        assertEquals(400, response.getStatus());
     }
 
     @Test
     void eliminarConIdDistractorNullTest() {
         System.out.println("Ejecutando test: eliminarConIdDistractorNullTest en PruebaClaveAreaPreguntaDistractorResource");
         Response response = resource.eliminar(idPruebaClave, idArea, idPregunta, null);
-        assertEquals(422, response.getStatus());
+        assertEquals(400, response.getStatus());
     }
 
     @Test
