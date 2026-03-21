@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
@@ -27,55 +25,40 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Area;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  *
  * @author everg
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Testcontainers
-public class AreaDAOIT {
+public class AreaDAOIT extends AbstractIntengrationDAOTest{
 
-    @Container
-    GenericContainer postgres = new PostgreSQLContainer("postgres:16")
-            .withDatabaseName("tpi135")
-            .withInitScript("database.sql")
-            .withPassword("abc123")
-            .withUsername("postgres")
-            .withExposedPorts(5432)
-            ;
-
-    public AreaDAOIT() {}
-
-    @BeforeAll // Una vez para todas las pruebas
-    public void inicicializar(){
-
-    }
+    AreaDAO cut;
 
     @BeforeEach // una antes de cada prueba
     public void antesdecadaprueba(){
-
+        cut = new AreaDAO();
+        cut.em = em;
     }
 
     @Order(1)
     @Test
     public void testCount() {
         System.out.println("count");
-        assertTrue(postgres.isRunning());
-        Integer puertoPostgresql = postgres.getMappedPort(5432);
-
-        Map<String, Object> propiedades = new HashMap<>();
-        propiedades.put("jakarta.persistence.jdbc.url", String.format("jdbc:postgresql://localhost:%d/tpi135?stringtype=unspecified", puertoPostgresql));
-
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("AdmisionPUIT", propiedades);
-        EntityManager em = emf.createEntityManager();
-        AreaDAO cut = new AreaDAO();
-        cut.em = em;
-
-        assertTrue(postgres.isRunning());
         Long resultado = cut.contar();
         assertTrue(resultado == 0);
         System.out.println("Resultado: " + resultado);
+        cut.em = null;
+        assertThrows(IllegalStateException.class, () -> cut.contar());
+
+        // Asignamos un EntityManager defectuoso
+        EntityManager emCerrado = emf.createEntityManager();
+        emCerrado.close();
+        cut.em = emCerrado;
+        assertThrows(IllegalStateException.class, () -> cut.contar());
+
         //fail("The test case is a propotype");
     }
 
@@ -85,24 +68,45 @@ public class AreaDAOIT {
         System.out.println("crear");
         Area nuevo = new Area(UUID.randomUUID());
         nuevo.setNombre("registro prueba 1");
-
-        assertTrue(postgres.isRunning());
-        Integer puertoPostgresql = postgres.getMappedPort(5432);
-        Map<String, Object> propiedades = new HashMap<>();
-        propiedades.put("jakarta.persistence.jdbc.url", String.format("jdbc:postgresql://localhost:%d/tpi135?stringtype=unspecified", puertoPostgresql));
-
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("AdmisionPUIT", propiedades);
-        EntityManager em = emf.createEntityManager();
-
-        AreaDAO cut = new AreaDAO();
-        cut.em = em;
         cut.em.getTransaction().begin();
         cut.crear(nuevo);
-
         cut.em.getTransaction().commit();
         Long resultado = cut.contar();
         assertEquals(resultado, 1);
         System.out.println("Resultado: " + resultado);
+        cut.em = null;
+        assertThrows(IllegalArgumentException.class, () -> {cut.crear(null);});
+        assertThrows(IllegalStateException.class, () -> {cut.crear(new Area(UUID.randomUUID()));});
         //fail("The test case is a propotype");
     }
+
+    @Order(3)
+    @Test
+    public void buscarPorId(){
+        System.out.println("buscarPorId");
+
+        // Preparar el entorno
+        UUID idBuscado = UUID.randomUUID();
+        Area nuevo = new Area(idBuscado);
+        nuevo.setNombre("Area a buscar");
+
+        // Realizar la transacción
+        cut.em.getTransaction().begin();
+        cut.crear(nuevo);
+        cut.em.getTransaction().commit();
+
+        // Buscamos
+        Area encontrado = cut.buscarPorId(idBuscado);
+        assertNotNull(encontrado);
+        assertEquals(encontrado.getIdArea(), idBuscado);
+        assertEquals(encontrado.getNombre(), nuevo.getNombre());
+        System.out.println("Id: " + idBuscado);
+
+        cut.em = null;
+        assertThrows(IllegalArgumentException.class, () -> {cut.buscarPorId(null);});
+        assertThrows(IllegalStateException.class, () -> {cut.buscarPorId(idBuscado);});
+
+        //fail("La prueba falló");
+    }
+
 }
