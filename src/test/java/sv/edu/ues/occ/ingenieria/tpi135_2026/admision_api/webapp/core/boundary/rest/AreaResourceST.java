@@ -19,7 +19,7 @@ import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Are
 @Testcontainers
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class AreaResourceIT extends AbstractIntegrationTest{
+public class AreaResourceST extends AbstractIntegrationTest{
 
     @Override
     public String getResourceName(){
