@@ -1,6 +1,8 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.UUID;
 
 import jakarta.ejb.LocalBean;
 import jakarta.ejb.Stateless;
@@ -22,5 +24,23 @@ public class PreguntaAreaDAO extends DefaultDAO<PreguntaArea> implements Seriali
     @Override
     public EntityManager getEntityManager() {
         return em;
+    }
+
+    public List<PreguntaArea> buscarPorPreguntaRango(UUID idPregunta, int first, int max) {
+        return em.createQuery(
+                "SELECT p FROM PreguntaArea p WHERE p.idPregunta.idPregunta = :idPregunta ORDER BY p.idArea.idArea",
+                PreguntaArea.class)
+                .setParameter("idPregunta", idPregunta)
+                .setFirstResult(first)
+                .setMaxResults(max)
+                .getResultList();
+    }
+
+    public Long contarPorPregunta(UUID idPregunta) {
+        return em.createQuery(
+                "SELECT COUNT(p) FROM PreguntaArea p WHERE p.idPregunta.idPregunta = :idPregunta",
+                Long.class)
+                .setParameter("idPregunta", idPregunta)
+                .getSingleResult();
     }
 }
