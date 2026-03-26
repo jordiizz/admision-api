@@ -64,11 +64,11 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResource implements Serializa
             if (padre == null) {
                 return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "Padre no encontrado").build();
             }
-                if (pruebaJornadaAulaAspiranteOpcionExamenDAO
-                    .buscarPorId(new PruebaJornadaAulaAspiranteOpcionExamenPK(idPrueba, idJornada, idAula, idAspiranteOpcion)) != null) {
-                return Response.status(Response.Status.CONFLICT)
-                        .header(ResponseHeaders.WRONG_PARAMETER.toString(), "Ya existe examen para este aspirante")
-                        .build();
+            if (pruebaJornadaAulaAspiranteOpcionExamenDAO
+                .buscarPorId(new PruebaJornadaAulaAspiranteOpcionExamenPK(idPrueba, idJornada, idAula, idAspiranteOpcion)) != null) {
+            return Response.status(Response.Status.CONFLICT)
+                .header(ResponseHeaders.WRONG_PARAMETER.toString(), "Ya existe examen para este aspirante")
+                .build();
             }
             if (pruebaClave == null) {
                 return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "Prueba clave no encontrada").build();

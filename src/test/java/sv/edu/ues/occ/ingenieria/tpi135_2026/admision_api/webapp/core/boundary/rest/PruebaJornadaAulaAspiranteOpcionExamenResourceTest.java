@@ -100,49 +100,22 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResourceTest {
     }
 
     @Test
-    public void crearIdPruebaNullTest() {
-        System.out.println("Ejecutando test: crearIdPruebaNullTest en PruebaJornadaAulaAspiranteOpcionExamenResource");
+    public void crearParametrosNullTest() {
+        System.out.println("Ejecutando test: crearParametrosNullTest en PruebaJornadaAulaAspiranteOpcionExamenResource");
         assertEquals(400, cut.crear(null, idJornada, idAula, idAspiranteOpcion, nuevaEntidadValida(), mockUriInfo).getStatus());
-    }
-
-    @Test
-    public void crearIdJornadaNullTest() {
-        System.out.println("Ejecutando test: crearIdJornadaNullTest en PruebaJornadaAulaAspiranteOpcionExamenResource");
         assertEquals(400, cut.crear(idPrueba, null, idAula, idAspiranteOpcion, nuevaEntidadValida(), mockUriInfo).getStatus());
-    }
-
-    @Test
-    public void crearIdAulaNullTest() {
-        System.out.println("Ejecutando test: crearIdAulaNullTest en PruebaJornadaAulaAspiranteOpcionExamenResource");
         assertEquals(400, cut.crear(idPrueba, idJornada, null, idAspiranteOpcion, nuevaEntidadValida(), mockUriInfo).getStatus());
-    }
-
-    @Test
-    public void crearIdAspiranteOpcionNullTest() {
-        System.out.println("Ejecutando test: crearIdAspiranteOpcionNullTest en PruebaJornadaAulaAspiranteOpcionExamenResource");
         assertEquals(400, cut.crear(idPrueba, idJornada, idAula, null, nuevaEntidadValida(), mockUriInfo).getStatus());
-    }
-
-    @Test
-    public void crearEntityNullTest() {
-        System.out.println("Ejecutando test: crearEntityNullTest en PruebaJornadaAulaAspiranteOpcionExamenResource");
         assertEquals(400, cut.crear(idPrueba, idJornada, idAula, idAspiranteOpcion, null, mockUriInfo).getStatus());
-    }
 
-    @Test
-    public void crearResultadoNullTest() {
-        System.out.println("Ejecutando test: crearResultadoNullTest en PruebaJornadaAulaAspiranteOpcionExamenResource");
-        PruebaJornadaAulaAspiranteOpcionExamen entity = new PruebaJornadaAulaAspiranteOpcionExamen();
-        entity.setIdPruebaClave(UUID.randomUUID());
-        assertEquals(400, cut.crear(idPrueba, idJornada, idAula, idAspiranteOpcion, entity, mockUriInfo).getStatus());
-    }
+        PruebaJornadaAulaAspiranteOpcionExamen entitySinResultado = new PruebaJornadaAulaAspiranteOpcionExamen();
+        entitySinResultado.setIdPruebaClave(UUID.randomUUID());
+        assertEquals(400, cut.crear(idPrueba, idJornada, idAula, idAspiranteOpcion, entitySinResultado, mockUriInfo).getStatus());
 
-    @Test
-    public void crearIdPruebaClaveNullTest() {
-        System.out.println("Ejecutando test: crearIdPruebaClaveNullTest en PruebaJornadaAulaAspiranteOpcionExamenResource");
-        PruebaJornadaAulaAspiranteOpcionExamen entity = new PruebaJornadaAulaAspiranteOpcionExamen();
-        entity.setResultado(BigDecimal.TEN);
-        assertEquals(400, cut.crear(idPrueba, idJornada, idAula, idAspiranteOpcion, entity, mockUriInfo).getStatus());
+        
+        PruebaJornadaAulaAspiranteOpcionExamen entitySinClave = new PruebaJornadaAulaAspiranteOpcionExamen();
+        entitySinClave.setResultado(BigDecimal.TEN);
+        assertEquals(400, cut.crear(idPrueba, idJornada, idAula, idAspiranteOpcion, entitySinClave, mockUriInfo).getStatus());
     }
 
     @Test
@@ -220,26 +193,11 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResourceTest {
     }
 
     @Test
-    public void buscarPorPadreIdPruebaNullTest() {
-        System.out.println("Ejecutando test: buscarPorPadreIdPruebaNullTest en PruebaJornadaAulaAspiranteOpcionExamenResource");
+    public void buscarPorPadreParametrosNullTest() {
+        System.out.println("Ejecutando test: buscarPorPadreParametrosNullTest en PruebaJornadaAulaAspiranteOpcionExamenResource");
         assertEquals(400, cut.buscarPorPadre(null, idJornada, idAula, idAspiranteOpcion).getStatus());
-    }
-
-    @Test
-    public void buscarPorPadreIdJornadaNullTest() {
-        System.out.println("Ejecutando test: buscarPorPadreIdJornadaNullTest en PruebaJornadaAulaAspiranteOpcionExamenResource");
         assertEquals(400, cut.buscarPorPadre(idPrueba, null, idAula, idAspiranteOpcion).getStatus());
-    }
-
-    @Test
-    public void buscarPorPadreIdAulaNullTest() {
-        System.out.println("Ejecutando test: buscarPorPadreIdAulaNullTest en PruebaJornadaAulaAspiranteOpcionExamenResource");
         assertEquals(400, cut.buscarPorPadre(idPrueba, idJornada, null, idAspiranteOpcion).getStatus());
-    }
-
-    @Test
-    public void buscarPorPadreIdAspiranteOpcionNullTest() {
-        System.out.println("Ejecutando test: buscarPorPadreIdAspiranteOpcionNullTest en PruebaJornadaAulaAspiranteOpcionExamenResource");
         assertEquals(400, cut.buscarPorPadre(idPrueba, idJornada, idAula, null).getStatus());
     }
 
@@ -303,32 +261,12 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResourceTest {
     }
 
     @Test
-    public void actualizarIdPruebaNullTest() {
-        System.out.println("Ejecutando test: actualizarIdPruebaNullTest en PruebaJornadaAulaAspiranteOpcionExamenResource");
+    public void actualizarParametrosNullTest() {
+        System.out.println("Ejecutando test: actualizarParametrosNullTest en PruebaJornadaAulaAspiranteOpcionExamenResource");
         assertEquals(400, cut.actualizar(null, idJornada, idAula, idAspiranteOpcion, nuevaEntidadValida()).getStatus());
-    }
-
-    @Test
-    public void actualizarIdJornadaNullTest() {
-        System.out.println("Ejecutando test: actualizarIdJornadaNullTest en PruebaJornadaAulaAspiranteOpcionExamenResource");
         assertEquals(400, cut.actualizar(idPrueba, null, idAula, idAspiranteOpcion, nuevaEntidadValida()).getStatus());
-    }
-
-    @Test
-    public void actualizarIdAulaNullTest() {
-        System.out.println("Ejecutando test: actualizarIdAulaNullTest en PruebaJornadaAulaAspiranteOpcionExamenResource");
         assertEquals(400, cut.actualizar(idPrueba, idJornada, null, idAspiranteOpcion, nuevaEntidadValida()).getStatus());
-    }
-
-    @Test
-    public void actualizarIdAspiranteOpcionNullTest() {
-        System.out.println("Ejecutando test: actualizarIdAspiranteOpcionNullTest en PruebaJornadaAulaAspiranteOpcionExamenResource");
         assertEquals(400, cut.actualizar(idPrueba, idJornada, idAula, null, nuevaEntidadValida()).getStatus());
-    }
-
-    @Test
-    public void actualizarEntityNullTest() {
-        System.out.println("Ejecutando test: actualizarEntityNullTest en PruebaJornadaAulaAspiranteOpcionExamenResource");
         assertEquals(400, cut.actualizar(idPrueba, idJornada, idAula, idAspiranteOpcion, null).getStatus());
     }
 
@@ -397,26 +335,11 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResourceTest {
     }
 
     @Test
-    public void eliminarIdPruebaNullTest() {
-        System.out.println("Ejecutando test: eliminarIdPruebaNullTest en PruebaJornadaAulaAspiranteOpcionExamenResource");
+    public void eliminarParametrosNullTest() {
+        System.out.println("Ejecutando test: eliminarParametrosNullTest en PruebaJornadaAulaAspiranteOpcionExamenResource");
         assertEquals(400, cut.eliminar(null, idJornada, idAula, idAspiranteOpcion).getStatus());
-    }
-
-    @Test
-    public void eliminarIdJornadaNullTest() {
-        System.out.println("Ejecutando test: eliminarIdJornadaNullTest en PruebaJornadaAulaAspiranteOpcionExamenResource");
         assertEquals(400, cut.eliminar(idPrueba, null, idAula, idAspiranteOpcion).getStatus());
-    }
-
-    @Test
-    public void eliminarIdAulaNullTest() {
-        System.out.println("Ejecutando test: eliminarIdAulaNullTest en PruebaJornadaAulaAspiranteOpcionExamenResource");
         assertEquals(400, cut.eliminar(idPrueba, idJornada, null, idAspiranteOpcion).getStatus());
-    }
-
-    @Test
-    public void eliminarIdAspiranteOpcionNullTest() {
-        System.out.println("Ejecutando test: eliminarIdAspiranteOpcionNullTest en PruebaJornadaAulaAspiranteOpcionExamenResource");
         assertEquals(400, cut.eliminar(idPrueba, idJornada, idAula, null).getStatus());
     }
 
