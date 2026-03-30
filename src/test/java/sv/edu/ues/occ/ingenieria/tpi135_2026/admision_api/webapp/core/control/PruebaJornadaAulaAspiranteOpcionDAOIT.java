@@ -46,34 +46,54 @@ public class PruebaJornadaAulaAspiranteOpcionDAOIT extends AbstractIntengrationD
         cut.em = em;
     }
 
-    private ContextoPruebaJornadaAula crearContextoPruebaJornadaAula(String idAula) {
-        ContextoPruebaJornadaAula ctx = new ContextoPruebaJornadaAula();
-
+    private TipoPrueba crearTipoPrueba(UUID uniq) {
         TipoPrueba tipoPrueba = new TipoPrueba(UUID.randomUUID());
-        tipoPrueba.setValor("Tipo " + UUID.randomUUID());
+        tipoPrueba.setValor("Tipo " + uniq);
         em.persist(tipoPrueba);
+        return tipoPrueba;
+    }
 
+    private Prueba crearPrueba(TipoPrueba tipoPrueba, UUID uniq) {
         Prueba prueba = new Prueba(UUID.randomUUID());
-        prueba.setNombre("Prueba " + UUID.randomUUID());
+        prueba.setNombre("Prueba " + uniq);
         prueba.setPuntajeMaximo(new BigDecimal("10.00"));
         prueba.setNotaAprobacion(new BigDecimal("6.00"));
         prueba.setFechaCreacion(OffsetDateTime.now());
         prueba.setIdTipoPrueba(tipoPrueba);
         em.persist(prueba);
+        return prueba;
+    }
 
+    private Jornada crearJornada(UUID uniq) {
         Jornada jornada = new Jornada(UUID.randomUUID());
-        jornada.setNombre("Jornada " + UUID.randomUUID());
+        jornada.setNombre("Jornada " + uniq);
         jornada.setFechaInicio(OffsetDateTime.now());
         jornada.setFechaFin(OffsetDateTime.now().plusDays(1));
         em.persist(jornada);
+        return jornada;
+    }
 
+    private void crearPruebaJornada(Prueba prueba, Jornada jornada) {
         PruebaJornada pruebaJornada = new PruebaJornada(prueba, jornada);
         em.persist(pruebaJornada);
+    }
 
+    private void crearJornadaAula(Jornada jornada, String idAula) {
         JornadaAula jornadaAula = new JornadaAula(UUID.randomUUID());
         jornadaAula.setIdJornada(jornada);
         jornadaAula.setIdAula(idAula);
         em.persist(jornadaAula);
+    }
+
+    private ContextoPruebaJornadaAula crearContextoPruebaJornadaAula(String idAula) {
+        ContextoPruebaJornadaAula ctx = new ContextoPruebaJornadaAula();
+        UUID uniq = UUID.randomUUID();
+
+        TipoPrueba tipoPrueba = crearTipoPrueba(uniq);
+        Prueba prueba = crearPrueba(tipoPrueba, uniq);
+        Jornada jornada = crearJornada(uniq);
+        crearPruebaJornada(prueba, jornada);
+        crearJornadaAula(jornada, idAula);
 
         ctx.idPrueba = prueba.getIdPrueba();
         ctx.idJornada = jornada.getIdJornada();

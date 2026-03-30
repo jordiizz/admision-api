@@ -1,7 +1,23 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
+
 import jakarta.persistence.EntityManager;
-import org.junit.jupiter.api.*;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Aspirante;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.AspiranteOpcion;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Jornada;
@@ -13,14 +29,6 @@ import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Pru
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornadaAulaAspiranteOpcionExamen;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornadaAulaAspiranteOpcionExamenPK;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.TipoPrueba;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -42,14 +50,14 @@ public class PruebaJornadaAulaAspiranteOpcionExamenDAOIT extends AbstractIntengr
         cut.em = em;
     }
 
-    private ContextoCompleto crearContextoCompleto(String idAula) {
-        ContextoCompleto ctx = new ContextoCompleto();
-        UUID uniq = UUID.randomUUID();
-
+    private TipoPrueba crearTipoPrueba(UUID uniq) {
         TipoPrueba tipoPrueba = new TipoPrueba(UUID.randomUUID());
         tipoPrueba.setValor("Tipo " + uniq);
         em.persist(tipoPrueba);
+        return tipoPrueba;
+    }
 
+    private Prueba crearPrueba(TipoPrueba tipoPrueba, UUID uniq) {
         Prueba prueba = new Prueba(UUID.randomUUID());
         prueba.setNombre("Prueba " + uniq);
         prueba.setPuntajeMaximo(new BigDecimal("10.00"));
@@ -57,21 +65,31 @@ public class PruebaJornadaAulaAspiranteOpcionExamenDAOIT extends AbstractIntengr
         prueba.setFechaCreacion(OffsetDateTime.now());
         prueba.setIdTipoPrueba(tipoPrueba);
         em.persist(prueba);
+        return prueba;
+    }
 
+    private Jornada crearJornada(UUID uniq) {
         Jornada jornada = new Jornada(UUID.randomUUID());
         jornada.setNombre("Jornada " + uniq);
         jornada.setFechaInicio(OffsetDateTime.now());
         jornada.setFechaFin(OffsetDateTime.now().plusDays(1));
         em.persist(jornada);
+        return jornada;
+    }
 
+    private void crearPruebaJornada(Prueba prueba, Jornada jornada) {
         PruebaJornada pruebaJornada = new PruebaJornada(prueba, jornada);
         em.persist(pruebaJornada);
+    }
 
+    private void crearJornadaAula(Jornada jornada, String idAula) {
         JornadaAula jornadaAula = new JornadaAula(UUID.randomUUID());
         jornadaAula.setIdJornada(jornada);
         jornadaAula.setIdAula(idAula);
         em.persist(jornadaAula);
+    }
 
+    private Aspirante crearAspirante(UUID uniq) {
         Aspirante aspirante = new Aspirante(UUID.randomUUID());
         aspirante.setNombres("Aspirante " + uniq);
         aspirante.setApellidos("Apellido " + uniq);
@@ -79,13 +97,19 @@ public class PruebaJornadaAulaAspiranteOpcionExamenDAOIT extends AbstractIntengr
         aspirante.setCorreo("asp-" + uniq + "@mail.com");
         aspirante.setFechaCreacion(OffsetDateTime.now());
         em.persist(aspirante);
+        return aspirante;
+    }
 
+    private AspiranteOpcion crearAspiranteOpcion(Aspirante aspirante, UUID uniq) {
         AspiranteOpcion aspiranteOpcion = new AspiranteOpcion(UUID.randomUUID());
         aspiranteOpcion.setIdAspirante(aspirante);
         aspiranteOpcion.setIdOpcion("opcion-" + uniq);
         aspiranteOpcion.setFechaCreacion(OffsetDateTime.now());
         em.persist(aspiranteOpcion);
+        return aspiranteOpcion;
+    }
 
+    private void crearPadre(Prueba prueba, Jornada jornada, String idAula, AspiranteOpcion aspiranteOpcion) {
         PruebaJornadaAulaAspiranteOpcion padre = new PruebaJornadaAulaAspiranteOpcion(
                 prueba.getIdPrueba(),
                 jornada.getIdJornada(),
@@ -94,11 +118,29 @@ public class PruebaJornadaAulaAspiranteOpcionExamenDAOIT extends AbstractIntengr
         padre.setActivo(true);
         padre.setFecha(OffsetDateTime.now());
         em.persist(padre);
+    }
 
+    private PruebaClave crearPruebaClave(Prueba prueba, UUID uniq) {
         PruebaClave pruebaClave = new PruebaClave(UUID.randomUUID());
         pruebaClave.setNombreClave("Clave " + uniq);
         pruebaClave.setIdPrueba(prueba);
         em.persist(pruebaClave);
+        return pruebaClave;
+    }
+
+    private ContextoCompleto crearContextoCompleto(String idAula) {
+        ContextoCompleto ctx = new ContextoCompleto();
+        UUID uniq = UUID.randomUUID();
+
+        TipoPrueba tipoPrueba = crearTipoPrueba(uniq);
+        Prueba prueba = crearPrueba(tipoPrueba, uniq);
+        Jornada jornada = crearJornada(uniq);
+        crearPruebaJornada(prueba, jornada);
+        crearJornadaAula(jornada, idAula);
+        Aspirante aspirante = crearAspirante(uniq);
+        AspiranteOpcion aspiranteOpcion = crearAspiranteOpcion(aspirante, uniq);
+        crearPadre(prueba, jornada, idAula, aspiranteOpcion);
+        PruebaClave pruebaClave = crearPruebaClave(prueba, uniq);
 
         ctx.idPrueba = prueba.getIdPrueba();
         ctx.idJornada = jornada.getIdJornada();
