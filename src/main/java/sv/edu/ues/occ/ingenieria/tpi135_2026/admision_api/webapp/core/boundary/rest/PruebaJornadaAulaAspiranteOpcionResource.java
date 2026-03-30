@@ -28,6 +28,7 @@ import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Asp
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.JornadaAula;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornada;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornadaAulaAspiranteOpcion;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornadaAulaAspiranteOpcionPK;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornadaPK;
 
 @Path("prueba/{id_prueba}/jornada/{id_jornada}/aula/{id_aula}/aspirante-opcion")
@@ -117,7 +118,8 @@ public class PruebaJornadaAulaAspiranteOpcionResource implements Serializable {
         }
 
         try {
-            PruebaJornadaAulaAspiranteOpcion encontrado = pruebaJornadaAulaAspiranteOpcionDAO.buscarPorIdYPruebaJornadaYJornadaAula(idAspiranteOpcion, idPrueba, idJornada, idAula);
+            PruebaJornadaAulaAspiranteOpcion encontrado = pruebaJornadaAulaAspiranteOpcionDAO
+                .buscarPorId(new PruebaJornadaAulaAspiranteOpcionPK(idPrueba, idJornada, idAula, idAspiranteOpcion));
             return (encontrado != null)
                     ? Response.ok(encontrado).build()
                     : Response.status(Response.Status.NOT_FOUND)
@@ -144,7 +146,8 @@ public class PruebaJornadaAulaAspiranteOpcionResource implements Serializable {
         }
 
         try {
-            PruebaJornadaAulaAspiranteOpcion existente = pruebaJornadaAulaAspiranteOpcionDAO.buscarPorIdYPruebaJornadaYJornadaAula(idAspiranteOpcion, idPrueba, idJornada, idAula);
+            PruebaJornadaAulaAspiranteOpcion existente = pruebaJornadaAulaAspiranteOpcionDAO
+                    .buscarPorId(new PruebaJornadaAulaAspiranteOpcionPK(idPrueba, idJornada, idAula, idAspiranteOpcion));
             if (existente == null) return Response.status(Response.Status.NOT_FOUND).build();
 
             // Lógica simplificada de AspiranteOpcion
@@ -180,7 +183,8 @@ public class PruebaJornadaAulaAspiranteOpcionResource implements Serializable {
         }
 
         try {
-            PruebaJornadaAulaAspiranteOpcion existente = pruebaJornadaAulaAspiranteOpcionDAO.buscarPorIdYPruebaJornadaYJornadaAula(idAspiranteOpcion, idPrueba, idJornada, idAula);
+            PruebaJornadaAulaAspiranteOpcion existente = pruebaJornadaAulaAspiranteOpcionDAO
+                    .buscarPorId(new PruebaJornadaAulaAspiranteOpcionPK(idPrueba, idJornada, idAula, idAspiranteOpcion));
             if (existente == null) return Response.status(Response.Status.NOT_FOUND).build();
             
             pruebaJornadaAulaAspiranteOpcionDAO.eliminar(existente);
