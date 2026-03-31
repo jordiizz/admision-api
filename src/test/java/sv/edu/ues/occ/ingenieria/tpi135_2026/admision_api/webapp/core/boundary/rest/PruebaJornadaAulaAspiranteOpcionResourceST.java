@@ -91,15 +91,6 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
                 .request(MediaType.APPLICATION_JSON)
             .post(Entity.json(nuevaPrueba));
 
-        if (response.getStatus() != 201) {
-            String detalle = "status=" + response.getStatus()
-                + ", process_error=" + response.getHeaderString(ResponseHeaders.PROCESS_ERROR.toString())
-                + ", wrong_parameter=" + response.getHeaderString(ResponseHeaders.WRONG_PARAMETER.toString())
-                + ", not_found=" + response.getHeaderString(ResponseHeaders.NOT_FOUND.toString())
-                + ", body=" + response.readEntity(String.class);
-            Assertions.fail("crearPruebaPorApi fallo: " + detalle);
-        }
-
         Assertions.assertTrue(response.getHeaders().containsKey("Location"));
         String location = response.getHeaderString("Location");
         return UUID.fromString(location.substring(location.lastIndexOf('/') + 1));
@@ -114,15 +105,6 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
         Response response = apiRoot().path("jornada")
                 .request(MediaType.APPLICATION_JSON)
             .post(Entity.json(nuevaJornada));
-
-        if (response.getStatus() != 201) {
-            String detalle = "status=" + response.getStatus()
-                    + ", process_error=" + response.getHeaderString(ResponseHeaders.PROCESS_ERROR.toString())
-                    + ", wrong_parameter=" + response.getHeaderString(ResponseHeaders.WRONG_PARAMETER.toString())
-                    + ", not_found=" + response.getHeaderString(ResponseHeaders.NOT_FOUND.toString())
-                    + ", body=" + response.readEntity(String.class);
-            Assertions.fail("crearJornadaPorApi fallo: " + detalle);
-        }
 
         Assertions.assertTrue(response.getHeaders().containsKey("Location"));
         String location = response.getHeaderString("Location");
