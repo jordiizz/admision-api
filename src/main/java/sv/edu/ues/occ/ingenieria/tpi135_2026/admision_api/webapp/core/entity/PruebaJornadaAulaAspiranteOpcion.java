@@ -5,6 +5,8 @@ import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -49,6 +51,7 @@ public class PruebaJornadaAulaAspiranteOpcion implements Serializable {
     private UUID idAspiranteOpcion;
 
     @Column(name = "fecha")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private OffsetDateTime fecha;
 
     @Column(name = "activo")

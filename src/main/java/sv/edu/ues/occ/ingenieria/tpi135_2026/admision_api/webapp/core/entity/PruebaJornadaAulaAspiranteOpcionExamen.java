@@ -6,6 +6,8 @@ import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -52,6 +54,7 @@ public class PruebaJornadaAulaAspiranteOpcionExamen implements Serializable {
     private BigDecimal resultado;
 
     @Column(name = "fecha_resultado")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private OffsetDateTime fechaResultado;
 
     public PruebaJornadaAulaAspiranteOpcionExamen() {}

@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -21,9 +23,11 @@ public class Jornada implements Serializable{
     private String nombre;
 
     @Column(name = "fecha_inicio", nullable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private OffsetDateTime fechaInicio;
 
     @Column(name = "fecha_fin", nullable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private OffsetDateTime fechaFin;
 
 

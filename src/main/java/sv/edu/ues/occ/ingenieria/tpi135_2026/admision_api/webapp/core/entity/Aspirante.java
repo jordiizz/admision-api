@@ -6,7 +6,6 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.json.bind.annotation.JsonbDateFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -14,7 +13,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "aspirante")
-public class Aspirante implements Serializable{
+public class Aspirante implements Serializable {
 
     @Id
     @Column(name = "id_aspirante")
@@ -37,7 +36,7 @@ public class Aspirante implements Serializable{
     private String correo;
 
     @Column(name = "fecha_creacion", nullable = false)
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private OffsetDateTime fechaCreacion;
 
     public Aspirante(UUID idAspirante) {

@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -37,6 +39,7 @@ public class Prueba implements Serializable{
     private Integer duracion;
 
     @Column(name = "fecha_creacion", nullable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private OffsetDateTime fechaCreacion;
 
     @ManyToOne(fetch = FetchType.LAZY)

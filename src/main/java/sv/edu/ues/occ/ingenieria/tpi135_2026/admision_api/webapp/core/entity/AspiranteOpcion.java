@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -27,6 +29,7 @@ public class AspiranteOpcion implements Serializable {
     private Integer prioridad;
 
     @Column(name = "fecha_creacion", nullable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private OffsetDateTime fechaCreacion;
 
     @ManyToOne(fetch = FetchType.LAZY)
