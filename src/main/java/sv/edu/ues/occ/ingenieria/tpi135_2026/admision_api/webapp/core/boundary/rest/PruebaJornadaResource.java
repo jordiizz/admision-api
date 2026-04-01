@@ -10,15 +10,16 @@ import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriInfo;
+
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PruebaDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.JornadaDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PruebaJornadaDAO;
@@ -41,11 +42,10 @@ public class PruebaJornadaResource implements Serializable{
     PruebaJornadaDAO pJDAO;
 
     @GET
-    @Path("{id_prueba}/jornada")
     @Produces({MediaType.APPLICATION_JSON})
     public Response listarJornadas(@PathParam("id_prueba") UUID idPrueba, 
-                                @PathParam("first") @DefaultValue("0") int first,
-                                @PathParam("max") @DefaultValue("10") int max) {
+                                @QueryParam("first") @DefaultValue("0") int first,
+                                @QueryParam("max") @DefaultValue("10") int max) {
 
         if(idPrueba != null && first >= 0 && max > 0){
             try {
@@ -63,7 +63,7 @@ public class PruebaJornadaResource implements Serializable{
     }
 
     @POST
-    @Path("{id_prueba}/jornada/{id_jornada}")
+    @Path("/{id_jornada}")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response crear(@PathParam("id_prueba") UUID idPrueba, @PathParam("id_jornada") UUID idJornada, @Context UriInfo uriInfo){
@@ -89,7 +89,7 @@ public class PruebaJornadaResource implements Serializable{
 
 
     @DELETE
-    @Path("{id_prueba}/jornada/{id_jornada}")
+    @Path("/{id_jornada}")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response eliminar(@PathParam("id_prueba") UUID idPrueba, @PathParam("id_jornada") UUID idJornada){
@@ -112,28 +112,5 @@ public class PruebaJornadaResource implements Serializable{
         return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "idPrueba o idJornada").build();
     }
 
-    @PUT
-    @Consumes({MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_JSON})
-    @Path("{id_prueba}/jornada/{id_jornada}")
-    public Response actualizar(PruebaJornada pj, @PathParam("id_prueba") UUID idPrueba, @PathParam("id_jornada") UUID idJornada){
-        if(pj != null && idPrueba != null && idJornada != null){
-            try {
-                Prueba p = pDAO.buscarPorId(idPrueba);
-                Jornada j = jDAO.buscarPorId(idJornada);
-                PruebaJornadaPK pk = new PruebaJornadaPK(idPrueba, idJornada);
-                PruebaJornada PJExistente = pJDAO.buscarPorId(pk);
-                if(p != null && j != null && PJExistente != null){
-                    pj.setIdPrueba(p);
-                    pj.setIdJornada(j);
-                    pJDAO.actualizar(pj);
-                    return Response.status(Response.Status.OK).build();
-                }
-                return Response.status(Response.Status.NOT_FOUND).build();
-            } catch (Exception e) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
-            }
-        }
-        return Response.status(Response.Status.BAD_REQUEST).build();
-    }
+   
 }

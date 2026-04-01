@@ -154,40 +154,6 @@ public class PruebaJornadaResourceTest {
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), respuesta.getStatus());
     }
 
-    @Test
-    public void actualizar_PruebaJornada_Exitoso() {
-        System.out.println("EjecutandoTest: actualizar_PruebaJornada_Exitoso");
-        UUID idPrueba = UUID.randomUUID();
-        UUID idJornada = UUID.randomUUID();
-        p = new Prueba(idPrueba);
-        j = new Jornada(idJornada);
-        PruebaJornada pj = new PruebaJornada(p, j);
+   
 
-        Mockito.when(pDAO.buscarPorId(idPrueba)).thenReturn(p);
-        Mockito.when(jDAO.buscarPorId(idJornada)).thenReturn(j);
-        Mockito.when(pJDAO.buscarPorId(Mockito.any(PruebaJornadaPK.class))).thenReturn(pj);
-
-        Response respuesta = cut.actualizar(pj, idPrueba, idJornada);
-        assertEquals(Response.Status.OK.getStatusCode(), respuesta.getStatus());
-    }
-
-     @Test
-    public void actualizar_PruebaJornada_NotFound() {
-        System.out.println("EjecutandoTest: actualizar_PruebaJornada_NotFound");
-        UUID idPrueba = UUID.randomUUID();
-        UUID idJornada = UUID.randomUUID();
-        PruebaJornada pj = new PruebaJornada(new Prueba(idPrueba), new Jornada(idJornada));
-
-        Mockito.when(pDAO.buscarPorId(idPrueba)).thenReturn(null);
-        Mockito.when(jDAO.buscarPorId(idJornada)).thenReturn(null);
-        Response respuesta = cut.actualizar(pj, idPrueba, idJornada);
-        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), respuesta.getStatus());
-    }
-
-    @Test
-    public void actualizar_PruebaJornada_BadRequest() {
-        System.out.println("EjecutandoTest: actualizar_PruebaJornada_BadRequest");
-        Response respuesta = cut.actualizar(null, null, null);
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), respuesta.getStatus());
-    }
 }
