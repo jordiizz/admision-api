@@ -407,51 +407,6 @@ public class PruebaClaveAreaPreguntaDistractorResourceST extends AbstractIntegra
 
     @Order(9)
     @Test
-    public void actualizarTest() throws SQLException {
-        // Actualizacion valida manteniendo el distractor del path.
-        System.out.println("actualizar en PruebaClaveAreaPreguntaDistractorResource");
-
-        ContextoDistractor contexto = crearContexto(true);
-        PruebaClaveAreaPreguntaDistractor actualizar = new PruebaClaveAreaPreguntaDistractor();
-
-        Response respuesta = target.path(contexto.idPruebaClave.toString())
-                .path("area")
-                .path(contexto.idArea.toString())
-                .path("pregunta")
-                .path(contexto.idPregunta.toString())
-                .path("distractor")
-                .path(contexto.idDistractor.toString())
-                .request(MediaType.APPLICATION_JSON)
-                .put(Entity.json(actualizar));
-
-        Assertions.assertEquals(200, respuesta.getStatus());
-    }
-
-    @Order(10)
-    @Test
-    public void actualizarDistractorInvalidoTest() throws SQLException {
-        // Si cambia a distractor inexistente en body, debe responder 404.
-        System.out.println("actualizarDistractorInvalido en PruebaClaveAreaPreguntaDistractorResource");
-
-        ContextoDistractor contexto = crearContexto(true);
-        PruebaClaveAreaPreguntaDistractor actualizar = new PruebaClaveAreaPreguntaDistractor();
-        actualizar.setIdDistractor(UUID.randomUUID());
-
-        Response respuesta = target.path(contexto.idPruebaClave.toString())
-                .path("area")
-                .path(contexto.idArea.toString())
-                .path("pregunta")
-                .path(contexto.idPregunta.toString())
-                .path("distractor")
-                .path(contexto.idDistractor.toString())
-                .request(MediaType.APPLICATION_JSON)
-                .put(Entity.json(actualizar));
-
-        Assertions.assertEquals(404, respuesta.getStatus());
-    }
-
-    @Order(11)
-    @Test
     public void eliminarTest() throws SQLException {
         // Elimina y confirma que no se pueda consultar nuevamente.
         System.out.println("eliminar en PruebaClaveAreaPreguntaDistractorResource");
@@ -483,7 +438,7 @@ public class PruebaClaveAreaPreguntaDistractorResourceST extends AbstractIntegra
         Assertions.assertEquals(404, buscarRespuesta.getStatus());
     }
 
-    @Order(12)
+    @Order(10)
     @Test
     public void eliminarNoEncontradoTest() throws SQLException {
         // Eliminar un distractor no asociado debe responder 404.

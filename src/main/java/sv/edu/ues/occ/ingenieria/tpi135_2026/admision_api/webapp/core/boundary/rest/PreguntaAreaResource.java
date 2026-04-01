@@ -10,7 +10,6 @@ import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -126,48 +125,6 @@ public class PreguntaAreaResource implements Serializable {
         }
         return Response.status(Response.Status.BAD_REQUEST)
                 .header(ResponseHeaders.WRONG_PARAMETER.toString(), "idPregunta e idArea no pueden ser nulos")
-                .build();
-    }
-
-    @PUT
-    @Path("{id_area}")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response actualizar(
-            @PathParam("id_pregunta") UUID idPregunta,
-            @PathParam("id_area") UUID idArea,
-            PreguntaArea preguntaArea) {
-        if (preguntaArea != null && idPregunta != null && idArea != null
-                && preguntaArea.getIdArea() != null && preguntaArea.getIdArea().getIdArea() != null) {
-            try {
-                if (!idArea.equals(preguntaArea.getIdArea().getIdArea())) {
-                    return Response.status(Response.Status.BAD_REQUEST)
-                            .header(ResponseHeaders.WRONG_PARAMETER.toString(), "El idArea del body debe coincidir con el id_area del path")
-                            .build();
-                }
-                PreguntaArea existente = preguntaAreaDAO.buscarPorId(new PreguntaAreaPK(idPregunta, idArea));
-                if (existente != null) {
-                    preguntaArea.setIdPregunta(new Pregunta(idPregunta));
-                    Area area = areaDAO.buscarPorId(preguntaArea.getIdArea().getIdArea());
-                    if (area == null) {
-                        return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "Area no encontrada").build();
-                    }
-                    preguntaArea.setIdArea(area);
-                    preguntaAreaDAO.actualizar(preguntaArea);
-                    return Response.ok(preguntaArea).build();
-                }
-                return Response.status(Response.Status.NOT_FOUND)
-                        .header(ResponseHeaders.NOT_FOUND.toString(), "Recurso no encontrado")
-                        .build();
-            } catch (Exception e) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage())
-                        .build();
-            }
-        }
-        return Response.status(Response.Status.BAD_REQUEST)
-                .header(ResponseHeaders.WRONG_PARAMETER.toString(),
-                        "El recurso no puede ser nulo y idPregunta e idArea no pueden ser nulos")
                 .build();
     }
 

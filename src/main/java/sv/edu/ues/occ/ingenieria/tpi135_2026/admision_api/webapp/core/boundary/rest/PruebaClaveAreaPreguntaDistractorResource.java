@@ -10,7 +10,6 @@ import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -117,44 +116,6 @@ public class PruebaClaveAreaPreguntaDistractorResource implements Serializable {
             return (encontrado != null)
                     ? Response.ok(encontrado).build()
                     : Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "No encontrado").build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
-        }
-    }
-
-    @PUT
-    @Path("{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response actualizar(
-            @PathParam("id_prueba_clave") UUID idPruebaClave,
-            @PathParam("id_area") UUID idArea,
-            @PathParam("id_pregunta") UUID idPregunta,
-            @PathParam("id") UUID idDistractor,
-            PruebaClaveAreaPreguntaDistractor entity) {
-
-        if (idPruebaClave == null || idArea == null || idPregunta == null || idDistractor == null || entity == null
-                || entity.getIdDistractor() == null) {
-            return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "Datos insuficientes para actualizar").build();
-        }
-        try {
-            if (!idDistractor.equals(entity.getIdDistractor())) {
-                return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "El idDistractor del body debe coincidir con el id del path").build();
-            }
-            PruebaClaveAreaPreguntaDistractorPK pk = new PruebaClaveAreaPreguntaDistractorPK(idPruebaClave, idArea, idPregunta, idDistractor);
-            PruebaClaveAreaPreguntaDistractor existente = pruebaClaveAreaPreguntaDistractorDAO.buscarPorId(pk);
-            if (existente == null) {
-                return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "No encontrado").build();
-            }
-            Distractor distractor = distractorDAO.buscarPorId(entity.getIdDistractor());
-            if (distractor == null) {
-                return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "Distractor especificado en el cuerpo no encontrado").build();
-            }
-            entity.setIdPruebaClave(idPruebaClave);
-            entity.setIdArea(idArea);
-            entity.setIdPregunta(idPregunta);
-            pruebaClaveAreaPreguntaDistractorDAO.actualizar(entity);
-            return Response.ok(entity).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
         }

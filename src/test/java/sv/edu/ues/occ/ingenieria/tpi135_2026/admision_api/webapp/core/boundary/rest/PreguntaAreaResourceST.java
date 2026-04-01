@@ -162,29 +162,6 @@ public class PreguntaAreaResourceST extends AbstractIntegrationTest {
 
     @Order(6)
     @Test
-    public void actualizarTest() {
-        System.out.println("actualizar en PreguntaAreaResource");
-
-        UUID idPregunta = crearPregunta();
-        UUID idArea = crearArea();
-        Response crearRespuesta = crearRelacion(idPregunta, idArea);
-        Assertions.assertEquals(201, crearRespuesta.getStatus());
-
-        PreguntaArea actualizar = new PreguntaArea();
-        actualizar.setIdPregunta(new Pregunta(UUID.randomUUID()));
-        actualizar.setIdArea(new Area(UUID.randomUUID()));
-
-        Response respuesta = target.path(idPregunta.toString())
-                .path("area")
-                .path(idArea.toString())
-                .request(MediaType.APPLICATION_JSON)
-                .put(Entity.json(actualizar));
-
-        Assertions.assertEquals(200, respuesta.getStatus());
-    }
-
-    @Order(7)
-    @Test
     public void eliminarTest() {
         System.out.println("eliminar en PreguntaAreaResource");
 
@@ -210,7 +187,7 @@ public class PreguntaAreaResourceST extends AbstractIntegrationTest {
         Assertions.assertEquals(404, buscar.getStatus());
     }
 
-    @Order(8)
+    @Order(7)
     @Test
     public void eliminarNoEncontradoTest() {
         System.out.println("eliminarNoEncontrado en PreguntaAreaResource");
