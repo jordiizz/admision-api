@@ -182,17 +182,15 @@ public class PruebaClaveAreaPreguntaDistractorResourceST extends AbstractIntegra
     }
 
     private void crearRelacionPorApi(ContextoDistractor contexto, UUID idDistractor) {
-        PruebaClaveAreaPreguntaDistractor nuevo = new PruebaClaveAreaPreguntaDistractor();
-        nuevo.setIdDistractor(idDistractor);
-
         Response response = target.path(contexto.idPruebaClave.toString())
                 .path("area")
                 .path(contexto.idArea.toString())
                 .path("pregunta")
                 .path(contexto.idPregunta.toString())
                 .path("distractor")
+                .path(idDistractor.toString())
                 .request(MediaType.APPLICATION_JSON)
-                .post(Entity.json(nuevo));
+                .method("POST");
 
         Assertions.assertEquals(201, response.getStatus());
     }
@@ -276,8 +274,6 @@ public class PruebaClaveAreaPreguntaDistractorResourceST extends AbstractIntegra
         System.out.println("crear en PruebaClaveAreaPreguntaDistractorResource");
 
         ContextoDistractor contexto = crearContexto(false);
-        PruebaClaveAreaPreguntaDistractor nuevo = new PruebaClaveAreaPreguntaDistractor();
-        nuevo.setIdDistractor(contexto.idDistractor);
 
         Response respuesta = target.path(contexto.idPruebaClave.toString())
                 .path("area")
@@ -285,8 +281,9 @@ public class PruebaClaveAreaPreguntaDistractorResourceST extends AbstractIntegra
                 .path("pregunta")
                 .path(contexto.idPregunta.toString())
                 .path("distractor")
+                .path(contexto.idDistractor.toString())
                 .request(MediaType.APPLICATION_JSON)
-                .post(Entity.json(nuevo));
+                .method("POST");
 
         Assertions.assertEquals(201, respuesta.getStatus());
         Assertions.assertTrue(respuesta.getHeaders().containsKey("Location"));
@@ -295,11 +292,10 @@ public class PruebaClaveAreaPreguntaDistractorResourceST extends AbstractIntegra
     @Order(4)
     @Test
     public void crearParametrosInvalidosTest() throws SQLException {
-        // Body sin idDistractor debe retornar 400.
+        // Sin id de distractor en el path no existe POST mapeado y debe rechazar la llamada.
         System.out.println("crearParametrosInvalidos en PruebaClaveAreaPreguntaDistractorResource");
 
         ContextoDistractor contexto = crearContexto(false);
-        PruebaClaveAreaPreguntaDistractor nuevo = new PruebaClaveAreaPreguntaDistractor();
 
         Response respuesta = target.path(contexto.idPruebaClave.toString())
                 .path("area")
@@ -308,9 +304,9 @@ public class PruebaClaveAreaPreguntaDistractorResourceST extends AbstractIntegra
                 .path(contexto.idPregunta.toString())
                 .path("distractor")
                 .request(MediaType.APPLICATION_JSON)
-                .post(Entity.json(nuevo));
+            .method("POST");
 
-        Assertions.assertEquals(400, respuesta.getStatus());
+        Assertions.assertEquals(405, respuesta.getStatus());
     }
 
     @Order(5)
@@ -320,8 +316,6 @@ public class PruebaClaveAreaPreguntaDistractorResourceST extends AbstractIntegra
         System.out.println("crearPadreNoEncontrado en PruebaClaveAreaPreguntaDistractorResource");
 
         ContextoDistractor contexto = crearContexto(false);
-        PruebaClaveAreaPreguntaDistractor nuevo = new PruebaClaveAreaPreguntaDistractor();
-        nuevo.setIdDistractor(contexto.idDistractor);
 
         Response respuesta = target.path(contexto.idPruebaClave.toString())
                 .path("area")
@@ -329,8 +323,9 @@ public class PruebaClaveAreaPreguntaDistractorResourceST extends AbstractIntegra
                 .path("pregunta")
                 .path(UUID.randomUUID().toString())
                 .path("distractor")
+                .path(contexto.idDistractor.toString())
                 .request(MediaType.APPLICATION_JSON)
-                .post(Entity.json(nuevo));
+                .method("POST");
 
         Assertions.assertEquals(404, respuesta.getStatus());
     }
@@ -342,8 +337,6 @@ public class PruebaClaveAreaPreguntaDistractorResourceST extends AbstractIntegra
         System.out.println("crearDistractorNoEncontrado en PruebaClaveAreaPreguntaDistractorResource");
 
         ContextoDistractor contexto = crearContexto(false);
-        PruebaClaveAreaPreguntaDistractor nuevo = new PruebaClaveAreaPreguntaDistractor();
-        nuevo.setIdDistractor(UUID.randomUUID());
 
         Response respuesta = target.path(contexto.idPruebaClave.toString())
                 .path("area")
@@ -351,8 +344,9 @@ public class PruebaClaveAreaPreguntaDistractorResourceST extends AbstractIntegra
                 .path("pregunta")
                 .path(contexto.idPregunta.toString())
                 .path("distractor")
+                .path(UUID.randomUUID().toString())
                 .request(MediaType.APPLICATION_JSON)
-                .post(Entity.json(nuevo));
+                .method("POST");
 
         Assertions.assertEquals(404, respuesta.getStatus());
     }

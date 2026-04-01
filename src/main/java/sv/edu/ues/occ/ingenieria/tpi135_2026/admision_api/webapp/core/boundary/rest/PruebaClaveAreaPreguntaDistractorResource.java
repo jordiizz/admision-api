@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.UUID;
 
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
@@ -17,7 +16,6 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriInfo;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.DistractorDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PruebaClaveAreaPreguntaDAO;
@@ -41,35 +39,34 @@ public class PruebaClaveAreaPreguntaDistractorResource implements Serializable {
     DistractorDAO distractorDAO;
 
     @POST
+    @Path("{id_distractor}")
     @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     public Response crear(
             @PathParam("id_prueba_clave") UUID idPruebaClave,
             @PathParam("id_area") UUID idArea,
             @PathParam("id_pregunta") UUID idPregunta,
-            PruebaClaveAreaPreguntaDistractor entity,
+            @PathParam("id_distractor") UUID idDistractor,
             @Context UriInfo uriInfo) {
-        if (idPruebaClave == null || idArea == null || idPregunta == null ||
-                entity == null || entity.getIdDistractor() == null) {
+        if (idPruebaClave == null || idArea == null || idPregunta == null || idDistractor == null) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .header(ResponseHeaders.WRONG_PARAMETER.toString(), "ID padre, cuerpo o distractor faltantes")
+                    .header(ResponseHeaders.WRONG_PARAMETER.toString(), "IDs requeridos")
                     .build();
         }
         try {
             PruebaClaveAreaPregunta padre = pruebaClaveAreaPreguntaDAO.buscarPorId(
                     new PruebaClaveAreaPreguntaPK(idPruebaClave, idArea, idPregunta));
-            Distractor distractor = distractorDAO.buscarPorId(entity.getIdDistractor());
+            Distractor distractor = distractorDAO.buscarPorId(idDistractor);
             if (padre == null || distractor == null) {
                 String message = (padre == null) ? "Padre no encontrado" : "Distractor no encontrado";
                 return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), message).build();
             }
+            PruebaClaveAreaPreguntaDistractor entity = new PruebaClaveAreaPreguntaDistractor();
             entity.setIdPruebaClave(idPruebaClave);
             entity.setIdArea(idArea);
             entity.setIdPregunta(idPregunta);
+            entity.setIdDistractor(idDistractor);
             pruebaClaveAreaPreguntaDistractorDAO.crear(entity);
-            UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
-            uriBuilder.path(entity.getIdDistractor().toString());
-            return Response.created(uriBuilder.build()).entity(entity).build();
+            return Response.created(uriInfo.getAbsolutePath()).entity(entity).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
         }

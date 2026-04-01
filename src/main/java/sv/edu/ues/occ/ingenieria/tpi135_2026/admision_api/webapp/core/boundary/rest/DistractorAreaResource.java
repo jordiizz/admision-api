@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.UUID;
 
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
@@ -17,7 +16,6 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriInfo;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.AreaDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.DistractorAreaDAO;
@@ -40,41 +38,36 @@ public class DistractorAreaResource implements Serializable {
     AreaDAO areaDAO;
 
     @POST
+    @Path("{id_area}")
     @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     public Response crear(
             @PathParam("id_distractor") UUID idDistractor,
-            DistractorArea distractorArea,
+            @PathParam("id_area") UUID idArea,
             @Context UriInfo uriInfo) {
-        if (distractorArea != null && idDistractor != null && distractorArea.getIdArea() != null
-                && distractorArea.getIdArea().getIdArea() != null) {
-            try {
-                Distractor distractor = distractorDAO.buscarPorId(idDistractor);
-                Area area = areaDAO.buscarPorId(distractorArea.getIdArea().getIdArea());
-                if (distractor == null || area == null) {
-                    String mensaje = distractor == null ? "Distractor no encontrado" : "Area no encontrada";
-                    return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), mensaje).build();
-                }
-                distractorArea.setIdDistractor(distractor);
-                distractorArea.setIdArea(area);
-                distractorAreaDAO.crear(distractorArea);
-
-                UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
-                UUID areaId = distractorArea.getIdArea().getIdArea();
-                if (areaId != null) {
-                    uriBuilder.path(areaId.toString());
-                }
-                return Response.created(uriBuilder.build()).entity(distractorArea).build();
-            } catch (Exception e) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage())
-                        .build();
-            }
+        if (idDistractor == null || idArea == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .header(ResponseHeaders.WRONG_PARAMETER.toString(),
+                            "Se requiere idDistractor e idArea")
+                    .build();
         }
-        return Response.status(Response.Status.BAD_REQUEST)
-                .header(ResponseHeaders.WRONG_PARAMETER.toString(),
-                        "El recurso no puede ser nulo y se requiere idDistractor e idArea")
-                .build();
+        try {
+            Distractor distractor = distractorDAO.buscarPorId(idDistractor);
+            Area area = areaDAO.buscarPorId(idArea);
+            if (distractor == null || area == null) {
+                String mensaje = distractor == null ? "Distractor no encontrado" : "Area no encontrada";
+                return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), mensaje).build();
+            }
+            DistractorArea distractorArea = new DistractorArea();
+            distractorArea.setIdDistractor(distractor);
+            distractorArea.setIdArea(area);
+            distractorAreaDAO.crear(distractorArea);
+
+            return Response.created(uriInfo.getAbsolutePath()).entity(distractorArea).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage())
+                    .build();
+        }
     }
 
     @GET
