@@ -12,11 +12,14 @@ import jakarta.ws.rs.core.UriBuilder;
 
 import jakarta.ws.rs.core.Response;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PruebaDAO;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.TipoPruebaDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Prueba;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.TipoPrueba;
 
 public class PruebaResourceTest {
 
     PruebaDAO pDAO;
+    TipoPruebaDAO tpDAO;
     PruebaResource cut;
     UriInfo uriInfo;
     UriBuilder uriBuilder;
@@ -27,6 +30,7 @@ public class PruebaResourceTest {
         pDAO = Mockito.mock(PruebaDAO.class);
         cut = new PruebaResource();
         cut.pDAO = pDAO; // Inyectar el mock en el recurso
+        cut.tpDAO = Mockito.mock(TipoPruebaDAO.class);
         uriInfo = Mockito.mock(UriInfo.class);
         uriBuilder = Mockito.mock(UriBuilder.class);
        
@@ -38,8 +42,10 @@ public class PruebaResourceTest {
         Mockito.when(uriInfo.getAbsolutePathBuilder()).thenReturn(uriBuilder);
         Mockito.when(uriBuilder.path(Mockito.anyString())).thenReturn(uriBuilder);
         Mockito.when(uriBuilder.build()).thenReturn(java.net.URI.create("http://localhost/prueba/1"));
+        UUID idTipoPrueba = UUID.randomUUID();
+        Mockito.when(cut.tpDAO.buscarPorId(idTipoPrueba)).thenReturn(new TipoPrueba());
         Prueba p = new Prueba();
-        Response response = cut.crear(p, uriInfo);
+        Response response = cut.crear(p, idTipoPrueba, uriInfo);
         Mockito.verify(pDAO).crear(p);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         assertEquals(p, response.getEntity());
@@ -50,14 +56,18 @@ public class PruebaResourceTest {
         System.out.println("EjecutandoTest: crear_Prueba_ErrorInterno");    
         cut.pDAO = null;
         Prueba p = new Prueba();
-        Response response = cut.crear(p, uriInfo);
+         UUID idTipoPrueba = UUID.randomUUID();
+        Mockito.when(cut.tpDAO.buscarPorId(idTipoPrueba)).thenReturn(new TipoPrueba());
+        Response response = cut.crear(p, idTipoPrueba, uriInfo);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
     }
     
     @Test 
     public void crear_Prueba_BadRequest(){
         System.out.println("EjecutandoTest: crear_Prueba_BadRequest");
-        Response response = cut.crear(null, uriInfo);
+        UUID idTipoPrueba = UUID.randomUUID();
+        Mockito.when(cut.tpDAO.buscarPorId(idTipoPrueba)).thenReturn(new TipoPrueba());
+        Response response = cut.crear(null, idTipoPrueba, uriInfo);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
 

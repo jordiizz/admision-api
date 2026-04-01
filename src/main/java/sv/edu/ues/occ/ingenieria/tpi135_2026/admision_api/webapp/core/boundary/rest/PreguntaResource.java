@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -106,7 +107,7 @@ public class PreguntaResource implements Serializable{
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    public Response buscarPorRango(@PathParam("first") @DefaultValue("0") int first, @PathParam("size") @DefaultValue("50") int hasta){
+    public Response buscarPorRango(@QueryParam("first") @DefaultValue("0") int first, @QueryParam("size") @DefaultValue("50") int hasta){
         if(first >= 0 && hasta > 0){
             try {
                 List<Pregunta> preguntas = pDAO.buscarPorRango(first, hasta);
