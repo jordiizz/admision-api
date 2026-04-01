@@ -29,7 +29,6 @@ public class PruebaResourceTest {
         pDAO = Mockito.mock(PruebaDAO.class);
         cut = new PruebaResource();
         cut.pDAO = pDAO; // Inyectar el mock en el recurso
-        cut.tpDAO = Mockito.mock(TipoPruebaDAO.class);
         uriInfo = Mockito.mock(UriInfo.class);
         uriBuilder = Mockito.mock(UriBuilder.class);
        

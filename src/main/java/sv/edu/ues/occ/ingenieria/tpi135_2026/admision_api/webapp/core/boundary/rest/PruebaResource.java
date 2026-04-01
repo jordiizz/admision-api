@@ -21,7 +21,6 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriInfo;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PruebaDAO;
-import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.TipoPruebaDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Prueba;
 
 
@@ -32,8 +31,6 @@ public class PruebaResource implements Serializable {
     @Inject
     PruebaDAO pDAO;
 
-    @Inject
-    TipoPruebaDAO tpDAO;
 
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
