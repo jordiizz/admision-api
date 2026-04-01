@@ -20,6 +20,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriInfo;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.AreaDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PruebaClaveAreaDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PruebaClaveDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Area;
@@ -36,6 +37,9 @@ public class PruebaClaveAreaResource implements Serializable {
     @Inject
     PruebaClaveDAO pruebaClaveDAO;
 
+    @Inject
+    AreaDAO areaDAO;
+
     @POST
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
@@ -43,13 +47,16 @@ public class PruebaClaveAreaResource implements Serializable {
             @PathParam("id_prueba_clave") UUID idPruebaClave,
             PruebaClaveArea pruebaClaveArea,
             @Context UriInfo uriInfo) {
-        if (pruebaClaveArea != null && idPruebaClave != null) {
+        if (pruebaClaveArea != null && idPruebaClave != null && pruebaClaveArea.getIdPruebaClaveArea() != null) {
             try {
                 PruebaClave pruebaClave = pruebaClaveDAO.buscarPorId(idPruebaClave);
-                if (pruebaClave == null) {
-                    return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "PruebaClave no encontrada").build();
+                Area area = areaDAO.buscarPorId(pruebaClaveArea.getIdPruebaClaveArea());
+                if (pruebaClave == null || area == null) {
+                    String mensaje = pruebaClave == null ? "PruebaClave no encontrada" : "Area no encontrada";
+                    return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), mensaje).build();
                 }
                 pruebaClaveArea.setIdPruebaClave(pruebaClave);
+                pruebaClaveArea.setIdArea(area);
                 pruebaClaveAreaDAO.crear(pruebaClaveArea);
                 UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
                 UUID idArea = pruebaClaveArea.getIdPruebaClaveArea();
@@ -87,7 +94,7 @@ public class PruebaClaveAreaResource implements Serializable {
     }
 
     @GET
-        @Path("{id_area}")
+    @Path("{id_area}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response buscarPorId(
             @PathParam("id_prueba_clave") UUID idPruebaClave,
@@ -107,18 +114,27 @@ public class PruebaClaveAreaResource implements Serializable {
     }
 
     @PUT
-        @Path("{id_area}")
+    @Path("{id_area}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response actualizar(
             @PathParam("id_prueba_clave") UUID idPruebaClave,
             @PathParam("id_area") UUID idArea,
             PruebaClaveArea pruebaClaveArea) {
-        if (pruebaClaveArea != null && idPruebaClave != null && idArea != null) {
+        if (pruebaClaveArea != null && idPruebaClave != null && idArea != null && pruebaClaveArea.getIdPruebaClaveArea() != null) {
             try {
+                if (!idArea.equals(pruebaClaveArea.getIdPruebaClaveArea())) {
+                    return Response.status(Response.Status.BAD_REQUEST)
+                            .header(ResponseHeaders.WRONG_PARAMETER.toString(), "El idArea del body debe coincidir con el id_area del path")
+                            .build();
+                }
                 PruebaClaveArea existente = pruebaClaveAreaDAO.buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea));
                 if (existente != null) {
-                    pruebaClaveArea.setIdArea(new Area(idArea));
+                    Area area = areaDAO.buscarPorId(pruebaClaveArea.getIdPruebaClaveArea());
+                    if (area == null) {
+                                return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "Area no encontrada").build();
+                    }
+                    pruebaClaveArea.setIdArea(area);
                     pruebaClaveArea.setIdPruebaClave(new PruebaClave(idPruebaClave));
                     pruebaClaveAreaDAO.actualizar(pruebaClaveArea);
                     return Response.ok(pruebaClaveArea).build();
@@ -132,7 +148,7 @@ public class PruebaClaveAreaResource implements Serializable {
     }
 
     @DELETE
-        @Path("{id_area}")
+    @Path("{id_area}")
     public Response eliminar(
             @PathParam("id_prueba_clave") UUID idPruebaClave,
             @PathParam("id_area") UUID idArea) {

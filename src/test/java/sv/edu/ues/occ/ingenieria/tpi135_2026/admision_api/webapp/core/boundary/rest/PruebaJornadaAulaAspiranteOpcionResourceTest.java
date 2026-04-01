@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -256,8 +255,9 @@ public class PruebaJornadaAulaAspiranteOpcionResourceTest {
 
     @Test
     public void actualizarExitosoTest() {
+        // el id del path y del body son del mismo valor
         UUID id = UUID.randomUUID();
-        UUID idAO = UUID.randomUUID();
+        UUID idAO = id;
         PruebaJornadaAulaAspiranteOpcion entity = new PruebaJornadaAulaAspiranteOpcion(id);
         entity.setIdAspiranteOpcion(idAO);
 
@@ -297,13 +297,11 @@ public class PruebaJornadaAulaAspiranteOpcionResourceTest {
 
         // Prueba Escenario 1
         Response res1 = cut.actualizar(idPrueba, idJornada, idAula, id, entity1);
-        assertEquals(200, res1.getStatus());
-        assertNotNull(entity1.getIdAspiranteOpcion());
+        assertEquals(400, res1.getStatus());
 
         // Prueba Escenario 2
         Response res2 = cut.actualizar(idPrueba, idJornada, idAula, id, entity2);
-        assertEquals(200, res2.getStatus());
-        assertNotNull(entity2.getIdAspiranteOpcion());
+        assertEquals(400, res2.getStatus());
     }
 
     @Test
@@ -327,7 +325,7 @@ public class PruebaJornadaAulaAspiranteOpcionResourceTest {
     @Test
     public void actualizarAspiranteOpcionNoEncontradoTest() {
         UUID id = UUID.randomUUID();
-        UUID idAO = UUID.randomUUID();
+        UUID idAO = id;
         PruebaJornadaAulaAspiranteOpcion entity = new PruebaJornadaAulaAspiranteOpcion(id);
         entity.setIdAspiranteOpcion(idAO);
 
@@ -337,6 +335,20 @@ public class PruebaJornadaAulaAspiranteOpcionResourceTest {
         Mockito.when(mockAODAO.buscarPorId(idAO)).thenReturn(null); // Retorna nulo, detona el 404 interno
 
         assertEquals(404, cut.actualizar(idPrueba, idJornada, idAula, id, entity).getStatus());
+    }
+
+    @Test
+    // Verifica 400 cuando el id del path y el idAspiranteOpcion del body no coinciden.
+    public void actualizarIdAspiranteOpcionBodyDistintoTest() {
+        UUID idPath = UUID.randomUUID();
+        UUID idBody = UUID.randomUUID();
+        PruebaJornadaAulaAspiranteOpcion entity = new PruebaJornadaAulaAspiranteOpcion(idBody);
+        entity.setIdAspiranteOpcion(idBody);
+
+        Response response = cut.actualizar(idPrueba, idJornada, idAula, idPath, entity);
+
+        assertEquals(400, response.getStatus());
+        Mockito.verify(mockDAO, Mockito.never()).actualizar(Mockito.any());
     }
 
     @Test

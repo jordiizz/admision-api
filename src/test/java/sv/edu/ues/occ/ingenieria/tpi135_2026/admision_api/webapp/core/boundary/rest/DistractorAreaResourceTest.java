@@ -13,6 +13,7 @@ import org.mockito.Mockito;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriInfo;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.AreaDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.DistractorAreaDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.DistractorDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Area;
@@ -25,6 +26,7 @@ public class DistractorAreaResourceTest {
     private UriInfo mockUriInfo;
     private DistractorAreaDAO mockDAA;
     private DistractorDAO mockDD;
+    private AreaDAO mockAreaDAO;
     private DistractorAreaResource cut;
 
     private UUID idDistractor;
@@ -36,6 +38,7 @@ public class DistractorAreaResourceTest {
         UriBuilder mockUriBuilder = Mockito.mock(UriBuilder.class);
         mockDAA = Mockito.mock(DistractorAreaDAO.class);
         mockDD = Mockito.mock(DistractorDAO.class);
+        mockAreaDAO = Mockito.mock(AreaDAO.class);
 
         Mockito.when(mockUriInfo.getAbsolutePathBuilder()).thenReturn(mockUriBuilder);
         Mockito.when(mockUriBuilder.path(Mockito.anyString())).thenReturn(mockUriBuilder);
@@ -48,6 +51,7 @@ public class DistractorAreaResourceTest {
         cut = new DistractorAreaResource();
         cut.distractorAreaDAO = mockDAA;
         cut.distractorDAO = mockDD;
+        cut.areaDAO = mockAreaDAO;
     }
 
     @Test
@@ -55,12 +59,14 @@ public class DistractorAreaResourceTest {
         System.out.println("Ejecutando test: crearExitosoTest en DistractorAreaResource");
         DistractorArea nuevo = new DistractorArea(new Distractor(idDistractor), new Area(idArea));
         Mockito.when(mockDD.buscarPorId(idDistractor)).thenReturn(new Distractor(idDistractor));
+        Mockito.when(mockAreaDAO.buscarPorId(idArea)).thenReturn(new Area(idArea));
 
         Response resultado = cut.crear(idDistractor, nuevo, mockUriInfo);
 
         assertEquals(201, resultado.getStatus());
         assertNotNull(resultado.getEntity());
         Mockito.verify(mockDD).buscarPorId(idDistractor);
+        Mockito.verify(mockAreaDAO).buscarPorId(idArea);
         Mockito.verify(mockDAA).crear(nuevo);
     }
 
@@ -69,12 +75,11 @@ public class DistractorAreaResourceTest {
         System.out.println("Ejecutando test: crearConAreaSinIdInternoTest en DistractorAreaResource");
         DistractorArea nuevo = new DistractorArea();
         nuevo.setIdArea(new Area());
-        Mockito.when(mockDD.buscarPorId(idDistractor)).thenReturn(new Distractor(idDistractor));
 
         Response resultado = cut.crear(idDistractor, nuevo, mockUriInfo);
 
-        assertEquals(201, resultado.getStatus());
-        Mockito.verify(mockDAA).crear(nuevo);
+        assertEquals(400, resultado.getStatus());
+        Mockito.verify(mockDAA, Mockito.never()).crear(Mockito.any());
     }
 
     @Test
@@ -91,10 +96,40 @@ public class DistractorAreaResourceTest {
     }
 
     @Test
+    // Valida 404 cuando el distractor existe pero el area referenciada no existe.
+    public void crearAreaNoEncontradaTest() {
+        System.out.println("Ejecutando test: crearAreaNoEncontradaTest en DistractorAreaResource");
+        DistractorArea nuevo = new DistractorArea(new Distractor(idDistractor), new Area(idArea));
+        Mockito.when(mockDD.buscarPorId(idDistractor)).thenReturn(new Distractor(idDistractor));
+        Mockito.when(mockAreaDAO.buscarPorId(idArea)).thenReturn(null);
+
+        Response resultado = cut.crear(idDistractor, nuevo, mockUriInfo);
+
+        assertEquals(404, resultado.getStatus());
+        Mockito.verify(mockDAA, Mockito.never()).crear(Mockito.any());
+    }
+
+    @Test
+    // Cubre el caso donde la entidad area recuperada no trae id interno y no agrega path extra al Location.
+    public void crearConAreaPersistidaSinIdNoAgregaPathTest() {
+        System.out.println("Ejecutando test: crearConAreaPersistidaSinIdNoAgregaPathTest en DistractorAreaResource");
+        DistractorArea nuevo = new DistractorArea(new Distractor(idDistractor), new Area(idArea));
+        Mockito.when(mockDD.buscarPorId(idDistractor)).thenReturn(new Distractor(idDistractor));
+        Mockito.when(mockAreaDAO.buscarPorId(idArea)).thenReturn(new Area());
+
+        Response resultado = cut.crear(idDistractor, nuevo, mockUriInfo);
+
+        assertEquals(201, resultado.getStatus());
+        Mockito.verify(mockUriInfo).getAbsolutePathBuilder();
+        Mockito.verify(mockDAA).crear(nuevo);
+    }
+
+    @Test
     public void crearConExcepcionTest() {
         System.out.println("Ejecutando test: crearConExcepcionTest en DistractorAreaResource");
         DistractorArea nuevo = new DistractorArea(new Distractor(idDistractor), new Area(idArea));
         Mockito.when(mockDD.buscarPorId(idDistractor)).thenReturn(new Distractor(idDistractor));
+        Mockito.when(mockAreaDAO.buscarPorId(idArea)).thenReturn(new Area(idArea));
         Mockito.doThrow(new RuntimeException("Error en base de datos")).when(mockDAA).crear(nuevo);
 
         Response resultado = cut.crear(idDistractor, nuevo, mockUriInfo);
@@ -201,11 +236,11 @@ public class DistractorAreaResourceTest {
     public void actualizarExitosoTest() {
         System.out.println("Ejecutando test: actualizarExitosoTest en DistractorAreaResource");
         UUID otroDistractor = UUID.randomUUID();
-        UUID otraArea = UUID.randomUUID();
-        DistractorArea body = new DistractorArea(new Distractor(otroDistractor), new Area(otraArea));
+        DistractorArea body = new DistractorArea(new Distractor(otroDistractor), new Area(idArea));
         DistractorArea existente = new DistractorArea(new Distractor(idDistractor), new Area(idArea));
 
         Mockito.when(mockDAA.buscarPorId(new DistractorAreaPK(idDistractor, idArea))).thenReturn(existente);
+        Mockito.when(mockAreaDAO.buscarPorId(idArea)).thenReturn(new Area(idArea));
         Mockito.when(mockDAA.actualizar(body)).thenReturn(body);
 
         Response resultado = cut.actualizar(idDistractor, idArea, body);
@@ -230,11 +265,40 @@ public class DistractorAreaResourceTest {
     }
 
     @Test
+    // Verifica que actualizar falle con 400 si id_area del path y del body no coinciden.
+    public void actualizarIdAreaBodyDistintoTest() {
+        System.out.println("Ejecutando test: actualizarIdAreaBodyDistintoTest en DistractorAreaResource");
+        UUID idAreaBody = UUID.randomUUID();
+        DistractorArea body = new DistractorArea(new Distractor(idDistractor), new Area(idAreaBody));
+
+        Response resultado = cut.actualizar(idDistractor, idArea, body);
+
+        assertEquals(400, resultado.getStatus());
+        Mockito.verify(mockDAA, Mockito.never()).actualizar(Mockito.any());
+    }
+
+    @Test
+    // Verifica 404 en actualizar cuando la relacion existe pero el area enviada en body no existe.
+    public void actualizarAreaNoEncontradaTest() {
+        System.out.println("Ejecutando test: actualizarAreaNoEncontradaTest en DistractorAreaResource");
+        DistractorArea body = new DistractorArea(new Distractor(idDistractor), new Area(idArea));
+        Mockito.when(mockDAA.buscarPorId(new DistractorAreaPK(idDistractor, idArea)))
+                .thenReturn(new DistractorArea(new Distractor(idDistractor), new Area(idArea)));
+        Mockito.when(mockAreaDAO.buscarPorId(idArea)).thenReturn(null);
+
+        Response resultado = cut.actualizar(idDistractor, idArea, body);
+
+        assertEquals(404, resultado.getStatus());
+        Mockito.verify(mockDAA, Mockito.never()).actualizar(Mockito.any());
+    }
+
+    @Test
     public void actualizarConExcepcionTest() {
         System.out.println("Ejecutando test: actualizarConExcepcionTest en DistractorAreaResource");
         DistractorArea body = new DistractorArea(new Distractor(idDistractor), new Area(idArea));
         Mockito.when(mockDAA.buscarPorId(new DistractorAreaPK(idDistractor, idArea)))
                 .thenReturn(new DistractorArea(new Distractor(idDistractor), new Area(idArea)));
+        Mockito.when(mockAreaDAO.buscarPorId(idArea)).thenReturn(new Area(idArea));
         Mockito.doThrow(new RuntimeException("Error en base de datos")).when(mockDAA).actualizar(body);
 
         Response resultado = cut.actualizar(idDistractor, idArea, body);
@@ -250,6 +314,10 @@ public class DistractorAreaResourceTest {
         assertEquals(400, cut.actualizar(idDistractor, idArea, null).getStatus());
         assertEquals(400, cut.actualizar(null, idArea, body).getStatus());
         assertEquals(400, cut.actualizar(idDistractor, null, body).getStatus());
+        assertEquals(400, cut.actualizar(idDistractor, idArea, new DistractorArea()).getStatus());
+        DistractorArea bodySinIdArea = new DistractorArea();
+        bodySinIdArea.setIdArea(new Area());
+        assertEquals(400, cut.actualizar(idDistractor, idArea, bodySinIdArea).getStatus());
         Mockito.verifyNoInteractions(mockDAA);
     }
 

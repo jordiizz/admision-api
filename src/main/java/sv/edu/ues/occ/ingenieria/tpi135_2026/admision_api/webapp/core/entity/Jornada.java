@@ -13,7 +13,7 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 
 @NamedQuery(name = "Jornada.findByIdPrueba", 
-    query = "SELECT pj.idJornada FROM PruebaJornada pj WHERE pj.idPrueba.idPrueba =: idPrueba "
+    query = "SELECT pj.idJornada FROM PruebaJornada pj WHERE pj.idPrueba.idPrueba = :idPrueba"
 )
 @Entity
 @Table(name = "jornada")

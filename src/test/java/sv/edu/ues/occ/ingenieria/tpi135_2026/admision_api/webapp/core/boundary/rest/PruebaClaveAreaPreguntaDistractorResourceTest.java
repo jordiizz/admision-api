@@ -311,21 +311,12 @@ class PruebaClaveAreaPreguntaDistractorResourceTest {
     @Test
     void actualizarExitosoConDistractorNullEnBodyTest() {
         System.out.println("Ejecutando test: actualizarExitosoConDistractorNullEnBodyTest en PruebaClaveAreaPreguntaDistractorResource");
-        PruebaClaveAreaPreguntaDistractor existente = new PruebaClaveAreaPreguntaDistractor();
-
-        when(mockDAO.buscarPorId(any())).thenReturn(existente);
-
         PruebaClaveAreaPreguntaDistractor entity = new PruebaClaveAreaPreguntaDistractor();
 
         Response response = resource.actualizar(idPruebaClave, idArea, idPregunta, idDistractor, entity);
 
-        assertEquals(200, response.getStatus());
-        assertEquals(idPruebaClave, entity.getIdPruebaClave());
-        assertEquals(idArea, entity.getIdArea());
-        assertEquals(idPregunta, entity.getIdPregunta());
-        assertEquals(idDistractor, entity.getIdDistractor());
-        verify(mockDistractorDAO, never()).buscarPorId(any());
-        verify(mockDAO).actualizar(entity);
+        assertEquals(400, response.getStatus());
+        verify(mockDAO, never()).actualizar(any());
     }
 
     @Test
@@ -336,34 +327,26 @@ class PruebaClaveAreaPreguntaDistractorResourceTest {
 
         PruebaClaveAreaPreguntaDistractor entity = new PruebaClaveAreaPreguntaDistractor();
         entity.setIdDistractor(idDistractor);
+        when(mockDistractorDAO.buscarPorId(idDistractor)).thenReturn(new Distractor());
 
         Response response = resource.actualizar(idPruebaClave, idArea, idPregunta, idDistractor, entity);
 
         assertEquals(200, response.getStatus());
         assertEquals(idDistractor, entity.getIdDistractor());
-        verify(mockDistractorDAO, never()).buscarPorId(any());
+        verify(mockDistractorDAO).buscarPorId(idDistractor);
         verify(mockDAO).actualizar(entity);
     }
 
     @Test
     void actualizarExitosoConDistractorDistintoYValidoTest() {
         System.out.println("Ejecutando test: actualizarExitosoConDistractorDistintoYValidoTest en PruebaClaveAreaPreguntaDistractorResource");
-        PruebaClaveAreaPreguntaDistractor existente = new PruebaClaveAreaPreguntaDistractor();
-        when(mockDAO.buscarPorId(any())).thenReturn(existente);
-
         PruebaClaveAreaPreguntaDistractor entity = new PruebaClaveAreaPreguntaDistractor();
         entity.setIdDistractor(idDistractorAlterno);
-        when(mockDistractorDAO.buscarPorId(idDistractorAlterno)).thenReturn(new Distractor());
 
         Response response = resource.actualizar(idPruebaClave, idArea, idPregunta, idDistractor, entity);
 
-        assertEquals(200, response.getStatus());
-        assertEquals(idDistractorAlterno, entity.getIdDistractor());
-        assertEquals(idPruebaClave, entity.getIdPruebaClave());
-        assertEquals(idArea, entity.getIdArea());
-        assertEquals(idPregunta, entity.getIdPregunta());
-        verify(mockDistractorDAO).buscarPorId(idDistractorAlterno);
-        verify(mockDAO).actualizar(entity);
+        assertEquals(400, response.getStatus());
+        verify(mockDAO, never()).actualizar(any());
     }
 
     @Test
@@ -371,7 +354,10 @@ class PruebaClaveAreaPreguntaDistractorResourceTest {
         System.out.println("Ejecutando test: actualizarNoEncontradoTest en PruebaClaveAreaPreguntaDistractorResource");
         when(mockDAO.buscarPorId(any())).thenReturn(null);
 
-        Response response = resource.actualizar(idPruebaClave, idArea, idPregunta, idDistractor, new PruebaClaveAreaPreguntaDistractor());
+        PruebaClaveAreaPreguntaDistractor entity = new PruebaClaveAreaPreguntaDistractor();
+        entity.setIdDistractor(idDistractor);
+
+        Response response = resource.actualizar(idPruebaClave, idArea, idPregunta, idDistractor, entity);
 
         assertEquals(404, response.getStatus());
     }
@@ -383,9 +369,9 @@ class PruebaClaveAreaPreguntaDistractorResourceTest {
         when(mockDAO.buscarPorId(any())).thenReturn(existente);
 
         PruebaClaveAreaPreguntaDistractor entity = new PruebaClaveAreaPreguntaDistractor();
-        entity.setIdDistractor(idDistractorAlterno);
+        entity.setIdDistractor(idDistractor);
 
-        when(mockDistractorDAO.buscarPorId(idDistractorAlterno)).thenReturn(null);
+        when(mockDistractorDAO.buscarPorId(idDistractor)).thenReturn(null);
 
         Response response = resource.actualizar(idPruebaClave, idArea, idPregunta, idDistractor, entity);
 
@@ -431,9 +417,11 @@ class PruebaClaveAreaPreguntaDistractorResourceTest {
     @Test
     void actualizarExceptionTest() {
         System.out.println("Ejecutando test: actualizarExceptionTest en PruebaClaveAreaPreguntaDistractorResource");
+        PruebaClaveAreaPreguntaDistractor entity = new PruebaClaveAreaPreguntaDistractor();
+        entity.setIdDistractor(idDistractor);
         when(mockDAO.buscarPorId(any())).thenThrow(new RuntimeException());
 
-        Response response = resource.actualizar(idPruebaClave, idArea, idPregunta, idDistractor, new PruebaClaveAreaPreguntaDistractor());
+        Response response = resource.actualizar(idPruebaClave, idArea, idPregunta, idDistractor, entity);
 
         assertEquals(500, response.getStatus());
     }

@@ -141,23 +141,26 @@ public class PruebaJornadaAulaAspiranteOpcionResource implements Serializable {
             @PathParam("id") UUID idAspiranteOpcion,
             PruebaJornadaAulaAspiranteOpcion entity) {
 
-        if (idPrueba == null || idJornada == null || idAula == null || entity == null || idAspiranteOpcion == null) {
+        if (idPrueba == null || idJornada == null || idAula == null || entity == null || idAspiranteOpcion == null
+                || entity.getIdAspiranteOpcion() == null) {
             return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "Datos incompletos").build();
         }
 
         try {
+            if (!idAspiranteOpcion.equals(entity.getIdAspiranteOpcion())) {
+                return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "El idAspiranteOpcion del body debe coincidir con el id del path").build();
+            }
             PruebaJornadaAulaAspiranteOpcion existente = pruebaJornadaAulaAspiranteOpcionDAO
                     .buscarPorId(new PruebaJornadaAulaAspiranteOpcionPK(idPrueba, idJornada, idAula, idAspiranteOpcion));
-            if (existente == null) return Response.status(Response.Status.NOT_FOUND).build();
-
-            // Lógica simplificada de AspiranteOpcion
-            if (entity.getIdAspiranteOpcion() != null) {
-                AspiranteOpcion aspirante = aspiranteOpcionDAO.buscarPorId(entity.getIdAspiranteOpcion());
-                if (aspirante == null) return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "AspiranteOpcion no encontrada").build();
-                entity.setIdAspiranteOpcion(aspirante.getIdAspiranteOpcion());
-            } else {
-                entity.setIdAspiranteOpcion(existente.getIdAspiranteOpcion());
+            if (existente == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
             }
+
+            AspiranteOpcion aspirante = aspiranteOpcionDAO.buscarPorId(entity.getIdAspiranteOpcion());
+            if (aspirante == null) {
+                return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "AspiranteOpcion no encontrada").build();
+            }
+            entity.setIdAspiranteOpcion(aspirante.getIdAspiranteOpcion());
 
             entity.setIdPrueba(idPrueba);
             entity.setIdJornada(idJornada);
@@ -185,7 +188,9 @@ public class PruebaJornadaAulaAspiranteOpcionResource implements Serializable {
         try {
             PruebaJornadaAulaAspiranteOpcion existente = pruebaJornadaAulaAspiranteOpcionDAO
                     .buscarPorId(new PruebaJornadaAulaAspiranteOpcionPK(idPrueba, idJornada, idAula, idAspiranteOpcion));
-            if (existente == null) return Response.status(Response.Status.NOT_FOUND).build();
+            if (existente == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
             
             pruebaJornadaAulaAspiranteOpcionDAO.eliminar(existente);
             return Response.noContent().build();

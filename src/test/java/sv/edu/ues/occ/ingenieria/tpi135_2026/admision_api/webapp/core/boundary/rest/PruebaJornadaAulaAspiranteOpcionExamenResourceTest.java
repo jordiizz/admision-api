@@ -243,21 +243,13 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResourceTest {
     @Test
     public void actualizarExitosoSinPruebaClaveEnBodyTest() {
         System.out.println("Ejecutando test: actualizarExitosoSinPruebaClaveEnBodyTest en PruebaJornadaAulaAspiranteOpcionExamenResource");
-        UUID idPruebaClaveExistente = UUID.randomUUID();
-
         PruebaJornadaAulaAspiranteOpcionExamen entity = new PruebaJornadaAulaAspiranteOpcionExamen();
         entity.setResultado(new BigDecimal("8.0"));
 
-        PruebaJornadaAulaAspiranteOpcionExamen existente = new PruebaJornadaAulaAspiranteOpcionExamen(idPrueba, idJornada, idAula, idAspiranteOpcion);
-        existente.setIdPruebaClave(idPruebaClaveExistente);
-
-        Mockito.when(mockDAO.buscarPorId(examenPk())).thenReturn(existente);
-
         Response res = cut.actualizar(idPrueba, idJornada, idAula, idAspiranteOpcion, entity);
 
-        assertEquals(200, res.getStatus());
-        assertEquals(idPruebaClaveExistente, entity.getIdPruebaClave());
-        Mockito.verify(mockPruebaClaveDAO, Mockito.never()).buscarPorId(Mockito.any());
+        assertEquals(400, res.getStatus());
+        Mockito.verify(mockDAO, Mockito.never()).actualizar(Mockito.any());
     }
 
     @Test
@@ -307,11 +299,14 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResourceTest {
         System.out.println("Ejecutando test: actualizarExcepcionEnActualizarTest en PruebaJornadaAulaAspiranteOpcionExamenResource");
         PruebaJornadaAulaAspiranteOpcionExamen entity = new PruebaJornadaAulaAspiranteOpcionExamen();
         entity.setResultado(new BigDecimal("6.5"));
+        UUID idPruebaClave = UUID.randomUUID();
+        entity.setIdPruebaClave(idPruebaClave);
 
         PruebaJornadaAulaAspiranteOpcionExamen existente = new PruebaJornadaAulaAspiranteOpcionExamen(idPrueba, idJornada, idAula, idAspiranteOpcion);
         existente.setIdPruebaClave(UUID.randomUUID());
 
         Mockito.when(mockDAO.buscarPorId(examenPk())).thenReturn(existente);
+        Mockito.when(mockPruebaClaveDAO.buscarPorId(idPruebaClave)).thenReturn(new PruebaClave(idPruebaClave));
         Mockito.doThrow(new RuntimeException("Error BD")).when(mockDAO).actualizar(entity);
 
         Response res = cut.actualizar(idPrueba, idJornada, idAula, idAspiranteOpcion, entity);

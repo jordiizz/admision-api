@@ -20,6 +20,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriInfo;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.AreaDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.DistractorAreaDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.DistractorDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Area;
@@ -36,6 +37,9 @@ public class DistractorAreaResource implements Serializable {
     @Inject
     DistractorDAO distractorDAO;
 
+    @Inject
+    AreaDAO areaDAO;
+
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -43,15 +47,17 @@ public class DistractorAreaResource implements Serializable {
             @PathParam("id_distractor") UUID idDistractor,
             DistractorArea distractorArea,
             @Context UriInfo uriInfo) {
-        if (distractorArea != null && idDistractor != null && distractorArea.getIdArea() != null) {
+        if (distractorArea != null && idDistractor != null && distractorArea.getIdArea() != null
+                && distractorArea.getIdArea().getIdArea() != null) {
             try {
                 Distractor distractor = distractorDAO.buscarPorId(idDistractor);
-                if (distractor == null) {
-                    return Response.status(Response.Status.NOT_FOUND)
-                            .header(ResponseHeaders.NOT_FOUND.toString(), "Distractor no encontrado")
-                            .build();
+                Area area = areaDAO.buscarPorId(distractorArea.getIdArea().getIdArea());
+                if (distractor == null || area == null) {
+                    String mensaje = distractor == null ? "Distractor no encontrado" : "Area no encontrada";
+                    return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), mensaje).build();
                 }
                 distractorArea.setIdDistractor(distractor);
+                distractorArea.setIdArea(area);
                 distractorAreaDAO.crear(distractorArea);
 
                 UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
@@ -132,12 +138,22 @@ public class DistractorAreaResource implements Serializable {
             @PathParam("id_distractor") UUID idDistractor,
             @PathParam("id_area") UUID idArea,
             DistractorArea distractorArea) {
-        if (distractorArea != null && idDistractor != null && idArea != null) {
+        if (distractorArea != null && idDistractor != null && idArea != null
+                && distractorArea.getIdArea() != null && distractorArea.getIdArea().getIdArea() != null) {
             try {
+                if (!idArea.equals(distractorArea.getIdArea().getIdArea())) {
+                    return Response.status(Response.Status.BAD_REQUEST)
+                            .header(ResponseHeaders.WRONG_PARAMETER.toString(), "El idArea del body debe coincidir con el id_area del path")
+                            .build();
+                }
                 DistractorArea existente = distractorAreaDAO.buscarPorId(new DistractorAreaPK(idDistractor, idArea));
                 if (existente != null) {
                     distractorArea.setIdDistractor(new Distractor(idDistractor));
-                    distractorArea.setIdArea(new Area(idArea));
+                    Area area = areaDAO.buscarPorId(distractorArea.getIdArea().getIdArea());
+                    if (area == null) {
+                        return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "Area no encontrada").build();
+                    }
+                    distractorArea.setIdArea(area);
                     distractorAreaDAO.actualizar(distractorArea);
                     return Response.ok(distractorArea).build();
                 }

@@ -20,6 +20,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriInfo;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.AreaDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PreguntaAreaDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PreguntaDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Area;
@@ -36,6 +37,9 @@ public class PreguntaAreaResource implements Serializable {
     @Inject
     PreguntaDAO preguntaDAO;
 
+    @Inject
+    AreaDAO areaDAO;
+
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -43,15 +47,16 @@ public class PreguntaAreaResource implements Serializable {
             @PathParam("id_pregunta") UUID idPregunta,
             PreguntaArea preguntaArea,
             @Context UriInfo uriInfo) {
-        if (preguntaArea != null && idPregunta != null && preguntaArea.getIdArea() != null) {
+        if (preguntaArea != null && idPregunta != null && preguntaArea.getIdArea() != null && preguntaArea.getIdArea().getIdArea() != null) {
             try {
                 Pregunta pregunta = preguntaDAO.buscarPorId(idPregunta);
-                if (pregunta == null) {
-                    return Response.status(Response.Status.NOT_FOUND)
-                            .header(ResponseHeaders.NOT_FOUND.toString(), "Pregunta no encontrada")
-                            .build();
+                Area area = areaDAO.buscarPorId(preguntaArea.getIdArea().getIdArea());
+                if (pregunta == null || area == null) {
+                    String mensaje = pregunta == null ? "Pregunta no encontrada" : "Area no encontrada";
+                    return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), mensaje).build();
                 }
                 preguntaArea.setIdPregunta(pregunta);
+                preguntaArea.setIdArea(area);
                 preguntaAreaDAO.crear(preguntaArea);
 
                 UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
@@ -132,12 +137,22 @@ public class PreguntaAreaResource implements Serializable {
             @PathParam("id_pregunta") UUID idPregunta,
             @PathParam("id_area") UUID idArea,
             PreguntaArea preguntaArea) {
-        if (preguntaArea != null && idPregunta != null && idArea != null) {
+        if (preguntaArea != null && idPregunta != null && idArea != null
+                && preguntaArea.getIdArea() != null && preguntaArea.getIdArea().getIdArea() != null) {
             try {
+                if (!idArea.equals(preguntaArea.getIdArea().getIdArea())) {
+                    return Response.status(Response.Status.BAD_REQUEST)
+                            .header(ResponseHeaders.WRONG_PARAMETER.toString(), "El idArea del body debe coincidir con el id_area del path")
+                            .build();
+                }
                 PreguntaArea existente = preguntaAreaDAO.buscarPorId(new PreguntaAreaPK(idPregunta, idArea));
                 if (existente != null) {
                     preguntaArea.setIdPregunta(new Pregunta(idPregunta));
-                    preguntaArea.setIdArea(new Area(idArea));
+                    Area area = areaDAO.buscarPorId(preguntaArea.getIdArea().getIdArea());
+                    if (area == null) {
+                        return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "Area no encontrada").build();
+                    }
+                    preguntaArea.setIdArea(area);
                     preguntaAreaDAO.actualizar(preguntaArea);
                     return Response.ok(preguntaArea).build();
                 }

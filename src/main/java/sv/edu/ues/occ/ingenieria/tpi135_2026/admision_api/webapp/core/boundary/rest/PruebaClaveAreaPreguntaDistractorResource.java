@@ -133,23 +133,22 @@ public class PruebaClaveAreaPreguntaDistractorResource implements Serializable {
             @PathParam("id") UUID idDistractor,
             PruebaClaveAreaPreguntaDistractor entity) {
 
-        if (idPruebaClave == null || idArea == null || idPregunta == null || idDistractor == null || entity == null) {
+        if (idPruebaClave == null || idArea == null || idPregunta == null || idDistractor == null || entity == null
+                || entity.getIdDistractor() == null) {
             return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "Datos insuficientes para actualizar").build();
         }
         try {
+            if (!idDistractor.equals(entity.getIdDistractor())) {
+                return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "El idDistractor del body debe coincidir con el id del path").build();
+            }
             PruebaClaveAreaPreguntaDistractorPK pk = new PruebaClaveAreaPreguntaDistractorPK(idPruebaClave, idArea, idPregunta, idDistractor);
             PruebaClaveAreaPreguntaDistractor existente = pruebaClaveAreaPreguntaDistractorDAO.buscarPorId(pk);
             if (existente == null) {
                 return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "No encontrado").build();
             }
-            // Validar si el cliente intenta actualizar el distractor usando un ID diferente al del path
-            if (entity.getIdDistractor() != null && !entity.getIdDistractor().equals(idDistractor)) {
-                Distractor nuevoDistractor = distractorDAO.buscarPorId(entity.getIdDistractor());
-                if (nuevoDistractor == null) {
-                    return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "Distractor especificado en el cuerpo no encontrado").build();
-                }
-            } else {
-                entity.setIdDistractor(idDistractor);
+            Distractor distractor = distractorDAO.buscarPorId(entity.getIdDistractor());
+            if (distractor == null) {
+                return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "Distractor especificado en el cuerpo no encontrado").build();
             }
             entity.setIdPruebaClave(idPruebaClave);
             entity.setIdArea(idArea);

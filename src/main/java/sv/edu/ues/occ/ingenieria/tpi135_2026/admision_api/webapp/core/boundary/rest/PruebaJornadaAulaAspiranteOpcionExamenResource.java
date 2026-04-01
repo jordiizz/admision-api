@@ -65,10 +65,8 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResource implements Serializa
                 return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "Padre no encontrado").build();
             }
             if (pruebaJornadaAulaAspiranteOpcionExamenDAO
-                .buscarPorId(new PruebaJornadaAulaAspiranteOpcionExamenPK(idPrueba, idJornada, idAula, idAspiranteOpcion)) != null) {
-            return Response.status(Response.Status.CONFLICT)
-                .header(ResponseHeaders.WRONG_PARAMETER.toString(), "Ya existe examen para este aspirante")
-                .build();
+                    .buscarPorId(new PruebaJornadaAulaAspiranteOpcionExamenPK(idPrueba, idJornada, idAula, idAspiranteOpcion)) != null) {
+                return Response.status(Response.Status.CONFLICT).header(ResponseHeaders.WRONG_PARAMETER.toString(), "Ya existe examen para este aspirante").build();
             }
             if (pruebaClave == null) {
                 return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "Prueba clave no encontrada").build();
@@ -123,7 +121,8 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResource implements Serializa
             @PathParam("id_aspirante_opcion") UUID idAspiranteOpcion,
             PruebaJornadaAulaAspiranteOpcionExamen entity) {
 
-        if (idPrueba == null || idJornada == null || idAula == null || idAspiranteOpcion == null || entity == null) {
+        if (idPrueba == null || idJornada == null || idAula == null || idAspiranteOpcion == null || entity == null
+                || entity.getIdPruebaClave() == null) {
             return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "Datos insuficientes para actualizar").build();
         }
 
@@ -134,15 +133,11 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResource implements Serializa
                 return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "No encontrado").build();
             }
 
-            if (entity.getIdPruebaClave() != null) {
-                PruebaClave pruebaClave = pruebaClaveDAO.buscarPorId(entity.getIdPruebaClave());
-                if (pruebaClave == null) {
-                    return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "Prueba clave no encontrada").build();
-                }
-                entity.setIdPruebaClave(pruebaClave.getIdPruebaClave());
-            } else {
-                entity.setIdPruebaClave(existente.getIdPruebaClave());
+            PruebaClave pruebaClave = pruebaClaveDAO.buscarPorId(entity.getIdPruebaClave());
+            if (pruebaClave == null) {
+                return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "Prueba clave no encontrada").build();
             }
+            entity.setIdPruebaClave(pruebaClave.getIdPruebaClave());
 
             entity.setIdPrueba(idPrueba);
             entity.setIdJornada(idJornada);
