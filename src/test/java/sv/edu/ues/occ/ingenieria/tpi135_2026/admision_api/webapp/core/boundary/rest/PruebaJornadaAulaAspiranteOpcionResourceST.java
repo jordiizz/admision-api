@@ -399,6 +399,7 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
 
         PruebaJornadaAulaAspiranteOpcion actualizar = new PruebaJornadaAulaAspiranteOpcion();
         actualizar.setActivo(false);
+        actualizar.setIdAspiranteOpcion(contexto.idAspiranteOpcion);
 
         Response respuesta = target.path(contexto.idPrueba.toString())
             .path("jornada")
@@ -420,7 +421,7 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
     @Order(9)
     @Test
     public void actualizarAspiranteOpcionNoEncontradoTest() throws SQLException {
-        // Si se intenta cambiar a un aspirante_opcion inexistente, debe responder 404.
+        // Si el id del body no coincide con el id del path, debe responder 400.
         System.out.println("actualizarAspiranteOpcionNoEncontrado en PruebaJornadaAulaAspiranteOpcionResource");
 
         ContextoSistema contexto = crearContextoSistema(true);
@@ -438,7 +439,7 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
                 .request(MediaType.APPLICATION_JSON)
                 .put(Entity.json(actualizar));
 
-        Assertions.assertEquals(404, respuesta.getStatus());
+        Assertions.assertEquals(400, respuesta.getStatus());
     }
 
     @Order(10)
@@ -448,9 +449,11 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
         System.out.println("actualizarNoEncontrado en PruebaJornadaAulaAspiranteOpcionResource");
 
         ContextoSistema contexto = crearContextoSistema(false);
+        UUID idNoExistente = UUID.randomUUID();
 
         PruebaJornadaAulaAspiranteOpcion actualizar = new PruebaJornadaAulaAspiranteOpcion();
         actualizar.setActivo(false);
+        actualizar.setIdAspiranteOpcion(idNoExistente);
 
         Response respuesta = target.path(contexto.idPrueba.toString())
             .path("jornada")
@@ -458,7 +461,7 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
             .path("aula")
             .path(contexto.idAula)
             .path("aspirante-opcion")
-                .path(UUID.randomUUID().toString())
+                .path(idNoExistente.toString())
                 .request(MediaType.APPLICATION_JSON)
                 .put(Entity.json(actualizar));
 

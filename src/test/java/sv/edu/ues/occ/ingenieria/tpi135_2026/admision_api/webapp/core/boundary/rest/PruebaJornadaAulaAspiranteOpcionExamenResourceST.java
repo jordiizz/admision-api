@@ -405,6 +405,7 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResourceST extends AbstractIn
         ContextoExamen contexto = crearContextoExamen(true);
         PruebaJornadaAulaAspiranteOpcionExamen actualizar = new PruebaJornadaAulaAspiranteOpcionExamen();
         actualizar.setResultado(new BigDecimal("9.75"));
+        actualizar.setIdPruebaClave(contexto.idPruebaClave);
 
         Response respuesta = target.path(contexto.idPrueba.toString())
                 .path("jornada")
@@ -433,6 +434,7 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResourceST extends AbstractIn
         ContextoExamen contexto = crearContextoExamen(false);
         PruebaJornadaAulaAspiranteOpcionExamen actualizar = new PruebaJornadaAulaAspiranteOpcionExamen();
         actualizar.setResultado(new BigDecimal("6.25"));
+        actualizar.setIdPruebaClave(contexto.idPruebaClave);
 
         Response respuesta = target.path(contexto.idPrueba.toString())
                 .path("jornada")
