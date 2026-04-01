@@ -23,7 +23,6 @@ import jakarta.ws.rs.core.UriInfo;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PruebaDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.TipoPruebaDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Prueba;
-import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.TipoPrueba;
 
 
 
@@ -39,15 +38,10 @@ public class PruebaResource implements Serializable {
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public Response crear(Prueba p, @PathParam("id_tipo_prueba") UUID idTipoPrueba, @Context UriInfo uriInfo) {
-        if(p != null && idTipoPrueba != null) {
+    public Response crear(Prueba p, @Context UriInfo uriInfo) {
+        if(p != null ) {
             try {
-                TipoPrueba tp = tpDAO.buscarPorId(idTipoPrueba);
-                if(tp == null){
-                    return Response.status(Response.Status.NOT_FOUND).build();
-                }
                 p.setIdPrueba(UUID.randomUUID());
-                p.setIdTipoPrueba(tp);
                 pDAO.crear(p);
                 UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
                 uriBuilder.path(p.getIdPrueba().toString());
@@ -66,6 +60,7 @@ public class PruebaResource implements Serializable {
             try {
                 Prueba p = pDAO.buscarPorId(idPrueba);
                 if(p != null) {
+                    p.setIdPrueba(idPrueba);
                     pDAO.eliminar(p);
                     return Response.status(Response.Status.NO_CONTENT).build();
                 }
@@ -85,6 +80,7 @@ public class PruebaResource implements Serializable {
         if(p != null) {
             try {
                 Prueba pruebaExistente = pDAO.buscarPorId(idPrueba);
+                p.setIdPrueba(idPrueba);
                 if(pruebaExistente != null) {
                     // Actualizar los campos de la prueba existente con los valores del objeto p
                     pDAO.actualizar(p);
