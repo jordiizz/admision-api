@@ -38,8 +38,8 @@ public class DistractorAreaDAOTest {
         System.out.println("DistractorAreaDAOTest.getEntityManagerTest - finalizado");
     }
 
-        @Test
-        public void buscarPorDistractorRangoTest() {
+    @Test
+    public void buscarPorDistractorRangoTest() {
         System.out.println("DistractorAreaDAOTest.buscarPorDistractorRangoTest");
         UUID idDistractor = UUID.randomUUID();
         int first = 0;
@@ -51,16 +51,22 @@ public class DistractorAreaDAOTest {
 
         DistractorAreaDAO cut = new DistractorAreaDAO();
 
-        NullPointerException npe = assertThrows(NullPointerException.class,
+        assertThrows(IllegalArgumentException.class,
+            () -> cut.buscarPorDistractorRango(null, first, max));
+        assertThrows(IllegalArgumentException.class,
+            () -> cut.buscarPorDistractorRango(idDistractor, -1, max));
+        assertThrows(IllegalArgumentException.class,
+            () -> cut.buscarPorDistractorRango(idDistractor, first, 0));
+
+        assertThrows(IllegalStateException.class,
             () -> cut.buscarPorDistractorRango(idDistractor, first, max));
-        assertNotNull(npe);
 
         EntityManager mockEM = Mockito.mock(EntityManager.class);
         @SuppressWarnings("unchecked")
         TypedQuery<DistractorArea> mockQuery = Mockito.mock(TypedQuery.class);
 
-        Mockito.when(mockEM.createQuery(
-            "SELECT d FROM DistractorArea d WHERE d.idDistractor.idDistractor = :idDistractor ORDER BY d.idArea.idArea",
+        Mockito.when(mockEM.createNamedQuery(
+            "DistractorArea.buscarPorDistractorRango",
             DistractorArea.class))
             .thenReturn(mockQuery);
         Mockito.when(mockQuery.setParameter("idDistractor", idDistractor)).thenReturn(mockQuery);
@@ -78,25 +84,27 @@ public class DistractorAreaDAOTest {
         Mockito.verify(mockQuery, Mockito.times(1)).setMaxResults(max);
         Mockito.verify(mockQuery, Mockito.times(1)).getResultList();
         System.out.println("DistractorAreaDAOTest.buscarPorDistractorRangoTest - finalizado");
-        }
+    }
 
-        @Test
-        public void contarPorDistractorTest() {
+    @Test
+    public void contarPorDistractorTest() {
         System.out.println("DistractorAreaDAOTest.contarPorDistractorTest");
         UUID idDistractor = UUID.randomUUID();
 
         DistractorAreaDAO cut = new DistractorAreaDAO();
 
-        NullPointerException npe = assertThrows(NullPointerException.class,
+        assertThrows(IllegalArgumentException.class,
+            () -> cut.contarPorDistractor(null));
+
+        assertThrows(IllegalStateException.class,
             () -> cut.contarPorDistractor(idDistractor));
-        assertNotNull(npe);
 
         EntityManager mockEM = Mockito.mock(EntityManager.class);
         @SuppressWarnings("unchecked")
         TypedQuery<Long> mockQuery = Mockito.mock(TypedQuery.class);
 
-        Mockito.when(mockEM.createQuery(
-            "SELECT COUNT(d) FROM DistractorArea d WHERE d.idDistractor.idDistractor = :idDistractor",
+        Mockito.when(mockEM.createNamedQuery(
+            "DistractorArea.contarPorDistractor",
             Long.class))
             .thenReturn(mockQuery);
         Mockito.when(mockQuery.setParameter("idDistractor", idDistractor)).thenReturn(mockQuery);
@@ -110,5 +118,5 @@ public class DistractorAreaDAOTest {
         Mockito.verify(mockQuery, Mockito.times(1)).setParameter("idDistractor", idDistractor);
         Mockito.verify(mockQuery, Mockito.times(1)).getSingleResult();
         System.out.println("DistractorAreaDAOTest.contarPorDistractorTest - finalizado");
-        }
+    }
 }

@@ -5,109 +5,122 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.AspiranteOpcion;
 
-@ExtendWith(MockitoExtension.class)
 public class AspiranteOpcionDAOTest {
 
-    @Mock
-    EntityManager em;
-
-    @InjectMocks
-    AspiranteOpcionDAO dao;
+    @Test
+    public void constructorTest() {
+        System.out.println("AspiranteOpcionDAOTest.constructorTest");
+        AspiranteOpcionDAO cut = new AspiranteOpcionDAO();
+        assertNotNull(cut);
+        System.out.println("AspiranteOpcionDAOTest.constructorTest - finalizado");
+    }
 
     @Test
     public void getEntityManagerTest() {
-        System.out.println("Ejecutando test: getEntityManagerTest en AspiranteOpcionDAO");
-        assertEquals(em, dao.getEntityManager());
+        System.out.println("AspiranteOpcionDAOTest.getEntityManagerTest");
+        AspiranteOpcionDAO cut = new AspiranteOpcionDAO();
+        assertNull(cut.getEntityManager());
+        EntityManager mockEM = Mockito.mock(EntityManager.class);
+        cut.em = mockEM;
+        assertEquals(mockEM, cut.getEntityManager());
+        System.out.println("AspiranteOpcionDAOTest.getEntityManagerTest - finalizado");
     }
 
     @Test
     public void buscarPorAspiranteRangoTest() {
-        System.out.println("Ejecutando test: buscarPorAspiranteRangoTest en AspiranteOpcionDAO");
+        System.out.println("AspiranteOpcionDAOTest.buscarPorAspiranteRangoTest");
         UUID idAspirante = UUID.randomUUID();
         AspiranteOpcion opcion = new AspiranteOpcion();
         List<AspiranteOpcion> listaEsperada = Collections.singletonList(opcion);
+        AspiranteOpcionDAO cut = new AspiranteOpcionDAO();
 
-        // Branch: idAspirante null
-        List<AspiranteOpcion> resultadoNulo = dao.buscarPorAspiranteRango(null, 0, 10);
-        assertTrue(resultadoNulo.isEmpty());
+        assertThrows(IllegalArgumentException.class, () -> cut.buscarPorAspiranteRango(null, 0, 10));
+        assertThrows(IllegalArgumentException.class, () -> cut.buscarPorAspiranteRango(idAspirante, -1, 10));
+        assertThrows(IllegalArgumentException.class, () -> cut.buscarPorAspiranteRango(idAspirante, 0, 0));
 
-        // Branch: Success
+        assertThrows(IllegalStateException.class, () -> cut.buscarPorAspiranteRango(idAspirante, 0, 10));
+
+        EntityManager mockEM = Mockito.mock(EntityManager.class);
         TypedQuery<AspiranteOpcion> mockQuery = Mockito.mock(TypedQuery.class);
-        Mockito.when(em.createQuery(Mockito.anyString(), Mockito.eq(AspiranteOpcion.class))).thenReturn(mockQuery);
+        Mockito.when(mockEM.createNamedQuery("AspiranteOpcion.buscarPorAspiranteRango", AspiranteOpcion.class)).thenReturn(mockQuery);
         Mockito.when(mockQuery.setParameter(Mockito.anyString(), Mockito.any(UUID.class))).thenReturn(mockQuery);
         Mockito.when(mockQuery.setFirstResult(Mockito.anyInt())).thenReturn(mockQuery);
         Mockito.when(mockQuery.setMaxResults(Mockito.anyInt())).thenReturn(mockQuery);
         Mockito.when(mockQuery.getResultList()).thenReturn(listaEsperada);
 
-        List<AspiranteOpcion> resultadoExitoso = dao.buscarPorAspiranteRango(idAspirante, 0, 10);
+        cut.em = mockEM;
+        List<AspiranteOpcion> resultadoExitoso = cut.buscarPorAspiranteRango(idAspirante, 0, 10);
         assertEquals(listaEsperada, resultadoExitoso);
 
-        // Branch: Exception
-        Mockito.when(em.createQuery(Mockito.anyString(), Mockito.eq(AspiranteOpcion.class))).thenThrow(new RuntimeException("Error"));
-        List<AspiranteOpcion> resultadoExcepcion = dao.buscarPorAspiranteRango(idAspirante, 0, 10);
-        assertTrue(resultadoExcepcion.isEmpty());
+        Mockito.when(mockEM.createNamedQuery("AspiranteOpcion.buscarPorAspiranteRango", AspiranteOpcion.class))
+            .thenThrow(new RuntimeException("Error"));
+        assertThrows(IllegalStateException.class, () -> cut.buscarPorAspiranteRango(idAspirante, 0, 10));
+        System.out.println("AspiranteOpcionDAOTest.buscarPorAspiranteRangoTest - finalizado");
     }
 
     @Test
     public void contarPorAspiranteTest() {
-        System.out.println("Ejecutando test: contarPorAspiranteTest en AspiranteOpcionDAO");
+        System.out.println("AspiranteOpcionDAOTest.contarPorAspiranteTest");
         UUID idAspirante = UUID.randomUUID();
+        AspiranteOpcionDAO cut = new AspiranteOpcionDAO();
 
-        // Branch: idAspirante null
-        Long resultadoNulo = dao.contarPorAspirante(null);
-        assertEquals(0L, resultadoNulo);
+        assertThrows(IllegalArgumentException.class, () -> cut.contarPorAspirante(null));
 
-        // Branch: Success
+        assertThrows(IllegalStateException.class, () -> cut.contarPorAspirante(idAspirante));
+
+        EntityManager mockEM = Mockito.mock(EntityManager.class);
         TypedQuery<Long> mockQuery = Mockito.mock(TypedQuery.class);
-        Mockito.when(em.createQuery(Mockito.anyString(), Mockito.eq(Long.class))).thenReturn(mockQuery);
+        Mockito.when(mockEM.createNamedQuery("AspiranteOpcion.contarPorAspirante", Long.class)).thenReturn(mockQuery);
         Mockito.when(mockQuery.setParameter(Mockito.anyString(), Mockito.any(UUID.class))).thenReturn(mockQuery);
         Mockito.when(mockQuery.getSingleResult()).thenReturn(5L);
 
-        Long resultadoExitoso = dao.contarPorAspirante(idAspirante);
+        cut.em = mockEM;
+        Long resultadoExitoso = cut.contarPorAspirante(idAspirante);
         assertEquals(5L, resultadoExitoso);
 
-        // Branch: Exception
-        Mockito.when(em.createQuery(Mockito.anyString(), Mockito.eq(Long.class))).thenThrow(new RuntimeException("Error"));
-        Long resultadoExcepcion = dao.contarPorAspirante(idAspirante);
-        assertEquals(0L, resultadoExcepcion);
+        Mockito.when(mockEM.createNamedQuery("AspiranteOpcion.contarPorAspirante", Long.class))
+            .thenThrow(new RuntimeException("Error"));
+        assertThrows(IllegalStateException.class, () -> cut.contarPorAspirante(idAspirante));
+        System.out.println("AspiranteOpcionDAOTest.contarPorAspiranteTest - finalizado");
     }
 
     @Test
     public void buscarPorIdYAspiranteTest() {
-        System.out.println("Ejecutando test: buscarPorIdYAspiranteTest en AspiranteOpcionDAO");
+        System.out.println("AspiranteOpcionDAOTest.buscarPorIdYAspiranteTest");
         UUID idAspirante = UUID.randomUUID();
         UUID idOpcion = UUID.randomUUID();
+        AspiranteOpcionDAO cut = new AspiranteOpcionDAO();
         
-        // Branch: idAspirante or idOpcion null
-        assertNull(dao.buscarPorIdYAspirante(null, UUID.randomUUID()));
-        assertNull(dao.buscarPorIdYAspirante(UUID.randomUUID(), null));
+        assertThrows(IllegalArgumentException.class, () -> cut.buscarPorIdYAspirante(null, UUID.randomUUID()));
+        assertThrows(IllegalArgumentException.class, () -> cut.buscarPorIdYAspirante(UUID.randomUUID(), null));
 
-        // Branch: Success
+        assertThrows(IllegalStateException.class, () -> cut.buscarPorIdYAspirante(idOpcion, idAspirante));
+
         AspiranteOpcion opcionEsperada = new AspiranteOpcion();
+        EntityManager mockEM = Mockito.mock(EntityManager.class);
         TypedQuery<AspiranteOpcion> mockQuery = Mockito.mock(TypedQuery.class);
-        Mockito.when(em.createQuery(Mockito.anyString(), Mockito.eq(AspiranteOpcion.class))).thenReturn(mockQuery);
+        Mockito.when(mockEM.createNamedQuery("AspiranteOpcion.buscarPorIdYAspirante", AspiranteOpcion.class)).thenReturn(mockQuery);
         Mockito.when(mockQuery.setParameter("idAspiranteOpcion", idOpcion)).thenReturn(mockQuery);
         Mockito.when(mockQuery.setParameter("idAspirante", idAspirante)).thenReturn(mockQuery);
         Mockito.when(mockQuery.getSingleResult()).thenReturn(opcionEsperada);
 
-        AspiranteOpcion resultadoExitoso = dao.buscarPorIdYAspirante(idOpcion, idAspirante);
+        cut.em = mockEM;
+        AspiranteOpcion resultadoExitoso = cut.buscarPorIdYAspirante(idOpcion, idAspirante);
         assertEquals(opcionEsperada, resultadoExitoso);
 
-        // Branch: Exception
-        Mockito.when(em.createQuery(Mockito.anyString(), Mockito.eq(AspiranteOpcion.class))).thenThrow(new RuntimeException("Error"));
-        assertNull(dao.buscarPorIdYAspirante(idOpcion, idAspirante));
+        Mockito.when(mockEM.createNamedQuery("AspiranteOpcion.buscarPorIdYAspirante", AspiranteOpcion.class))
+            .thenThrow(new RuntimeException("Error"));
+        assertThrows(IllegalStateException.class, () -> cut.buscarPorIdYAspirante(idOpcion, idAspirante));
+        System.out.println("AspiranteOpcionDAOTest.buscarPorIdYAspiranteTest - finalizado");
     }
 }

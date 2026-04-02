@@ -38,8 +38,8 @@ public class PreguntaAreaDAOTest {
         System.out.println("PreguntaAreaDAOTest.getEntityManagerTest - finalizado");
     }
 
-        @Test
-        public void buscarPorPreguntaRangoTest() {
+    @Test
+    public void buscarPorPreguntaRangoTest() {
         System.out.println("PreguntaAreaDAOTest.buscarPorPreguntaRangoTest");
         UUID idPregunta = UUID.randomUUID();
         int first = 0;
@@ -51,16 +51,22 @@ public class PreguntaAreaDAOTest {
 
         PreguntaAreaDAO cut = new PreguntaAreaDAO();
 
-        NullPointerException npe = assertThrows(NullPointerException.class,
+        assertThrows(IllegalArgumentException.class,
+            () -> cut.buscarPorPreguntaRango(null, first, max));
+        assertThrows(IllegalArgumentException.class,
+            () -> cut.buscarPorPreguntaRango(idPregunta, -1, max));
+        assertThrows(IllegalArgumentException.class,
+            () -> cut.buscarPorPreguntaRango(idPregunta, first, 0));
+
+        assertThrows(IllegalStateException.class,
             () -> cut.buscarPorPreguntaRango(idPregunta, first, max));
-        assertNotNull(npe);
 
         EntityManager mockEM = Mockito.mock(EntityManager.class);
         @SuppressWarnings("unchecked")
         TypedQuery<PreguntaArea> mockQuery = Mockito.mock(TypedQuery.class);
 
-        Mockito.when(mockEM.createQuery(
-            "SELECT p FROM PreguntaArea p WHERE p.idPregunta.idPregunta = :idPregunta ORDER BY p.idArea.idArea",
+        Mockito.when(mockEM.createNamedQuery(
+            "PreguntaArea.buscarPorPreguntaRango",
             PreguntaArea.class))
             .thenReturn(mockQuery);
         Mockito.when(mockQuery.setParameter("idPregunta", idPregunta)).thenReturn(mockQuery);
@@ -78,25 +84,27 @@ public class PreguntaAreaDAOTest {
         Mockito.verify(mockQuery, Mockito.times(1)).setMaxResults(max);
         Mockito.verify(mockQuery, Mockito.times(1)).getResultList();
         System.out.println("PreguntaAreaDAOTest.buscarPorPreguntaRangoTest - finalizado");
-        }
+    }
 
-        @Test
-        public void contarPorPreguntaTest() {
+    @Test
+    public void contarPorPreguntaTest() {
         System.out.println("PreguntaAreaDAOTest.contarPorPreguntaTest");
         UUID idPregunta = UUID.randomUUID();
 
         PreguntaAreaDAO cut = new PreguntaAreaDAO();
 
-        NullPointerException npe = assertThrows(NullPointerException.class,
+        assertThrows(IllegalArgumentException.class,
+            () -> cut.contarPorPregunta(null));
+
+        assertThrows(IllegalStateException.class,
             () -> cut.contarPorPregunta(idPregunta));
-        assertNotNull(npe);
 
         EntityManager mockEM = Mockito.mock(EntityManager.class);
         @SuppressWarnings("unchecked")
         TypedQuery<Long> mockQuery = Mockito.mock(TypedQuery.class);
 
-        Mockito.when(mockEM.createQuery(
-            "SELECT COUNT(p) FROM PreguntaArea p WHERE p.idPregunta.idPregunta = :idPregunta",
+        Mockito.when(mockEM.createNamedQuery(
+            "PreguntaArea.contarPorPregunta",
             Long.class))
             .thenReturn(mockQuery);
         Mockito.when(mockQuery.setParameter("idPregunta", idPregunta)).thenReturn(mockQuery);
@@ -110,5 +118,5 @@ public class PreguntaAreaDAOTest {
         Mockito.verify(mockQuery, Mockito.times(1)).setParameter("idPregunta", idPregunta);
         Mockito.verify(mockQuery, Mockito.times(1)).getSingleResult();
         System.out.println("PreguntaAreaDAOTest.contarPorPreguntaTest - finalizado");
-        }
+    }
 }

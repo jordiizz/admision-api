@@ -49,9 +49,15 @@ public class PruebaClaveAreaDAOTest {
 
         PruebaClaveAreaDAO cut = new PruebaClaveAreaDAO();
 
-        NullPointerException npe = assertThrows(NullPointerException.class,
+        assertThrows(IllegalArgumentException.class,
+            () -> cut.buscarPorPruebaClaveRango(null, first, max));
+        assertThrows(IllegalArgumentException.class,
+            () -> cut.buscarPorPruebaClaveRango(idPruebaClave, -1, max));
+        assertThrows(IllegalArgumentException.class,
+            () -> cut.buscarPorPruebaClaveRango(idPruebaClave, first, 0));
+
+        assertThrows(IllegalStateException.class,
             () -> cut.buscarPorPruebaClaveRango(idPruebaClave, first, max));
-        assertNotNull(npe);
 
         EntityManager mockEM = Mockito.mock(EntityManager.class);
         @SuppressWarnings("unchecked")
@@ -83,9 +89,11 @@ public class PruebaClaveAreaDAOTest {
 
         PruebaClaveAreaDAO cut = new PruebaClaveAreaDAO();
 
-        NullPointerException npe = assertThrows(NullPointerException.class,
+        assertThrows(IllegalArgumentException.class,
+            () -> cut.contarPorPruebaClave(null));
+
+        assertThrows(IllegalStateException.class,
             () -> cut.contarPorPruebaClave(idPruebaClave));
-        assertNotNull(npe);
 
         EntityManager mockEM = Mockito.mock(EntityManager.class);
         @SuppressWarnings("unchecked")

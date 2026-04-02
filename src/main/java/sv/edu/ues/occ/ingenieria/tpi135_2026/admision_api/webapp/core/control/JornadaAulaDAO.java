@@ -26,13 +26,32 @@ public class JornadaAulaDAO extends DefaultDAO<JornadaAula> implements Serializa
         return em;
     }
 
+    /**
+     * Busca una relacion de JornadaAula por jornada y aula.
+     * @param idJornada identificador de jornada
+     * @param idAula identificador de aula
+     * @return registro encontrado o null si no hay resultados
+     * @throws IllegalArgumentException si algun parametro es invalido
+     * @throws IllegalStateException si ocurre un error al consultar
+     */
     public JornadaAula buscarPorJornadaYAula(UUID idJornada, String idAula) {
-        List<JornadaAula> resultados = em
-                .createNamedQuery("JornadaAula.buscarPorJornadaYAula", JornadaAula.class)
-                .setParameter("idJornada", idJornada)
-                .setParameter("idAula", idAula)
-                .setMaxResults(1)
-                .getResultList();
-        return resultados.isEmpty() ? null : resultados.get(0);
+        if (idJornada != null && idAula != null) {
+            try {
+                EntityManager entityManager = this.getEntityManager();
+                if (entityManager != null) {
+                    List<JornadaAula> resultados = entityManager
+                            .createNamedQuery("JornadaAula.buscarPorJornadaYAula", JornadaAula.class)
+                            .setParameter("idJornada", idJornada)
+                            .setParameter("idAula", idAula)
+                            .setMaxResults(1)
+                            .getResultList();
+                    return resultados.isEmpty() ? null : resultados.get(0);
+                }
+                throw new NullPointerException("El repositorio es nulo");
+            } catch (Exception ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+        throw new IllegalArgumentException("Parámetros inválidos");
     }
 }

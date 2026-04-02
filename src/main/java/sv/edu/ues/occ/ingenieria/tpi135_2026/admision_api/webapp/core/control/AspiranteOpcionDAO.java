@@ -1,7 +1,6 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,48 +26,81 @@ public class AspiranteOpcionDAO extends DefaultDAO<AspiranteOpcion> implements S
         return em;
     }
 
+    /**
+     * Busca registros de AspiranteOpcion por aspirante en un rango paginado.
+     * @param idAspirante identificador del aspirante
+     * @param first indice inicial del rango
+     * @param max cantidad maxima de registros
+     * @return lista de registros encontrados
+     * @throws IllegalArgumentException si algun parametro es invalido
+     * @throws IllegalStateException si ocurre un error al consultar
+     */
     public List<AspiranteOpcion> buscarPorAspiranteRango(UUID idAspirante, int first, int max) {
-        if (idAspirante != null) {
+        if (idAspirante != null && first >= 0 && max > 0) {
             try {
-                return em.createNamedQuery("AspiranteOpcion.buscarPorAspiranteRango", AspiranteOpcion.class)
+                EntityManager entityManager = this.getEntityManager();
+                if (entityManager != null) {
+                    return entityManager.createNamedQuery("AspiranteOpcion.buscarPorAspiranteRango", AspiranteOpcion.class)
                         .setParameter("idAspirante", idAspirante)
                         .setFirstResult(first)
                         .setMaxResults(max)
                         .getResultList();
+                }
+                throw new NullPointerException("El repositorio es nulo");
             } catch (Exception e) {
-                // Log the exception
-                return Collections.emptyList();
+                throw new IllegalStateException(e);
             }
         }
-        return Collections.emptyList();
+        throw new IllegalArgumentException("Parámetros inválidos");
     }
 
+    /**
+     * Cuenta registros de AspiranteOpcion por aspirante.
+     * @param idAspirante identificador del aspirante
+     * @return total de registros encontrados
+     * @throws IllegalArgumentException si el parametro es invalido
+     * @throws IllegalStateException si ocurre un error al consultar
+     */
     public Long contarPorAspirante(UUID idAspirante) {
         if (idAspirante != null) {
             try {
-                return em.createNamedQuery("AspiranteOpcion.contarPorAspirante", Long.class)
+                EntityManager entityManager = this.getEntityManager();
+                if (entityManager != null) {
+                    return entityManager.createNamedQuery("AspiranteOpcion.contarPorAspirante", Long.class)
                         .setParameter("idAspirante", idAspirante)
                         .getSingleResult();
+                }
+                throw new NullPointerException("El repositorio es nulo");
             } catch (Exception e) {
-                // Log the exception
-                return 0L;
+                throw new IllegalStateException(e);
             }
         }
-        return 0L;
+        throw new IllegalArgumentException("Parámetros inválidos");
     }
 
+    /**
+     * Busca un registro de AspiranteOpcion por id de opcion y aspirante.
+     * @param idAspiranteOpcion identificador de aspirante opcion
+     * @param idAspirante identificador del aspirante
+     * @return registro encontrado
+     * @throws IllegalArgumentException si algun parametro es invalido
+     * @throws IllegalStateException si ocurre un error al consultar
+     */
     public AspiranteOpcion buscarPorIdYAspirante(UUID idAspiranteOpcion, UUID idAspirante) {
         if (idAspiranteOpcion != null && idAspirante != null) {
             try {
-                return em.createNamedQuery("AspiranteOpcion.buscarPorIdYAspirante", AspiranteOpcion.class)
+                EntityManager entityManager = this.getEntityManager();
+                if (entityManager != null) {
+                    return entityManager.createNamedQuery("AspiranteOpcion.buscarPorIdYAspirante", AspiranteOpcion.class)
                         .setParameter("idAspiranteOpcion", idAspiranteOpcion)
                         .setParameter("idAspirante", idAspirante)
                         .getSingleResult();
+                }
+                throw new NullPointerException("El repositorio es nulo");
             } catch (Exception e) {
-                // Log the exception
-                return null;
+                throw new IllegalStateException(e);
             }
         }
-        return null;
+        throw new IllegalArgumentException("Parámetros inválidos");
     }
 }

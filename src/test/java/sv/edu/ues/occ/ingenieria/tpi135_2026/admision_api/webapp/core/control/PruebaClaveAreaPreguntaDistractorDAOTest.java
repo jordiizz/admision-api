@@ -36,8 +36,8 @@ public class PruebaClaveAreaPreguntaDistractorDAOTest {
         System.out.println("PruebaClaveAreaPreguntaDistractorDAOTest.getEntityManagerTest - finalizado");
     }
 
-        @Test
-        public void buscarPorPadreRangoTest() {
+    @Test
+    public void buscarPorPadreRangoTest() {
         UUID idPruebaClave = UUID.randomUUID();
         UUID idArea = UUID.randomUUID();
         UUID idPregunta = UUID.randomUUID();
@@ -50,9 +50,19 @@ public class PruebaClaveAreaPreguntaDistractorDAOTest {
 
         PruebaClaveAreaPreguntaDistractorDAO cut = new PruebaClaveAreaPreguntaDistractorDAO();
 
-        NullPointerException npe = assertThrows(NullPointerException.class,
+        assertThrows(IllegalArgumentException.class,
+            () -> cut.buscarPorPadreRango(null, idArea, idPregunta, first, max));
+        assertThrows(IllegalArgumentException.class,
+            () -> cut.buscarPorPadreRango(idPruebaClave, null, idPregunta, first, max));
+        assertThrows(IllegalArgumentException.class,
+            () -> cut.buscarPorPadreRango(idPruebaClave, idArea, null, first, max));
+        assertThrows(IllegalArgumentException.class,
+            () -> cut.buscarPorPadreRango(idPruebaClave, idArea, idPregunta, -1, max));
+        assertThrows(IllegalArgumentException.class,
+            () -> cut.buscarPorPadreRango(idPruebaClave, idArea, idPregunta, first, 0));
+
+        assertThrows(IllegalStateException.class,
             () -> cut.buscarPorPadreRango(idPruebaClave, idArea, idPregunta, first, max));
-        assertNotNull(npe);
 
         EntityManager mockEM = Mockito.mock(EntityManager.class);
         @SuppressWarnings("unchecked")
@@ -79,19 +89,25 @@ public class PruebaClaveAreaPreguntaDistractorDAOTest {
         Mockito.verify(mockQuery).setFirstResult(first);
         Mockito.verify(mockQuery).setMaxResults(max);
         Mockito.verify(mockQuery).getResultList();
-        }
+    }
 
-        @Test
-        public void contarPorPadreTest() {
+    @Test
+    public void contarPorPadreTest() {
         UUID idPruebaClave = UUID.randomUUID();
         UUID idArea = UUID.randomUUID();
         UUID idPregunta = UUID.randomUUID();
 
         PruebaClaveAreaPreguntaDistractorDAO cut = new PruebaClaveAreaPreguntaDistractorDAO();
 
-        NullPointerException npe = assertThrows(NullPointerException.class,
+        assertThrows(IllegalArgumentException.class,
+            () -> cut.contarPorPadre(null, idArea, idPregunta));
+        assertThrows(IllegalArgumentException.class,
+            () -> cut.contarPorPadre(idPruebaClave, null, idPregunta));
+        assertThrows(IllegalArgumentException.class,
+            () -> cut.contarPorPadre(idPruebaClave, idArea, null));
+
+        assertThrows(IllegalStateException.class,
             () -> cut.contarPorPadre(idPruebaClave, idArea, idPregunta));
-        assertNotNull(npe);
 
         EntityManager mockEM = Mockito.mock(EntityManager.class);
         @SuppressWarnings("unchecked")
@@ -114,6 +130,6 @@ public class PruebaClaveAreaPreguntaDistractorDAOTest {
         Mockito.verify(mockQuery).setParameter("idArea", idArea);
         Mockito.verify(mockQuery).setParameter("idPregunta", idPregunta);
         Mockito.verify(mockQuery).getSingleResult();
-        }
+    }
 
 }

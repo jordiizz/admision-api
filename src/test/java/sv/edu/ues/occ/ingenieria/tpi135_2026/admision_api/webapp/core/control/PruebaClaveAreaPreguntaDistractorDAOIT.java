@@ -447,7 +447,7 @@ public class PruebaClaveAreaPreguntaDistractorDAOIT extends AbstractIntengration
     public void testBuscarPorPadreRangoEmNulo() {
         System.out.println("buscarPorPadreRango em nulo");
         cut.em = null;
-        assertThrows(NullPointerException.class, () -> {
+        assertThrows(IllegalStateException.class, () -> {
             cut.buscarPorPadreRango(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), 0, 10);
         });
     }
@@ -487,7 +487,7 @@ public class PruebaClaveAreaPreguntaDistractorDAOIT extends AbstractIntengration
     public void testContarPorPadreEmNulo() {
         System.out.println("contarPorPadre em nulo");
         cut.em = null;
-        assertThrows(NullPointerException.class, () -> {
+        assertThrows(IllegalStateException.class, () -> {
             cut.contarPorPadre(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID());
         });
     }

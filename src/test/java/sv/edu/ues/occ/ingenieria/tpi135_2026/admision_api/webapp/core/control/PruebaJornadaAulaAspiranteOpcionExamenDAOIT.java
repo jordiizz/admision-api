@@ -470,7 +470,7 @@ public class PruebaJornadaAulaAspiranteOpcionExamenDAOIT extends AbstractIntengr
     public void testBuscarPorPadreRangoEmNulo() {
         System.out.println("buscarPorPadreRango em nulo");
         cut.em = null;
-        assertThrows(NullPointerException.class, () -> {
+        assertThrows(IllegalStateException.class, () -> {
             cut.buscarPorPadreRango(UUID.randomUUID(), UUID.randomUUID(), "A-01", UUID.randomUUID(), 0, 10);
         });
     }
@@ -508,7 +508,7 @@ public class PruebaJornadaAulaAspiranteOpcionExamenDAOIT extends AbstractIntengr
     public void testContarPorPadreEmNulo() {
         System.out.println("contarPorPadre em nulo");
         cut.em = null;
-        assertThrows(NullPointerException.class, () -> {
+        assertThrows(IllegalStateException.class, () -> {
             cut.contarPorPadre(UUID.randomUUID(), UUID.randomUUID(), "A-01", UUID.randomUUID());
         });
     }

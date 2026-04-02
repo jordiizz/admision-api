@@ -52,9 +52,21 @@ public class PruebaJornadaAulaAspiranteOpcionExamenDAOTest {
 
         PruebaJornadaAulaAspiranteOpcionExamenDAO cut = new PruebaJornadaAulaAspiranteOpcionExamenDAO();
 
-        NullPointerException npe = assertThrows(NullPointerException.class,
+        assertThrows(IllegalArgumentException.class,
+                () -> cut.buscarPorPadreRango(null, idJornada, idAula, idAspiranteOpcion, first, max));
+        assertThrows(IllegalArgumentException.class,
+                () -> cut.buscarPorPadreRango(idPrueba, null, idAula, idAspiranteOpcion, first, max));
+        assertThrows(IllegalArgumentException.class,
+                () -> cut.buscarPorPadreRango(idPrueba, idJornada, null, idAspiranteOpcion, first, max));
+        assertThrows(IllegalArgumentException.class,
+                () -> cut.buscarPorPadreRango(idPrueba, idJornada, idAula, null, first, max));
+        assertThrows(IllegalArgumentException.class,
+                () -> cut.buscarPorPadreRango(idPrueba, idJornada, idAula, idAspiranteOpcion, -1, max));
+        assertThrows(IllegalArgumentException.class,
+                () -> cut.buscarPorPadreRango(idPrueba, idJornada, idAula, idAspiranteOpcion, first, 0));
+
+        assertThrows(IllegalStateException.class,
                 () -> cut.buscarPorPadreRango(idPrueba, idJornada, idAula, idAspiranteOpcion, first, max));
-        assertNotNull(npe);
 
         EntityManager mockEM = Mockito.mock(EntityManager.class);
         @SuppressWarnings("unchecked")
@@ -97,9 +109,17 @@ public class PruebaJornadaAulaAspiranteOpcionExamenDAOTest {
 
         PruebaJornadaAulaAspiranteOpcionExamenDAO cut = new PruebaJornadaAulaAspiranteOpcionExamenDAO();
 
-        NullPointerException npe = assertThrows(NullPointerException.class,
+        assertThrows(IllegalArgumentException.class,
+                () -> cut.contarPorPadre(null, idJornada, idAula, idAspiranteOpcion));
+        assertThrows(IllegalArgumentException.class,
+                () -> cut.contarPorPadre(idPrueba, null, idAula, idAspiranteOpcion));
+        assertThrows(IllegalArgumentException.class,
+                () -> cut.contarPorPadre(idPrueba, idJornada, null, idAspiranteOpcion));
+        assertThrows(IllegalArgumentException.class,
+                () -> cut.contarPorPadre(idPrueba, idJornada, idAula, null));
+
+        assertThrows(IllegalStateException.class,
                 () -> cut.contarPorPadre(idPrueba, idJornada, idAula, idAspiranteOpcion));
-        assertNotNull(npe);
 
         EntityManager mockEM = Mockito.mock(EntityManager.class);
         @SuppressWarnings("unchecked")

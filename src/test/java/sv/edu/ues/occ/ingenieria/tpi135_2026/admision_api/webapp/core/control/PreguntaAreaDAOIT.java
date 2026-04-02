@@ -350,7 +350,7 @@ public class PreguntaAreaDAOIT extends AbstractIntengrationDAOTest {
     public void testBuscarPorPreguntaRangoEmNulo() {
         System.out.println("buscarPorPreguntaRango pregunta_area em nulo");
         cut.em = null;
-        assertThrows(NullPointerException.class, () -> {
+        assertThrows(IllegalStateException.class, () -> {
             cut.buscarPorPreguntaRango(UUID.randomUUID(), 0, 10);
         });
     }
@@ -389,7 +389,7 @@ public class PreguntaAreaDAOIT extends AbstractIntengrationDAOTest {
     public void testContarPorPreguntaEmNulo() {
         System.out.println("contarPorPregunta pregunta_area em nulo");
         cut.em = null;
-        assertThrows(NullPointerException.class, () -> {
+        assertThrows(IllegalStateException.class, () -> {
             cut.contarPorPregunta(UUID.randomUUID());
         });
     }

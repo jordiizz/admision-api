@@ -165,9 +165,7 @@ public class PruebaJornadaAulaAspiranteOpcionDAOIT extends AbstractIntengrationD
     public void testCrearEntidadNula() {
         System.out.println("Crear PruebaJornadaAulaAspiranteOpcion entidad null");
         // Dejamos que falle por la validación de la entidad nula
-        assertThrows(IllegalArgumentException.class, () -> {
-            cut.crear(null);
-        });
+        assertThrows(IllegalArgumentException.class, () -> cut.crear(null));
     }
 
     @Order(3)
@@ -175,9 +173,7 @@ public class PruebaJornadaAulaAspiranteOpcionDAOIT extends AbstractIntengrationD
     public void testCrearEmNulo() {
         System.out.println("Crear PruebaJornadaAulaAspiranteOpcion Entity manager null");
         cut.em = null;
-        assertThrows(IllegalStateException.class, () -> {
-            cut.crear(new PruebaJornadaAulaAspiranteOpcion());
-        });
+        assertThrows(IllegalStateException.class, () -> cut.crear(new PruebaJornadaAulaAspiranteOpcion()));
     }
 
     @Order(4)
@@ -235,9 +231,7 @@ public class PruebaJornadaAulaAspiranteOpcionDAOIT extends AbstractIntengrationD
     @Test
     public void testBuscarPorIdNulo() {
         System.out.println("BuscarPorId prueba_jornada_aula_aspirante_opcion null");
-        assertThrows(IllegalArgumentException.class, () -> {
-            cut.buscarPorId(null);
-        });
+        assertThrows(IllegalArgumentException.class, () -> cut.buscarPorId(null));
     }
 
     @Order(9)
@@ -245,10 +239,8 @@ public class PruebaJornadaAulaAspiranteOpcionDAOIT extends AbstractIntengrationD
     public void testBuscarPorIdEmNulo() {
         System.out.println("buscarPorId prueba_jornada_aula_aspirante_opcion em nulo");
         cut.em = null;
-        assertThrows(IllegalStateException.class, () -> {
-            cut.buscarPorId(new PruebaJornadaAulaAspiranteOpcionPK(
-                    UUID.randomUUID(), UUID.randomUUID(), "A-01", UUID.randomUUID()));
-        });
+        assertThrows(IllegalStateException.class, () -> cut.buscarPorId(new PruebaJornadaAulaAspiranteOpcionPK(
+            UUID.randomUUID(), UUID.randomUUID(), "A-01", UUID.randomUUID())));
     }
 
     @Order(10)
@@ -304,9 +296,7 @@ public class PruebaJornadaAulaAspiranteOpcionDAOIT extends AbstractIntengrationD
     @Test
     public void testEliminarEntidadNula() {
         System.out.println("eliminar prueba_jornada_aula_aspirante_opcion entidad nula");
-        assertThrows(IllegalArgumentException.class, () -> {
-            cut.eliminar(null);
-        });
+        assertThrows(IllegalArgumentException.class, () -> cut.eliminar(null));
     }
 
     @Order(13)
@@ -315,9 +305,7 @@ public class PruebaJornadaAulaAspiranteOpcionDAOIT extends AbstractIntengrationD
         System.out.println("eliminar prueba_jornada_aula_aspirante_opcion em nulo");
         cut.em = null;
         PruebaJornadaAulaAspiranteOpcion eliminado = new PruebaJornadaAulaAspiranteOpcion();
-        assertThrows(IllegalStateException.class, () -> {
-            cut.eliminar(eliminado);
-        });
+        assertThrows(IllegalStateException.class, () -> cut.eliminar(eliminado));
     }
 
     @Order(14)
@@ -344,9 +332,7 @@ public class PruebaJornadaAulaAspiranteOpcionDAOIT extends AbstractIntengrationD
     @Test
     public void testActualizarEntidadNula() {
         System.out.println("actualizar prueba_jornada_aula_aspirante_opcion entidad nula");
-        assertThrows(IllegalArgumentException.class, () -> {
-            cut.actualizar(null);
-        });
+        assertThrows(IllegalArgumentException.class, () -> cut.actualizar(null));
     }
 
     @Order(16)
@@ -357,9 +343,7 @@ public class PruebaJornadaAulaAspiranteOpcionDAOIT extends AbstractIntengrationD
         cut.em = null;
         PruebaJornadaAulaAspiranteOpcion actualizado = new PruebaJornadaAulaAspiranteOpcion();
 
-        assertThrows(IllegalStateException.class, () -> {
-            cut.actualizar(actualizado);
-        });
+        assertThrows(IllegalStateException.class, () -> cut.actualizar(actualizado));
     }
 
     @Order(17)
@@ -377,12 +361,8 @@ public class PruebaJornadaAulaAspiranteOpcionDAOIT extends AbstractIntengrationD
     @Test
     public void testBuscarPorRangoPametrosNoValidos() {
         System.out.println("buscarPorRango prueba_jornada_aula_aspirante_opcion parametros no validos");
-        assertThrows(IllegalArgumentException.class, () -> {
-            cut.buscarPorRango(0, -1);
-        });
-        assertThrows(IllegalArgumentException.class, () -> {
-            cut.buscarPorRango(-1, 50);
-        });
+        assertThrows(IllegalArgumentException.class, () -> cut.buscarPorRango(0, -1));
+        assertThrows(IllegalArgumentException.class, () -> cut.buscarPorRango(-1, 50));
     }
 
     @Order(19)
@@ -390,9 +370,7 @@ public class PruebaJornadaAulaAspiranteOpcionDAOIT extends AbstractIntengrationD
     public void testBuscarPorRangoEmNull() {
         System.out.println("buscarPorRango prueba_jornada_aula_aspirante_opcion parametros no validos");
         cut.em = null;
-        assertThrows(IllegalStateException.class, () -> {
-            cut.buscarPorRango(0, 50);
-        });
+        assertThrows(IllegalStateException.class, () -> cut.buscarPorRango(0, 50));
     }
 
     @Order(20)
@@ -438,9 +416,8 @@ public class PruebaJornadaAulaAspiranteOpcionDAOIT extends AbstractIntengrationD
     public void testBuscarPorPruebaJornadaYJornadaAulaRangoEmNulo() {
         System.out.println("buscarPorPruebaJornadaYJornadaAulaRango em nulo");
         cut.em = null;
-        assertThrows(NullPointerException.class, () -> {
-            cut.buscarPorPruebaJornadaYJornadaAulaRango(UUID.randomUUID(), UUID.randomUUID(), "A-01", 0, 10);
-        });
+        assertThrows(IllegalStateException.class,
+            () -> cut.buscarPorPruebaJornadaYJornadaAulaRango(UUID.randomUUID(), UUID.randomUUID(), "A-01", 0, 10));
     }
 
     @Order(22)
@@ -473,8 +450,7 @@ public class PruebaJornadaAulaAspiranteOpcionDAOIT extends AbstractIntengrationD
     public void testContarPorPruebaJornadaYJornadaAulaEmNulo() {
         System.out.println("contarPorPruebaJornadaYJornadaAula em nulo");
         cut.em = null;
-        assertThrows(NullPointerException.class, () -> {
-            cut.contarPorPruebaJornadaYJornadaAula(UUID.randomUUID(), UUID.randomUUID(), "A-01");
-        });
+        assertThrows(IllegalStateException.class,
+                () -> cut.contarPorPruebaJornadaYJornadaAula(UUID.randomUUID(), UUID.randomUUID(), "A-01"));
     }
 }

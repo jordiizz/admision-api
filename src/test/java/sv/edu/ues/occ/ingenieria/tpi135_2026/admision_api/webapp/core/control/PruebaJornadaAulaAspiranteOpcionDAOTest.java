@@ -39,9 +39,9 @@ public class PruebaJornadaAulaAspiranteOpcionDAOTest {
     @Test
     public void buscarPorPruebaJornadaYJornadaAulaRangoTest() {
         System.out.println("PruebaJornadaAulaAspiranteOpcionDAOTest.buscarPorPruebaJornadaYJornadaAulaRangoTest");
-                UUID idPrueba = UUID.randomUUID();
-                UUID idJornada = UUID.randomUUID();
-                String idAula = "A-01";
+        UUID idPrueba = UUID.randomUUID();
+        UUID idJornada = UUID.randomUUID();
+        String idAula = "A-01";
         int first = 0;
         int max = 10;
         List<PruebaJornadaAulaAspiranteOpcion> esperados = Arrays.asList(
@@ -51,9 +51,19 @@ public class PruebaJornadaAulaAspiranteOpcionDAOTest {
 
         PruebaJornadaAulaAspiranteOpcionDAO cut = new PruebaJornadaAulaAspiranteOpcionDAO();
 
-        NullPointerException npe = assertThrows(NullPointerException.class,
+        assertThrows(IllegalArgumentException.class,
+                () -> cut.buscarPorPruebaJornadaYJornadaAulaRango(null, idJornada, idAula, first, max));
+        assertThrows(IllegalArgumentException.class,
+                () -> cut.buscarPorPruebaJornadaYJornadaAulaRango(idPrueba, null, idAula, first, max));
+        assertThrows(IllegalArgumentException.class,
+                () -> cut.buscarPorPruebaJornadaYJornadaAulaRango(idPrueba, idJornada, null, first, max));
+        assertThrows(IllegalArgumentException.class,
+                () -> cut.buscarPorPruebaJornadaYJornadaAulaRango(idPrueba, idJornada, idAula, -1, max));
+        assertThrows(IllegalArgumentException.class,
+                () -> cut.buscarPorPruebaJornadaYJornadaAulaRango(idPrueba, idJornada, idAula, first, 0));
+
+        assertThrows(IllegalStateException.class,
                 () -> cut.buscarPorPruebaJornadaYJornadaAulaRango(idPrueba, idJornada, idAula, first, max));
-        assertNotNull(npe);
 
         EntityManager mockEM = Mockito.mock(EntityManager.class);
         @SuppressWarnings("unchecked")
@@ -87,15 +97,21 @@ public class PruebaJornadaAulaAspiranteOpcionDAOTest {
     @Test
     public void contarPorPruebaJornadaYJornadaAulaTest() {
         System.out.println("PruebaJornadaAulaAspiranteOpcionDAOTest.contarPorPruebaJornadaYJornadaAulaTest");
-                UUID idPrueba = UUID.randomUUID();
-                UUID idJornada = UUID.randomUUID();
-                String idAula = "A-01";
+        UUID idPrueba = UUID.randomUUID();
+        UUID idJornada = UUID.randomUUID();
+        String idAula = "A-01";
 
         PruebaJornadaAulaAspiranteOpcionDAO cut = new PruebaJornadaAulaAspiranteOpcionDAO();
 
-        NullPointerException npe = assertThrows(NullPointerException.class,
+        assertThrows(IllegalArgumentException.class,
+                () -> cut.contarPorPruebaJornadaYJornadaAula(null, idJornada, idAula));
+        assertThrows(IllegalArgumentException.class,
+                () -> cut.contarPorPruebaJornadaYJornadaAula(idPrueba, null, idAula));
+        assertThrows(IllegalArgumentException.class,
+                () -> cut.contarPorPruebaJornadaYJornadaAula(idPrueba, idJornada, null));
+
+        assertThrows(IllegalStateException.class,
                 () -> cut.contarPorPruebaJornadaYJornadaAula(idPrueba, idJornada, idAula));
-        assertNotNull(npe);
 
         EntityManager mockEM = Mockito.mock(EntityManager.class);
         @SuppressWarnings("unchecked")
@@ -114,9 +130,9 @@ public class PruebaJornadaAulaAspiranteOpcionDAOTest {
 
         assertNotNull(resultado);
         assertEquals(5L, resultado);
-                Mockito.verify(mockQuery).setParameter("idPrueba", idPrueba);
-                Mockito.verify(mockQuery).setParameter("idJornada", idJornada);
-                Mockito.verify(mockQuery).setParameter("idAula", idAula);
+        Mockito.verify(mockQuery).setParameter("idPrueba", idPrueba);
+        Mockito.verify(mockQuery).setParameter("idJornada", idJornada);
+        Mockito.verify(mockQuery).setParameter("idAula", idAula);
         Mockito.verify(mockQuery).getSingleResult();
         System.out.println("PruebaJornadaAulaAspiranteOpcionDAOTest.contarPorPruebaJornadaYJornadaAulaTest - finalizado");
     }

@@ -27,28 +27,72 @@ public class PruebaJornadaAulaAspiranteOpcionExamenDAO
         return em;
     }
 
+    /**
+     * Busca registros por llaves padre en un rango paginado.
+     * @param idPrueba identificador de prueba
+     * @param idJornada identificador de jornada
+     * @param idAula identificador de aula
+     * @param idAspiranteOpcion identificador de aspirante opcion
+     * @param first indice inicial del rango
+     * @param max cantidad maxima de registros
+     * @return lista de registros encontrados
+     * @throws IllegalArgumentException si algun parametro es invalido
+     * @throws IllegalStateException si ocurre un error al consultar
+     */
     public List<PruebaJornadaAulaAspiranteOpcionExamen> buscarPorPadreRango(
             UUID idPrueba, UUID idJornada, String idAula, UUID idAspiranteOpcion, int first, int max) {
-        return em.createNamedQuery(
-                "PruebaJornadaAulaAspiranteOpcionExamen.buscarPorPadre",
-                PruebaJornadaAulaAspiranteOpcionExamen.class)
-            .setParameter("idPrueba", idPrueba)
-            .setParameter("idJornada", idJornada)
-            .setParameter("idAula", idAula)
-            .setParameter("idAspiranteOpcion", idAspiranteOpcion)
-                .setFirstResult(first)
-                .setMaxResults(max)
-                .getResultList();
+        if (idPrueba != null && idJornada != null && idAula != null && idAspiranteOpcion != null && first >= 0 && max > 0) {
+            try {
+                EntityManager entityManager = this.getEntityManager();
+                if (entityManager != null) {
+                    return entityManager.createNamedQuery(
+                            "PruebaJornadaAulaAspiranteOpcionExamen.buscarPorPadre",
+                            PruebaJornadaAulaAspiranteOpcionExamen.class)
+                        .setParameter("idPrueba", idPrueba)
+                        .setParameter("idJornada", idJornada)
+                        .setParameter("idAula", idAula)
+                        .setParameter("idAspiranteOpcion", idAspiranteOpcion)
+                            .setFirstResult(first)
+                            .setMaxResults(max)
+                            .getResultList();
+                }
+                throw new NullPointerException("El repositorio es nulo");
+            } catch (Exception ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+        throw new IllegalArgumentException("Parámetros inválidos");
     }
 
+    /**
+     * Cuenta registros por llaves padre.
+     * @param idPrueba identificador de prueba
+     * @param idJornada identificador de jornada
+     * @param idAula identificador de aula
+     * @param idAspiranteOpcion identificador de aspirante opcion
+     * @return total de registros encontrados
+     * @throws IllegalArgumentException si algun parametro es invalido
+     * @throws IllegalStateException si ocurre un error al consultar
+     */
     public Long contarPorPadre(UUID idPrueba, UUID idJornada, String idAula, UUID idAspiranteOpcion) {
-        return em.createNamedQuery(
-                "PruebaJornadaAulaAspiranteOpcionExamen.contarPorPadre", Long.class)
-            .setParameter("idPrueba", idPrueba)
-            .setParameter("idJornada", idJornada)
-            .setParameter("idAula", idAula)
-            .setParameter("idAspiranteOpcion", idAspiranteOpcion)
-                .getSingleResult();
+        if (idPrueba != null && idJornada != null && idAula != null && idAspiranteOpcion != null) {
+            try {
+                EntityManager entityManager = this.getEntityManager();
+                if (entityManager != null) {
+                    return entityManager.createNamedQuery(
+                            "PruebaJornadaAulaAspiranteOpcionExamen.contarPorPadre", Long.class)
+                        .setParameter("idPrueba", idPrueba)
+                        .setParameter("idJornada", idJornada)
+                        .setParameter("idAula", idAula)
+                        .setParameter("idAspiranteOpcion", idAspiranteOpcion)
+                            .getSingleResult();
+                }
+                throw new NullPointerException("El repositorio es nulo");
+            } catch (Exception ex) {
+                throw new IllegalStateException(ex);
+            }
+        }
+        throw new IllegalArgumentException("Parámetros inválidos");
     }
 }
 

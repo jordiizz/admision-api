@@ -6,6 +6,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -35,8 +36,8 @@ public class JornadaAulaDAOTest {
     }
 
     @Test
-    public void buscarPorJornadaYAulaSinResultadosTest() {
-        System.out.println("JornadaAulaDAOTest.buscarPorJornadaYAulaSinResultadosTest");
+    public void buscarPorJornadaYAulaTest() {
+        System.out.println("JornadaAulaDAOTest.buscarPorJornadaYAulaTest");
         JornadaAulaDAO cut = new JornadaAulaDAO();
         EntityManager mockEM = Mockito.mock(EntityManager.class);
         @SuppressWarnings("unchecked")
@@ -44,53 +45,39 @@ public class JornadaAulaDAOTest {
 
         UUID idJornada = UUID.randomUUID();
         String idAula = "A-01";
+        JornadaAula esperado = new JornadaAula(UUID.randomUUID());
 
+        // Validaciones de entrada y repositorio no inicializado.
+        assertThrows(IllegalArgumentException.class, () -> cut.buscarPorJornadaYAula(null, idAula));
+        assertThrows(IllegalArgumentException.class, () -> cut.buscarPorJornadaYAula(idJornada, null));
+        assertThrows(IllegalStateException.class, () -> cut.buscarPorJornadaYAula(idJornada, idAula));
+
+        // Configuracion comun del query para los escenarios con EntityManager disponible.
         cut.em = mockEM;
-        Mockito.when(mockEM.createQuery(Mockito.anyString(), Mockito.eq(JornadaAula.class))).thenReturn(mockQuery);
+        Mockito.when(mockEM.createNamedQuery("JornadaAula.buscarPorJornadaYAula", JornadaAula.class)).thenReturn(mockQuery);
         Mockito.when(mockQuery.setParameter("idJornada", idJornada)).thenReturn(mockQuery);
         Mockito.when(mockQuery.setParameter("idAula", idAula)).thenReturn(mockQuery);
         Mockito.when(mockQuery.setMaxResults(1)).thenReturn(mockQuery);
+
+        // Escenario 1: no hay coincidencias, se espera null.
         Mockito.when(mockQuery.getResultList()).thenReturn(List.of());
 
         JornadaAula resultado = cut.buscarPorJornadaYAula(idJornada, idAula);
 
         assertNull(resultado);
-        Mockito.verify(mockEM).createQuery(Mockito.anyString(), Mockito.eq(JornadaAula.class));
-        Mockito.verify(mockQuery).setParameter("idJornada", idJornada);
-        Mockito.verify(mockQuery).setParameter("idAula", idAula);
-        Mockito.verify(mockQuery).setMaxResults(1);
-        Mockito.verify(mockQuery).getResultList();
-        System.out.println("JornadaAulaDAOTest.buscarPorJornadaYAulaSinResultadosTest - finalizado");
-    }
 
-    @Test
-    public void buscarPorJornadaYAulaConResultadoTest() {
-        System.out.println("JornadaAulaDAOTest.buscarPorJornadaYAulaConResultadoTest");
-        JornadaAulaDAO cut = new JornadaAulaDAO();
-        EntityManager mockEM = Mockito.mock(EntityManager.class);
-        @SuppressWarnings("unchecked")
-        TypedQuery<JornadaAula> mockQuery = Mockito.mock(TypedQuery.class);
-
-        UUID idJornada = UUID.randomUUID();
-        String idAula = "B-12";
-        JornadaAula esperado = new JornadaAula(UUID.randomUUID());
-
-        cut.em = mockEM;
-        Mockito.when(mockEM.createQuery(Mockito.anyString(), Mockito.eq(JornadaAula.class))).thenReturn(mockQuery);
-        Mockito.when(mockQuery.setParameter("idJornada", idJornada)).thenReturn(mockQuery);
-        Mockito.when(mockQuery.setParameter("idAula", idAula)).thenReturn(mockQuery);
-        Mockito.when(mockQuery.setMaxResults(1)).thenReturn(mockQuery);
+        // Escenario 2: hay coincidencia, se retorna el primer elemento.
         Mockito.when(mockQuery.getResultList()).thenReturn(List.of(esperado));
+        JornadaAula conResultado = cut.buscarPorJornadaYAula(idJornada, idAula);
+        assertNotNull(conResultado);
+        assertEquals(esperado, conResultado);
 
-        JornadaAula resultado = cut.buscarPorJornadaYAula(idJornada, idAula);
-
-        assertNotNull(resultado);
-        assertEquals(esperado, resultado);
-        Mockito.verify(mockEM).createQuery(Mockito.anyString(), Mockito.eq(JornadaAula.class));
-        Mockito.verify(mockQuery).setParameter("idJornada", idJornada);
-        Mockito.verify(mockQuery).setParameter("idAula", idAula);
-        Mockito.verify(mockQuery).setMaxResults(1);
-        Mockito.verify(mockQuery).getResultList();
-        System.out.println("JornadaAulaDAOTest.buscarPorJornadaYAulaConResultadoTest - finalizado");
+        // Verifica que ambos escenarios ejecutaron la misma cadena de consulta.
+        Mockito.verify(mockEM, Mockito.times(2)).createNamedQuery("JornadaAula.buscarPorJornadaYAula", JornadaAula.class);
+        Mockito.verify(mockQuery, Mockito.times(2)).setParameter("idJornada", idJornada);
+        Mockito.verify(mockQuery, Mockito.times(2)).setParameter("idAula", idAula);
+        Mockito.verify(mockQuery, Mockito.times(2)).setMaxResults(1);
+        Mockito.verify(mockQuery, Mockito.times(2)).getResultList();
+        System.out.println("JornadaAulaDAOTest.buscarPorJornadaYAulaTest - finalizado");
     }
 }
