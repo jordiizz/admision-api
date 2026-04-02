@@ -9,8 +9,20 @@ import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 
+@NamedQueries({
+    @NamedQuery(
+        name = "DistractorArea.buscarPorDistractorRango",
+        query = "SELECT d FROM DistractorArea d WHERE d.idDistractor.idDistractor = :idDistractor ORDER BY d.idArea.idArea"
+    ),
+    @NamedQuery(
+        name = "DistractorArea.contarPorDistractor",
+        query = "SELECT COUNT(d) FROM DistractorArea d WHERE d.idDistractor.idDistractor = :idDistractor"
+    )
+})
 @Entity
 @IdClass(DistractorAreaPK.class)
 @Table(name = "distractor_area")

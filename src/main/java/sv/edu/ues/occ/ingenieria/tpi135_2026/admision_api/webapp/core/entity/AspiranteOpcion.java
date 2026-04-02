@@ -12,8 +12,24 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 
+@NamedQueries({
+    @NamedQuery(
+        name = "AspiranteOpcion.buscarPorAspiranteRango",
+        query = "SELECT a FROM AspiranteOpcion a WHERE a.idAspirante.idAspirante = :idAspirante"
+    ),
+    @NamedQuery(
+        name = "AspiranteOpcion.contarPorAspirante",
+        query = "SELECT COUNT(a) FROM AspiranteOpcion a WHERE a.idAspirante.idAspirante = :idAspirante"
+    ),
+    @NamedQuery(
+        name = "AspiranteOpcion.buscarPorIdYAspirante",
+        query = "SELECT a FROM AspiranteOpcion a WHERE a.idAspiranteOpcion = :idAspiranteOpcion AND a.idAspirante.idAspirante = :idAspirante"
+    )
+})
 @Entity
 @Table(name = "aspirante_opcion")
 public class AspiranteOpcion implements Serializable {

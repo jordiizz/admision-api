@@ -27,9 +27,9 @@ public class DistractorAreaDAO extends DefaultDAO<DistractorArea> implements Ser
     }
 
     public List<DistractorArea> buscarPorDistractorRango(UUID idDistractor, int first, int max) {
-        return em.createQuery(
-                "SELECT d FROM DistractorArea d WHERE d.idDistractor.idDistractor = :idDistractor ORDER BY d.idArea.idArea",
-                DistractorArea.class)
+        return em.createNamedQuery(
+            "DistractorArea.buscarPorDistractorRango",
+            DistractorArea.class)
                 .setParameter("idDistractor", idDistractor)
                 .setFirstResult(first)
                 .setMaxResults(max)
@@ -37,9 +37,9 @@ public class DistractorAreaDAO extends DefaultDAO<DistractorArea> implements Ser
     }
 
     public Long contarPorDistractor(UUID idDistractor) {
-        return em.createQuery(
-                "SELECT COUNT(d) FROM DistractorArea d WHERE d.idDistractor.idDistractor = :idDistractor",
-                Long.class)
+        return em.createNamedQuery(
+            "DistractorArea.contarPorDistractor",
+            Long.class)
                 .setParameter("idDistractor", idDistractor)
                 .getSingleResult();
     }

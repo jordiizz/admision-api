@@ -28,7 +28,7 @@ public class JornadaAulaDAO extends DefaultDAO<JornadaAula> implements Serializa
 
     public JornadaAula buscarPorJornadaYAula(UUID idJornada, String idAula) {
         List<JornadaAula> resultados = em
-                .createQuery("SELECT j FROM JornadaAula j WHERE j.idJornada.idJornada = :idJornada AND j.idAula = :idAula", JornadaAula.class)
+                .createNamedQuery("JornadaAula.buscarPorJornadaYAula", JornadaAula.class)
                 .setParameter("idJornada", idJornada)
                 .setParameter("idAula", idAula)
                 .setMaxResults(1)

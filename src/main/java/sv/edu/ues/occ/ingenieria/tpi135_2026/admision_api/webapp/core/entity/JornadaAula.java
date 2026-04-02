@@ -9,8 +9,16 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 
+@NamedQueries({
+    @NamedQuery(
+        name = "JornadaAula.buscarPorJornadaYAula",
+        query = "SELECT j FROM JornadaAula j WHERE j.idJornada.idJornada = :idJornada AND j.idAula = :idAula"
+    )
+})
 @Entity
 @Table(name = "jornada_aula")
 public class JornadaAula implements Serializable {

@@ -9,8 +9,20 @@ import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 
+@NamedQueries({
+    @NamedQuery(
+        name = "PreguntaArea.buscarPorPreguntaRango",
+        query = "SELECT p FROM PreguntaArea p WHERE p.idPregunta.idPregunta = :idPregunta ORDER BY p.idArea.idArea"
+    ),
+    @NamedQuery(
+        name = "PreguntaArea.contarPorPregunta",
+        query = "SELECT COUNT(p) FROM PreguntaArea p WHERE p.idPregunta.idPregunta = :idPregunta"
+    )
+})
 @Entity
 @IdClass(PreguntaAreaPK.class)
 @Table(name = "pregunta_area")

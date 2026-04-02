@@ -27,9 +27,9 @@ public class PreguntaAreaDAO extends DefaultDAO<PreguntaArea> implements Seriali
     }
 
     public List<PreguntaArea> buscarPorPreguntaRango(UUID idPregunta, int first, int max) {
-        return em.createQuery(
-                "SELECT p FROM PreguntaArea p WHERE p.idPregunta.idPregunta = :idPregunta ORDER BY p.idArea.idArea",
-                PreguntaArea.class)
+        return em.createNamedQuery(
+            "PreguntaArea.buscarPorPreguntaRango",
+            PreguntaArea.class)
                 .setParameter("idPregunta", idPregunta)
                 .setFirstResult(first)
                 .setMaxResults(max)
@@ -37,9 +37,9 @@ public class PreguntaAreaDAO extends DefaultDAO<PreguntaArea> implements Seriali
     }
 
     public Long contarPorPregunta(UUID idPregunta) {
-        return em.createQuery(
-                "SELECT COUNT(p) FROM PreguntaArea p WHERE p.idPregunta.idPregunta = :idPregunta",
-                Long.class)
+        return em.createNamedQuery(
+            "PreguntaArea.contarPorPregunta",
+            Long.class)
                 .setParameter("idPregunta", idPregunta)
                 .getSingleResult();
     }

@@ -30,7 +30,7 @@ public class AspiranteOpcionDAO extends DefaultDAO<AspiranteOpcion> implements S
     public List<AspiranteOpcion> buscarPorAspiranteRango(UUID idAspirante, int first, int max) {
         if (idAspirante != null) {
             try {
-                return em.createQuery("SELECT a FROM AspiranteOpcion a WHERE a.idAspirante.idAspirante = :idAspirante", AspiranteOpcion.class)
+                return em.createNamedQuery("AspiranteOpcion.buscarPorAspiranteRango", AspiranteOpcion.class)
                         .setParameter("idAspirante", idAspirante)
                         .setFirstResult(first)
                         .setMaxResults(max)
@@ -46,7 +46,7 @@ public class AspiranteOpcionDAO extends DefaultDAO<AspiranteOpcion> implements S
     public Long contarPorAspirante(UUID idAspirante) {
         if (idAspirante != null) {
             try {
-                return em.createQuery("SELECT COUNT(a) FROM AspiranteOpcion a WHERE a.idAspirante.idAspirante = :idAspirante", Long.class)
+                return em.createNamedQuery("AspiranteOpcion.contarPorAspirante", Long.class)
                         .setParameter("idAspirante", idAspirante)
                         .getSingleResult();
             } catch (Exception e) {
@@ -60,7 +60,7 @@ public class AspiranteOpcionDAO extends DefaultDAO<AspiranteOpcion> implements S
     public AspiranteOpcion buscarPorIdYAspirante(UUID idAspiranteOpcion, UUID idAspirante) {
         if (idAspiranteOpcion != null && idAspirante != null) {
             try {
-                return em.createQuery("SELECT a FROM AspiranteOpcion a WHERE a.idAspiranteOpcion = :idAspiranteOpcion AND a.idAspirante.idAspirante = :idAspirante", AspiranteOpcion.class)
+                return em.createNamedQuery("AspiranteOpcion.buscarPorIdYAspirante", AspiranteOpcion.class)
                         .setParameter("idAspiranteOpcion", idAspiranteOpcion)
                         .setParameter("idAspirante", idAspirante)
                         .getSingleResult();
