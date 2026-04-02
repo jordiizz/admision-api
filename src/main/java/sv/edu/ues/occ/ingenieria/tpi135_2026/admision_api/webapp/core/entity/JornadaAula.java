@@ -17,7 +17,10 @@ import jakarta.persistence.Table;
     @NamedQuery(
         name = "JornadaAula.buscarPorJornadaYAula",
         query = "SELECT j FROM JornadaAula j WHERE j.idJornada.idJornada = :idJornada AND j.idAula = :idAula"
-    )
+    ),
+    @NamedQuery(name = "JornadaAula.findByIdJornada", 
+    query = "SELECT ja FROM JornadaAula ja WHERE  ja.idJornada.idJornada = :idJornada"
+)
 })
 @Entity
 @Table(name = "jornada_aula")
