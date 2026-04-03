@@ -1,6 +1,8 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.UUID;
 
 import jakarta.ejb.LocalBean;
 import jakarta.ejb.Stateless;
@@ -23,4 +25,22 @@ public class PreguntaDistractorDAO extends DefaultDAO<PreguntaDistractor> implem
     public EntityManager getEntityManager() {
         return em;
     }
+    /**
+     * Busca los distractores asociados a una pregunta
+     * @param idPregunta
+     * @return
+     */
+    public List<PreguntaDistractor> buscarPorIdPregunta(UUID idPregunta){
+        if(idPregunta != null){
+            try {
+                return em.createNamedQuery("PreguntaDistractor.findByIdPregunta", PreguntaDistractor.class)
+                .setParameter("idPregunta", idPregunta)
+                .getResultList();
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+        }
+        throw new IllegalArgumentException("El idPregunta no puede ser nulo");
+    }
+
 }

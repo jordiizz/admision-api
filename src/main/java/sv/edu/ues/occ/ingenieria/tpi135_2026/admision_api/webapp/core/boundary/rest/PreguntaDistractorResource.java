@@ -1,0 +1,105 @@
+package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.boundary.rest;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.UUID;
+
+import jakarta.inject.Inject;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.DistractorDAO;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PreguntaDAO;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PreguntaDistractorDAO;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Distractor;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Pregunta;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PreguntaDistractor;
+
+@Path("pregunta/{id_pregunta}/distractor")
+public class PreguntaDistractorResource implements Serializable {
+
+    @Inject
+    PreguntaDAO pDAO;
+
+    @Inject
+    DistractorDAO dDAO;
+
+    @Inject
+    PreguntaDistractorDAO pDDAO;
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/{id_distractor}")
+    public Response crear(@PathParam("id_pregunta") UUID idPregunta, @PathParam("id_distractor") UUID idDistractor, PreguntaDistractor pD){ 
+        if(idPregunta != null && idDistractor != null){    
+            try {
+                Pregunta p = pDAO.buscarPorId(idPregunta);
+                Distractor d = dDAO.buscarPorId(idDistractor);
+
+                if(p != null && d != null && pD != null){
+                    pD.setIdPregunta(p);
+                    pD.setIdDistractor(d);
+                    pDDAO.crear(pD);
+                    return Response.status(Response.Status.CREATED).entity(pD).build();
+                }
+                
+                return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "pregunta o distractor o preguntaDistractor").build();
+            } catch (Exception e) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
+            }
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
+    }
+
+    @DELETE
+    @Path("/{id_distractor}")
+    public Response eliminar(@PathParam("id_pregunta") UUID idPregunta, @PathParam("id_distractor") UUID idDistractor){
+        if(idPregunta != null && idDistractor != null){
+            try {
+                Pregunta p = pDAO.buscarPorId(idPregunta);
+                Distractor d = dDAO.buscarPorId(idDistractor);
+                if(p != null && d != null){
+                    PreguntaDistractor pD = new PreguntaDistractor();
+                    pD.setIdPregunta(p);
+                    pD.setIdDistractor(d);
+                    pDDAO.eliminar(pD);
+                    return Response.status(Response.Status.NO_CONTENT).build();
+                }
+                return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "pregunta o distractor").build();
+            } catch (Exception e) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
+            }
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response listar(@PathParam("id_pregunta") UUID idPregunta){
+        if(idPregunta != null){
+            try {
+                Pregunta p = pDAO.buscarPorId(idPregunta);
+                if(p != null){
+                    List<PreguntaDistractor> preguntaDistractores = pDDAO.buscarPorIdPregunta(idPregunta);
+                    if(!preguntaDistractores.isEmpty() && preguntaDistractores != null){
+                        return Response.status(Response.Status.OK).entity(preguntaDistractores).build();
+                    }
+                }
+                return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "pregunta o distractores").build();
+            } catch (Exception e) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
+            }
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
+    }
+
+}
+
