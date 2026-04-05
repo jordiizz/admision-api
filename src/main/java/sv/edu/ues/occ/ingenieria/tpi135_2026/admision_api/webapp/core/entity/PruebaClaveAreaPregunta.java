@@ -9,8 +9,14 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 
+@NamedQueries({
+    @NamedQuery(name = "PruebaClaveAreaPregunta.findByClaveAndArea", 
+                query = "SELECT pcap FROM PruebaClaveAreaPregunta pcap WHERE pcap.idPruebaClave = :idPruebaClave AND pcap.idAre = :idArea")
+})
 @Entity
 @IdClass(PruebaClaveAreaPreguntaPK.class)
 @Table(name = "prueba_clave_area_pregunta")
