@@ -15,7 +15,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @NamedQueries({
-    @NamedQuery(name = "PruebaClave.findByIdPrueba", query = "SELECT pk FROM PruebaClave pk WHERE pk.idPrueba = :idPrueba")
+    @NamedQuery(name = "PruebaClave.findByIdPrueba", query = "SELECT pk FROM PruebaClave pk WHERE pk.idPrueba.idPrueba = :idPrueba")
 })
 @Entity
 @Table(name = "prueba_clave")

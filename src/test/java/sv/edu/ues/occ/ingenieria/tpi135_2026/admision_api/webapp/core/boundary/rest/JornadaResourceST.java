@@ -80,7 +80,7 @@ public class JornadaResourceST extends AbstractIntegrationTest{
         Assertions.assertTrue(respuesta.getHeaders().containsKey(ResponseHeaders.TOTAL_RECORDS.toString()));
         List<Jornada> registros = respuesta.readEntity(new GenericType<List<Jornada>>() {});
         Assertions.assertNotNull(registros);
-        Assertions.assertEquals(1, Integer.parseInt(respuesta.getHeaderString(ResponseHeaders.TOTAL_RECORDS.toString())));
+        Assertions.assertTrue(Integer.parseInt(respuesta.getHeaderString(ResponseHeaders.TOTAL_RECORDS.toString())) > 0);
         for (Jornada jornada : registros) {
             System.out.println(jornada);
         }

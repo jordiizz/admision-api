@@ -15,7 +15,7 @@ import jakarta.persistence.Table;
 
 @NamedQueries({
     @NamedQuery(name = "PruebaClaveAreaPregunta.findByClaveAndArea", 
-                query = "SELECT pcap FROM PruebaClaveAreaPregunta pcap WHERE pcap.idPruebaClave = :idPruebaClave AND pcap.idAre = :idArea")
+                query = "SELECT pcap FROM PruebaClaveAreaPregunta pcap WHERE pcap.idPruebaClave = :idPruebaClave AND pcap.idArea = :idArea")
 })
 @Entity
 @IdClass(PruebaClaveAreaPreguntaPK.class)
