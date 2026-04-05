@@ -54,4 +54,17 @@ public class JornadaAulaDAO extends DefaultDAO<JornadaAula> implements Serializa
         }
         throw new IllegalArgumentException("Parámetros inválidos");
     }
+
+    public List<JornadaAula> listarPorJornada(UUID idJornada) {
+        if(idJornada != null){
+            try {
+            return em.createNamedQuery("JornadaAula.findByIdJornada", JornadaAula.class)
+                .setParameter("idJornada", idJornada)
+                .getResultList();
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            } 
+        }
+        throw new IllegalArgumentException("id de jornada no puede ser nulo");
+    }
 }

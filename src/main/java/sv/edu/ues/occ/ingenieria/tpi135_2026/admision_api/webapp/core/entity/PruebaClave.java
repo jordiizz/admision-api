@@ -6,12 +6,17 @@ import java.util.UUID;
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+@NamedQueries({
+    @NamedQuery(name = "PruebaClave.findByIdPrueba", query = "SELECT pk FROM PruebaClave pk WHERE pk.idPrueba = :idPrueba")
+})
 @Entity
 @Table(name = "prueba_clave")
 public class PruebaClave implements Serializable {

@@ -10,8 +10,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 
+@NamedQueries({
+    @NamedQuery(name = "PreguntaDistractor.findByIdPregunta", query = "SELECT pd FROM PreguntaDistractor pd WHERE pd.idPregunta.idPregunta = :idPregunta")
+})
 @Entity
 @IdClass(PreguntaDistractorPK.class)
 @Table(name = "pregunta_distractor")
