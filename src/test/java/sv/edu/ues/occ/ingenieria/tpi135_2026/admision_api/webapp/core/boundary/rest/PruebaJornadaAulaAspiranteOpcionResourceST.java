@@ -184,7 +184,7 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
                 .path(contexto.idJornada.toString())
                 .path("aula")
                 .path(contexto.idAula)
-                .path("aspirante-opcion")
+                .path("aspirante_opcion")
                 .request(MediaType.APPLICATION_JSON)
                 .post(Entity.json(relacion));
 
@@ -228,7 +228,7 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
             .path(contexto.idJornada.toString())
             .path("aula")
             .path(contexto.idAula)
-            .path("aspirante-opcion")
+            .path("aspirante_opcion")
                 .queryParam("first", 0)
                 .queryParam("max", 50)
                 .request(MediaType.APPLICATION_JSON)
@@ -261,7 +261,7 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
             .path(contexto.idJornada.toString())
             .path("aula")
             .path(contexto.idAula)
-            .path("aspirante-opcion")
+            .path("aspirante_opcion")
                 .queryParam("first", -1)
                 .queryParam("max", 0)
                 .request(MediaType.APPLICATION_JSON)
@@ -286,7 +286,7 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
             .path(contexto.idJornada.toString())
             .path("aula")
             .path(contexto.idAula)
-            .path("aspirante-opcion")
+            .path("aspirante_opcion")
                 .request(MediaType.APPLICATION_JSON)
                 .post(Entity.json(nuevo));
 
@@ -312,7 +312,7 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
             .path(contexto.idJornada.toString())
             .path("aula")
             .path(contexto.idAula)
-            .path("aspirante-opcion")
+            .path("aspirante_opcion")
                 .request(MediaType.APPLICATION_JSON)
                 .post(Entity.json(nuevo));
 
@@ -334,7 +334,7 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
             .path(contexto.idJornada.toString())
             .path("aula")
             .path(contexto.idAula)
-            .path("aspirante-opcion")
+            .path("aspirante_opcion")
                 .request(MediaType.APPLICATION_JSON)
                 .post(Entity.json(nuevo));
 
@@ -354,7 +354,7 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
             .path(contexto.idJornada.toString())
             .path("aula")
             .path(contexto.idAula)
-            .path("aspirante-opcion")
+            .path("aspirante_opcion")
                 .path(contexto.idAspiranteOpcion.toString())
                 .request(MediaType.APPLICATION_JSON)
                 .get();
@@ -381,7 +381,7 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
             .path(contexto.idJornada.toString())
             .path("aula")
             .path(contexto.idAula)
-            .path("aspirante-opcion")
+            .path("aspirante_opcion")
                 .path(UUID.randomUUID().toString())
                 .request(MediaType.APPLICATION_JSON)
                 .get();
@@ -406,7 +406,7 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
             .path(contexto.idJornada.toString())
             .path("aula")
             .path(contexto.idAula)
-            .path("aspirante-opcion")
+            .path("aspirante_opcion")
                 .path(contexto.idAspiranteOpcion.toString())
                 .request(MediaType.APPLICATION_JSON)
                 .put(Entity.json(actualizar));
@@ -434,7 +434,7 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
             .path(contexto.idJornada.toString())
             .path("aula")
             .path(contexto.idAula)
-            .path("aspirante-opcion")
+            .path("aspirante_opcion")
                 .path(contexto.idAspiranteOpcion.toString())
                 .request(MediaType.APPLICATION_JSON)
                 .put(Entity.json(actualizar));
@@ -460,7 +460,7 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
             .path(contexto.idJornada.toString())
             .path("aula")
             .path(contexto.idAula)
-            .path("aspirante-opcion")
+            .path("aspirante_opcion")
                 .path(idNoExistente.toString())
                 .request(MediaType.APPLICATION_JSON)
                 .put(Entity.json(actualizar));
@@ -481,7 +481,7 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
             .path(contexto.idJornada.toString())
             .path("aula")
             .path(contexto.idAula)
-            .path("aspirante-opcion")
+            .path("aspirante_opcion")
                 .path(contexto.idAspiranteOpcion.toString())
                 .request(MediaType.APPLICATION_JSON)
                 .delete();
@@ -493,7 +493,7 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
             .path(contexto.idJornada.toString())
             .path("aula")
             .path(contexto.idAula)
-            .path("aspirante-opcion")
+            .path("aspirante_opcion")
                 .path(contexto.idAspiranteOpcion.toString())
                 .request(MediaType.APPLICATION_JSON)
                 .get();
@@ -514,7 +514,7 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
             .path(contexto.idJornada.toString())
             .path("aula")
             .path(contexto.idAula)
-            .path("aspirante-opcion")
+            .path("aspirante_opcion")
                 .path(UUID.randomUUID().toString())
                 .request(MediaType.APPLICATION_JSON)
                 .delete();

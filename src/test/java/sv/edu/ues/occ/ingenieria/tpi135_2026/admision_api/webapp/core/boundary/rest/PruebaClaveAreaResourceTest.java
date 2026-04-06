@@ -44,7 +44,7 @@ public class PruebaClaveAreaResourceTest {
         Mockito.when(mockUriInfo.getAbsolutePathBuilder()).thenReturn(mockUriBuilder);
         Mockito.when(mockUriBuilder.path(Mockito.anyString())).thenReturn(mockUriBuilder);
         Mockito.when(mockUriBuilder.build())
-                .thenReturn(URI.create("http://localhost:8080/v1/prueba-clave/1/area/1"));
+                .thenReturn(URI.create("http://localhost:8080/v1/prueba_clave/1/area/1"));
 
         idPruebaClave = UUID.randomUUID();
         idArea = UUID.randomUUID();

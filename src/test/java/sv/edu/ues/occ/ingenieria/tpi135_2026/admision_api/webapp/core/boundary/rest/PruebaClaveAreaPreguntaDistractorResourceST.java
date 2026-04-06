@@ -35,7 +35,7 @@ public class PruebaClaveAreaPreguntaDistractorResourceST extends AbstractIntegra
 
     @Override
     public String getResourceName() {
-        return "prueba-clave";
+        return "prueba_clave";
     }
 
     // Contexto con IDs de todas las entidades necesarias para cada escenario.

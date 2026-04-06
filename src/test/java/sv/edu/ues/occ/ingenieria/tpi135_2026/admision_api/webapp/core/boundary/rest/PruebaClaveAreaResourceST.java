@@ -34,7 +34,7 @@ public class PruebaClaveAreaResourceST extends AbstractIntegrationTest {
 
     @Override
     public String getResourceName() {
-        return "prueba-clave";
+        return "prueba_clave";
     }
 
     private static class ContextoPruebaClaveArea {
@@ -116,7 +116,7 @@ public class PruebaClaveAreaResourceST extends AbstractIntegrationTest {
         return idPruebaClave;
     }
 
-    // Crea contexto funcional para operar con /prueba-clave/{id_prueba_clave}/area.
+    // Crea contexto funcional para operar con /prueba_clave/{id_prueba_clave}/area.
     private ContextoPruebaClaveArea crearContexto(boolean incluirRelacion) throws SQLException {
         ContextoPruebaClaveArea contexto = new ContextoPruebaClaveArea();
         UUID idTipoPrueba = crearTipoPruebaPorApi();

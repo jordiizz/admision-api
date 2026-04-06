@@ -28,7 +28,7 @@ import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Pru
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveArea;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveAreaPK;
 
-@Path("prueba-clave/{id_prueba_clave}/area")
+@Path("prueba_clave/{id_prueba_clave}/area")
 public class PruebaClaveAreaResource implements Serializable {
 
     @Inject

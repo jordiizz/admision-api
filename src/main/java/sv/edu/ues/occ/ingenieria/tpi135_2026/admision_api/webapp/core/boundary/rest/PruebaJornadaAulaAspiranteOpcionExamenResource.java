@@ -26,7 +26,7 @@ import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Pru
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornadaAulaAspiranteOpcionExamenPK;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornadaAulaAspiranteOpcionPK;
 
-@Path("prueba/{id_prueba}/jornada/{id_jornada}/aula/{id_aula}/aspirante-opcion/{id_aspirante_opcion}/examen")
+@Path("prueba/{id_prueba}/jornada/{id_jornada}/aula/{id_aula}/aspirante_opcion/{id_aspirante_opcion}/examen")
 public class PruebaJornadaAulaAspiranteOpcionExamenResource implements Serializable {
 
     @Inject
