@@ -50,7 +50,7 @@ public class PruebaClaveAreaResource implements Serializable {
         if (pruebaClaveArea != null && idPruebaClave != null && pruebaClaveArea.getIdPruebaClaveArea() != null) {
             try {
                 PruebaClave pruebaClave = pruebaClaveDAO.buscarPorId(idPruebaClave);
-                Area area = areaDAO.buscarPorId(pruebaClaveArea.getIdPruebaClaveArea());
+                Area area = areaDAO.buscarPorId(pruebaClaveArea.getIdArea().getIdArea());
                 if (pruebaClave == null || area == null) {
                     String mensaje = pruebaClave == null ? "PruebaClave no encontrada" : "Area no encontrada";
                     return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), mensaje).build();
@@ -130,7 +130,7 @@ public class PruebaClaveAreaResource implements Serializable {
                 }
                 PruebaClaveArea existente = pruebaClaveAreaDAO.buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea));
                 if (existente != null) {
-                    Area area = areaDAO.buscarPorId(pruebaClaveArea.getIdPruebaClaveArea());
+                    Area area = areaDAO.buscarPorId(pruebaClaveArea.getIdArea().getIdArea());
                     if (area == null) {
                                 return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "Area no encontrada").build();
                     }
