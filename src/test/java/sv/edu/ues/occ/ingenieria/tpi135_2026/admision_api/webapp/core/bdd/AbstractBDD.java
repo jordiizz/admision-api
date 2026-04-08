@@ -15,15 +15,15 @@ import java.nio.file.Paths;
 
 public abstract class AbstractBDD {
 
-    static Client cliente;
+    protected static Client cliente;
 
-    static WebTarget target;
+    protected static WebTarget target;
 
     static Network red = Network.newNetwork();
 
     static MountableFile war = MountableFile.forHostPath(Paths.get("target/admision-api.war").toAbsolutePath());
 
-    static GenericContainer postgres = new PostgreSQLContainer("postgres:16")
+    protected static GenericContainer postgres = new PostgreSQLContainer("postgres:16")
             .withDatabaseName("tpi135")
             .withInitScript("database.sql")
             .withPassword("abc123")
@@ -34,7 +34,7 @@ public abstract class AbstractBDD {
             ;
 
 
-    static GenericContainer liberty = new GenericContainer("openliberty-pg:10.26.0.0.2")
+    protected static GenericContainer liberty = new GenericContainer("openliberty-pg:10.26.0.0.2")
             .withEnv("PGSERVER", "db")
             .withEnv("PGPORT", "5432")
             .withEnv("PGDBNAME", "tpi135")

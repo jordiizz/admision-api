@@ -1,4 +1,4 @@
-package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.bdd;
+package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.bdd.configuracion.prueba;
 
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
@@ -8,6 +8,7 @@ import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.Assertions;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.bdd.AbstractBDD;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.*;
 
 import java.math.BigDecimal;
