@@ -25,13 +25,19 @@ public abstract class AbstractBDD {
 
     protected static GenericContainer postgres = new PostgreSQLContainer("postgres:16")
             .withDatabaseName("tpi135")
-            .withInitScript("database.sql")
             .withPassword("abc123")
             .withUsername("postgres")
             .withNetwork(red)
             .withNetworkAliases("db")
             .withExposedPorts(5432)
-            ;
+            .withCopyFileToContainer(
+                    MountableFile.forClasspathResource("database.sql"),
+                    "/docker-entrypoint-initdb.d/01-database.sql"
+            )
+            .withCopyFileToContainer(
+                    MountableFile.forClasspathResource("datos.sql"),
+                    "/docker-entrypoint-initdb.d/02-datos.sql"
+            );
 
 
     protected static GenericContainer liberty = new GenericContainer("openliberty-pg:10.26.0.0.2")
