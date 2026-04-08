@@ -2,15 +2,19 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.boundary.
 
 import static org.junit.Assert.assertEquals;
 
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
+import jakarta.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import jakarta.ws.rs.core.Response;
 
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.AreaDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PruebaClaveDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PruebaDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClave;
@@ -22,9 +26,23 @@ public class PruebaClaveResourceTest {
     PruebaDAO pDAO;
     PruebaClaveDAO pCDAO;
 
+    private UriInfo mockUriInfo;
+    private AreaDAO mockAD;
 
     @BeforeEach
     public void setUp() {
+
+        mockUriInfo = Mockito.mock(UriInfo.class);
+        UriBuilder mockUriBuilder = Mockito.mock(UriBuilder.class);
+        mockAD = Mockito.mock(AreaDAO.class);
+
+        Mockito.when(mockUriInfo.getAbsolutePathBuilder())
+                .thenReturn(mockUriBuilder);
+        Mockito.when(mockUriBuilder.path(Mockito.anyString()))
+                .thenReturn(mockUriBuilder);
+        Mockito.when(mockUriBuilder.build())
+                .thenReturn(URI.create("http://localhost:8080/v1/area/1"));
+
         cut = new PruebaClaveResource();
         pDAO = Mockito.mock(PruebaDAO.class);
         pCDAO = Mockito.mock(PruebaClaveDAO.class);
@@ -40,7 +58,7 @@ public class PruebaClaveResourceTest {
 
         Mockito.when(pDAO.buscarPorId(p.getIdPrueba())).thenReturn(p);
         Mockito.doNothing().when(pCDAO).crear(Mockito.any(PruebaClave.class));
-        Response respuesta = cut.asignarClave(p.getIdPrueba(), pC);
+        Response respuesta = cut.asignarClave(p.getIdPrueba(), pC, mockUriInfo);
         assertEquals(respuesta.getStatus(), Response.Status.CREATED.getStatusCode());
     }
 
@@ -50,13 +68,13 @@ public class PruebaClaveResourceTest {
         PruebaClave pC = new PruebaClave();
         pC.setIdPrueba(null);
         Mockito.when(pDAO.buscarPorId(Mockito.any(UUID.class))).thenReturn(null);
-        Response respuesta = cut.asignarClave(UUID.randomUUID(), pC);
+        Response respuesta = cut.asignarClave(UUID.randomUUID(), pC, mockUriInfo);
         assertEquals(respuesta.getStatus(), Response.Status.NOT_FOUND.getStatusCode());
     }
 
      @Test
      public void test_PruebaClave_asignarClave_badRequest() {
-         Response respuesta = cut.asignarClave(null, null);
+         Response respuesta = cut.asignarClave(null, null, mockUriInfo);
          assertEquals(respuesta.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
     }
 
@@ -68,7 +86,7 @@ public class PruebaClaveResourceTest {
 
          Mockito.when(pDAO.buscarPorId(p.getIdPrueba())).thenReturn(p);
          Mockito.doThrow(new RuntimeException("Error al crear la clave")).when(pCDAO).crear(Mockito.any(PruebaClave.class));
-         Response respuesta = cut.asignarClave(p.getIdPrueba(), pC);
+         Response respuesta = cut.asignarClave(p.getIdPrueba(), pC, mockUriInfo);
          assertEquals(respuesta.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
     }
 

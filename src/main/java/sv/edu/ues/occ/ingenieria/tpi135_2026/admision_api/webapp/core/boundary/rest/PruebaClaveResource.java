@@ -12,14 +12,13 @@ import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.*;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PruebaDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClave;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Prueba;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PruebaClaveDAO;
 
-@Path("prueba")
+@Path("prueba/{id_prueba}/clave")
 public class PruebaClaveResource implements Serializable{
     
 
@@ -30,9 +29,9 @@ public class PruebaClaveResource implements Serializable{
     PruebaClaveDAO pCDAO;
 
     @POST
-    @Path("{id_prueba}/clave")
     @Consumes({MediaType.APPLICATION_JSON})
-    public Response asignarClave(@PathParam("id_prueba") UUID idPrueba, PruebaClave pC) {
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response asignarClave(@PathParam("id_prueba") UUID idPrueba, PruebaClave pC, @Context UriInfo uriInfo) {
         if(idPrueba != null && pC != null) {
             try {
                 Prueba p = pDAO.buscarPorId(idPrueba);
@@ -40,7 +39,12 @@ public class PruebaClaveResource implements Serializable{
                     pC.setIdPruebaClave(UUID.randomUUID());
                     pC.setIdPrueba(p);
                     pCDAO.crear(pC);
-                    return Response.status(Response.Status.CREATED).build();
+                    UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
+                    uriBuilder.path(pC.getIdPruebaClave().toString());
+                    return Response.status(Response.Status.CREATED)
+                            .header("Location", uriBuilder.build().toString())
+                            .entity(pC)
+                            .build();
                 }
                 return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(),"prueba").build();
             } catch (Exception e) {
@@ -50,8 +54,7 @@ public class PruebaClaveResource implements Serializable{
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
-    @GET 
-    @Path("{id_prueba}/claves")
+    @GET
     @Produces({MediaType.APPLICATION_JSON})
     public Response listarClaves(@PathParam("id_prueba") UUID idPrueba) {
         if(idPrueba != null) {
@@ -72,7 +75,7 @@ public class PruebaClaveResource implements Serializable{
     }
 
     @DELETE
-    @Path("{id_prueba}/clave/{id_clave}")
+    @Path("{id_clave}")
     public Response eliminarClave(@PathParam("id_prueba") UUID idPrueba, @PathParam("id_clave") UUID idPruebaClave) { 
         if(idPruebaClave != null && idPrueba != null) {
             try {
