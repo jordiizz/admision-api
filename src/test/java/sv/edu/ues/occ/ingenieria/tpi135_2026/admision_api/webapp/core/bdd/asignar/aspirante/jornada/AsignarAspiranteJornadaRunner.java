@@ -11,6 +11,6 @@ import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 @IncludeEngines("cucumber")
 @SelectPackages("bdd.asignar.aspirante.jornada")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.bdd.asignar.aspirante.jornada")
-public class LanzadorAsignarAspiranteJornadaIT {
+public class AsignarAspiranteJornadaRunner {
 
 }

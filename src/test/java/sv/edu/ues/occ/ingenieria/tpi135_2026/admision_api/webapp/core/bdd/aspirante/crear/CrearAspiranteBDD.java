@@ -1,4 +1,4 @@
-package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.bdd;
+package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.bdd.aspirante.crear;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -14,11 +14,9 @@ import org.junit.jupiter.api.Assertions;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.lifecycle.Startables;
 import org.testcontainers.utility.MountableFile;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.boundary.rest.ResponseHeaders;
-import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Area;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Aspirante;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.AspiranteOpcion;
 
