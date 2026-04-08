@@ -173,7 +173,7 @@ public class PruebaResourceST extends AbstractIntegrationTest {
 
         ContextoPrueba contexto = crearContexto();
 
-        Response buscar = target.path("(" + contexto.idPrueba + ")")
+        Response buscar = target.path(contexto.idPrueba.toString())
                 .request(MediaType.APPLICATION_JSON)
                 .get();
 

@@ -92,7 +92,7 @@ public class PruebaResource implements Serializable {
     }   
 
     @GET
-    @Path("({id_prueba})")
+    @Path("{id_prueba}")
     @Produces({MediaType.APPLICATION_JSON})
     public Response buscarPorId(@PathParam("id_prueba") UUID idPrueba) {
         if(idPrueba != null) {
