@@ -163,12 +163,76 @@ public class AreaResourceTest {
     }
 
     @Test
+    public void buscarPorRangoMaxInvalidoTest() {
+        System.out.println("Ejecutando test: buscarPorRangoMaxMayorQue50Test y buscarPorRangoMaxCeroTest");
+        Response resultadoMaxMayor = cut.buscarPorRango(0, 51);
+        assertEquals(422, resultadoMaxMayor.getStatus());
+
+        Response resultadoMaxCero = cut.buscarPorRango(0, 0);
+        assertEquals(422, resultadoMaxCero.getStatus());
+
+        Mockito.verifyNoInteractions(mockAD);
+    }
+
+    @Test
     public void buscarPorRangoConExcepcionTest(){
         System.out.println("Ejecutando test: buscarPorRangoConExcepcionTest");
         Mockito.when(mockAD.buscarPorRango(0, 50)).thenThrow(new RuntimeException("Error en base de datos"));
         Response resultado = cut.buscarPorRango(0, 50);
         assertEquals(500, resultado.getStatus());
         Mockito.verify(mockAD).buscarPorRango(0, 50);
+    }
+
+    @Test
+    public void buscarPorIdExitosoTest() {
+        System.out.println("Ejecutando test: buscarPorIdExitosoTest");
+        UUID id = UUID.randomUUID();
+        Area area = new Area(id);
+        area.setNombre("AREA-UNIT");
+
+        Mockito.when(mockAD.buscarPorId(id)).thenReturn(area);
+
+        Response resultado = cut.buscarPorId(id);
+
+        assertEquals(200, resultado.getStatus());
+        assertNotNull(resultado.getEntity());
+        Mockito.verify(mockAD).buscarPorId(id);
+    }
+
+    @Test
+    public void buscarPorIdNoEncontradoTest() {
+        System.out.println("Ejecutando test: buscarPorIdNoEncontradoTest");
+        UUID id = UUID.randomUUID();
+
+        Mockito.when(mockAD.buscarPorId(id)).thenReturn(null);
+
+        Response resultado = cut.buscarPorId(id);
+
+        assertEquals(404, resultado.getStatus());
+        Mockito.verify(mockAD).buscarPorId(id);
+    }
+
+    @Test
+    public void buscarPorIdConExcepcionTest() {
+        System.out.println("Ejecutando test: buscarPorIdConExcepcionTest");
+        UUID id = UUID.randomUUID();
+
+        Mockito.when(mockAD.buscarPorId(id)).thenThrow(new RuntimeException("Error en base de datos"));
+
+        Response resultado = cut.buscarPorId(id);
+
+        assertEquals(500, resultado.getStatus());
+        Mockito.verify(mockAD).buscarPorId(id);
+    }
+
+    @Test
+    public void buscarPorIdNuloTest() {
+        System.out.println("Ejecutando test: buscarPorIdNuloTest");
+
+        Response resultado = cut.buscarPorId(null);
+
+        assertEquals(400, resultado.getStatus());
+        Mockito.verifyNoInteractions(mockAD);
     }
 
 }
