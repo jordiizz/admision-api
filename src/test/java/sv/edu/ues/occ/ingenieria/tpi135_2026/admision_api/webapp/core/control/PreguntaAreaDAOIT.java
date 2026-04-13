@@ -393,4 +393,31 @@ public class PreguntaAreaDAOIT extends AbstractIntengrationDAOTest {
             cut.contarPorPregunta(UUID.randomUUID());
         });
     }
+
+    @Order(24)
+    @Test
+    public void testBuscarPorPreguntaRangoParametrosInvalidos() {
+        System.out.println("buscarPorPreguntaRango pregunta_area parametros no validos");
+
+        IllegalArgumentException exNulo = assertThrows(IllegalArgumentException.class,
+                () -> cut.buscarPorPreguntaRango(null, 0, 10));
+        assertEquals("Parámetros inválidos", exNulo.getMessage());
+
+        IllegalArgumentException exFirst = assertThrows(IllegalArgumentException.class,
+                () -> cut.buscarPorPreguntaRango(UUID.randomUUID(), -1, 10));
+        assertEquals("Parámetros inválidos", exFirst.getMessage());
+
+        IllegalArgumentException exMax = assertThrows(IllegalArgumentException.class,
+                () -> cut.buscarPorPreguntaRango(UUID.randomUUID(), 0, 0));
+        assertEquals("Parámetros inválidos", exMax.getMessage());
+    }
+
+    @Order(25)
+    @Test
+    public void testContarPorPreguntaParametrosInvalidos() {
+        System.out.println("contarPorPregunta pregunta_area parametros no validos");
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> cut.contarPorPregunta(null));
+        assertEquals("Parámetros inválidos", ex.getMessage());
+    }
 }

@@ -392,4 +392,31 @@ public class PruebaClaveAreaDAOIT extends AbstractIntengrationDAOTest {
             cut.contarPorPruebaClave(UUID.randomUUID());
         });
     }
+
+    @Order(24)
+    @Test
+    public void testBuscarPorPruebaClaveRangoParametrosInvalidos() {
+        System.out.println("buscarPorPruebaClaveRango prueba_clave_area parametros no validos");
+
+        IllegalArgumentException exNulo = assertThrows(IllegalArgumentException.class,
+                () -> cut.buscarPorPruebaClaveRango(null, 0, 10));
+        assertEquals("Parámetros inválidos", exNulo.getMessage());
+
+        IllegalArgumentException exFirst = assertThrows(IllegalArgumentException.class,
+            () -> cut.buscarPorPruebaClaveRango(UUID.randomUUID(), -1, 10));
+        assertEquals("Parámetros inválidos", exFirst.getMessage());
+
+        IllegalArgumentException exRango = assertThrows(IllegalArgumentException.class,
+                () -> cut.buscarPorPruebaClaveRango(UUID.randomUUID(), 0, 0));
+        assertEquals("Parámetros inválidos", exRango.getMessage());
+    }
+
+    @Order(25)
+    @Test
+    public void testContarPorPruebaClaveParametrosInvalidos() {
+        System.out.println("contarPorPruebaClave prueba_clave_area parametros no validos");
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> cut.contarPorPruebaClave(null));
+        assertEquals("Parámetros inválidos", ex.getMessage());
+    }
 }

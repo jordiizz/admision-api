@@ -512,4 +512,56 @@ public class PruebaJornadaAulaAspiranteOpcionExamenDAOIT extends AbstractIntengr
             cut.contarPorPadre(UUID.randomUUID(), UUID.randomUUID(), "A-01", UUID.randomUUID());
         });
     }
+
+    @Order(24)
+    @Test
+    public void testBuscarPorPadreRangoParametrosInvalidos() {
+        System.out.println("buscarPorPadreRango parametros no validos");
+
+        IllegalArgumentException exNulo = assertThrows(IllegalArgumentException.class,
+                () -> cut.buscarPorPadreRango(null, UUID.randomUUID(), "A-01", UUID.randomUUID(), 0, 10));
+        assertEquals("Parámetros inválidos", exNulo.getMessage());
+
+        IllegalArgumentException exJornadaNula = assertThrows(IllegalArgumentException.class,
+            () -> cut.buscarPorPadreRango(UUID.randomUUID(), null, "A-01", UUID.randomUUID(), 0, 10));
+        assertEquals("Parámetros inválidos", exJornadaNula.getMessage());
+
+        IllegalArgumentException exAulaNula = assertThrows(IllegalArgumentException.class,
+            () -> cut.buscarPorPadreRango(UUID.randomUUID(), UUID.randomUUID(), null, UUID.randomUUID(), 0, 10));
+        assertEquals("Parámetros inválidos", exAulaNula.getMessage());
+
+        IllegalArgumentException exAspiranteNulo = assertThrows(IllegalArgumentException.class,
+            () -> cut.buscarPorPadreRango(UUID.randomUUID(), UUID.randomUUID(), "A-01", null, 0, 10));
+        assertEquals("Parámetros inválidos", exAspiranteNulo.getMessage());
+
+        IllegalArgumentException exFirst = assertThrows(IllegalArgumentException.class,
+            () -> cut.buscarPorPadreRango(UUID.randomUUID(), UUID.randomUUID(), "A-01", UUID.randomUUID(), -1, 10));
+        assertEquals("Parámetros inválidos", exFirst.getMessage());
+
+        IllegalArgumentException exRango = assertThrows(IllegalArgumentException.class,
+                () -> cut.buscarPorPadreRango(UUID.randomUUID(), UUID.randomUUID(), "A-01", UUID.randomUUID(), 0, 0));
+        assertEquals("Parámetros inválidos", exRango.getMessage());
+    }
+
+    @Order(25)
+    @Test
+    public void testContarPorPadreParametrosInvalidos() {
+        System.out.println("contarPorPadre parametros no validos");
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
+            cut.contarPorPadre(UUID.randomUUID(), UUID.randomUUID(), null, UUID.randomUUID());
+        });
+        assertEquals("Parámetros inválidos", ex.getMessage());
+
+        IllegalArgumentException exPruebaNula = assertThrows(IllegalArgumentException.class,
+            () -> cut.contarPorPadre(null, UUID.randomUUID(), "A-01", UUID.randomUUID()));
+        assertEquals("Parámetros inválidos", exPruebaNula.getMessage());
+
+        IllegalArgumentException exJornadaNula = assertThrows(IllegalArgumentException.class,
+            () -> cut.contarPorPadre(UUID.randomUUID(), null, "A-01", UUID.randomUUID()));
+        assertEquals("Parámetros inválidos", exJornadaNula.getMessage());
+
+        IllegalArgumentException exAspiranteNulo = assertThrows(IllegalArgumentException.class,
+            () -> cut.contarPorPadre(UUID.randomUUID(), UUID.randomUUID(), "A-01", null));
+        assertEquals("Parámetros inválidos", exAspiranteNulo.getMessage());
+    }
 }
