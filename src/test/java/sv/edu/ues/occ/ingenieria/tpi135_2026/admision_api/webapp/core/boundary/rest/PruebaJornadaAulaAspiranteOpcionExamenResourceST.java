@@ -1,9 +1,6 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.boundary.rest;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -25,6 +22,7 @@ import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Asp
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.AspiranteOpcion;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Jornada;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Prueba;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClave;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornadaAulaAspiranteOpcion;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornadaAulaAspiranteOpcionExamen;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.TipoPrueba;
@@ -49,12 +47,6 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResourceST extends AbstractIn
         UUID idAspirante;
         UUID idAspiranteOpcion;
         UUID idPruebaClave;
-    }
-
-    // Conexion directa para preparar relaciones sin endpoint dedicado.
-    private Connection abrirConexion() throws SQLException {
-        String url = String.format("jdbc:postgresql://localhost:%d/tpi135", postgres.getMappedPort(5432));
-        return DriverManager.getConnection(url, "postgres", "abc123");
     }
 
     // Raiz de API para setup E2E desde endpoints reales.
@@ -151,36 +143,42 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResourceST extends AbstractIn
         return UUID.fromString(location.substring(location.lastIndexOf('/') + 1));
     }
 
-    // Las relaciones intermedias se crean por SQL porque no tienen endpoint en el proyecto.
-    private void insertarPruebaJornada(Connection conexion, UUID idPrueba, UUID idJornada) throws SQLException {
-        String sql = "INSERT INTO prueba_jornada (id_prueba, id_jornada) VALUES (?, ?)";
-        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
-            ps.setObject(1, idPrueba);
-            ps.setObject(2, idJornada);
-            ps.executeUpdate();
-        }
+    private void crearPruebaJornadaPorApi(UUID idPrueba, UUID idJornada) {
+        Response response = apiRoot().path("prueba")
+                .path(idPrueba.toString())
+                .path("jornada")
+                .path(idJornada.toString())
+                .request(MediaType.APPLICATION_JSON)
+                .method("POST");
+
+        Assertions.assertEquals(201, response.getStatus());
     }
 
-    private void insertarJornadaAula(Connection conexion, UUID idJornada, String idAula) throws SQLException {
-        String sql = "INSERT INTO jornada_aula (id_jornada_aula, id_jornada, id_aula) VALUES (?, ?, ?)";
-        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
-            ps.setObject(1, UUID.randomUUID());
-            ps.setObject(2, idJornada);
-            ps.setString(3, idAula);
-            ps.executeUpdate();
-        }
+    private void crearJornadaAulaPorApi(UUID idJornada, String idAula) {
+        Response response = apiRoot().path("jornada")
+                .path(idJornada.toString())
+                .path("aula")
+                .path(idAula)
+                .request(MediaType.APPLICATION_JSON)
+                .method("POST");
+
+        Assertions.assertEquals(201, response.getStatus());
     }
 
-    private UUID insertarPruebaClave(Connection conexion, UUID idPrueba) throws SQLException {
-        UUID idPruebaClave = UUID.randomUUID();
-        String sql = "INSERT INTO prueba_clave (id_prueba_clave, nombre_clave, id_prueba) VALUES (?, ?, ?)";
-        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
-            ps.setObject(1, idPruebaClave);
-            ps.setString(2, "CLAVE-ST-" + idPruebaClave.toString().substring(0, 8));
-            ps.setObject(3, idPrueba);
-            ps.executeUpdate();
-        }
-        return idPruebaClave;
+    private UUID crearPruebaClavePorApi(UUID idPrueba) {
+        PruebaClave nuevaClave = new PruebaClave();
+        nuevaClave.setNombreClave("CLAVE-ST-" + UUID.randomUUID().toString().substring(0, 8));
+
+        Response response = apiRoot().path("prueba")
+                .path(idPrueba.toString())
+                .path("clave")
+                .request(MediaType.APPLICATION_JSON)
+                .post(Entity.json(nuevaClave));
+
+        Assertions.assertEquals(201, response.getStatus());
+        Assertions.assertTrue(response.getHeaders().containsKey("Location"));
+        String location = response.getHeaderString("Location");
+        return UUID.fromString(location.substring(location.lastIndexOf('/') + 1));
     }
 
     // Crea el recurso padre necesario para operar con /examen.
@@ -231,11 +229,9 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResourceST extends AbstractIn
         contexto.idAspirante = crearAspirantePorApi();
         contexto.idAspiranteOpcion = crearAspiranteOpcionPorApi(contexto.idAspirante);
 
-        try (Connection conexion = abrirConexion()) {
-            insertarPruebaJornada(conexion, contexto.idPrueba, contexto.idJornada);
-            insertarJornadaAula(conexion, contexto.idJornada, contexto.idAula);
-            contexto.idPruebaClave = insertarPruebaClave(conexion, contexto.idPrueba);
-        }
+        crearPruebaJornadaPorApi(contexto.idPrueba, contexto.idJornada);
+        crearJornadaAulaPorApi(contexto.idJornada, contexto.idAula);
+        contexto.idPruebaClave = crearPruebaClavePorApi(contexto.idPrueba);
 
         crearRelacionPorApi(contexto);
 

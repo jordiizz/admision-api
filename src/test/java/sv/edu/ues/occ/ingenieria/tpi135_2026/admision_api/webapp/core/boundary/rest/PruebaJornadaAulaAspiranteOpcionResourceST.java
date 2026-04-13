@@ -1,8 +1,5 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.boundary.rest;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -48,11 +45,6 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
         String idAula;
         UUID idAspirante;
         UUID idAspiranteOpcion;
-    }
-
-    private Connection abrirConexion() throws SQLException {
-        String url = String.format("jdbc:postgresql://localhost:%d/tpi135", postgres.getMappedPort(5432));
-        return DriverManager.getConnection(url, "postgres", "abc123");
     }
 
     private WebTarget apiRoot() {
@@ -154,24 +146,26 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
         return UUID.fromString(location.substring(location.lastIndexOf('/') + 1));
     }
 
-    // Estas dos relaciones no tienen endpoint dedicado en el proyecto, por eso se preparan por SQL.
-    private void insertarPruebaJornada(Connection conexion, UUID idPrueba, UUID idJornada) throws SQLException {
-        String sql = "INSERT INTO prueba_jornada (id_prueba, id_jornada) VALUES (?, ?)";
-        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
-            ps.setObject(1, idPrueba);
-            ps.setObject(2, idJornada);
-            ps.executeUpdate();
-        }
+    private void crearPruebaJornadaPorApi(UUID idPrueba, UUID idJornada) {
+        Response response = apiRoot().path("prueba")
+                .path(idPrueba.toString())
+                .path("jornada")
+                .path(idJornada.toString())
+                .request(MediaType.APPLICATION_JSON)
+                .method("POST");
+
+        Assertions.assertEquals(201, response.getStatus());
     }
 
-    private void insertarJornadaAula(Connection conexion, UUID idJornada, String idAula) throws SQLException {
-        String sql = "INSERT INTO jornada_aula (id_jornada_aula, id_jornada, id_aula) VALUES (?, ?, ?)";
-        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
-            ps.setObject(1, UUID.randomUUID());
-            ps.setObject(2, idJornada);
-            ps.setString(3, idAula);
-            ps.executeUpdate();
-        }
+    private void crearJornadaAulaPorApi(UUID idJornada, String idAula) {
+        Response response = apiRoot().path("jornada")
+                .path(idJornada.toString())
+                .path("aula")
+                .path(idAula)
+                .request(MediaType.APPLICATION_JSON)
+                .method("POST");
+
+        Assertions.assertEquals(201, response.getStatus());
     }
 
     private void crearRelacionPorApi(ContextoSistema contexto, boolean activo) {
@@ -191,7 +185,7 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
         Assertions.assertEquals(201, response.getStatus());
     }
 
-    // Prepara dependencias por API y usa SQL solo donde no existen endpoints de esas relaciones.
+    // Prepara dependencias por API.
     private ContextoSistema crearContextoSistema(boolean incluirRelacion) throws SQLException {
         ContextoSistema contexto = new ContextoSistema();
         contexto.idTipoPrueba = crearTipoPruebaPorApi();
@@ -201,10 +195,8 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
         contexto.idAspirante = crearAspirantePorApi();
         contexto.idAspiranteOpcion = crearAspiranteOpcionPorApi(contexto.idAspirante);
 
-        try (Connection conexion = abrirConexion()) {
-            insertarPruebaJornada(conexion, contexto.idPrueba, contexto.idJornada);
-            insertarJornadaAula(conexion, contexto.idJornada, contexto.idAula);
-        }
+        crearPruebaJornadaPorApi(contexto.idPrueba, contexto.idJornada);
+        crearJornadaAulaPorApi(contexto.idJornada, contexto.idAula);
 
         if (incluirRelacion) {
             crearRelacionPorApi(contexto, true);
