@@ -453,4 +453,47 @@ public class PruebaJornadaAulaAspiranteOpcionDAOIT extends AbstractIntengrationD
         assertThrows(IllegalStateException.class,
                 () -> cut.contarPorPruebaJornadaYJornadaAula(UUID.randomUUID(), UUID.randomUUID(), "A-01"));
     }
+
+    @Order(24)
+    @Test
+    public void testBuscarPorPruebaJornadaYJornadaAulaRangoParametrosInvalidos() {
+        System.out.println("buscarPorPruebaJornadaYJornadaAulaRango parametros no validos");
+
+        IllegalArgumentException exNulo = assertThrows(IllegalArgumentException.class,
+                () -> cut.buscarPorPruebaJornadaYJornadaAulaRango(null, UUID.randomUUID(), "A-01", 0, 10));
+        assertEquals("Parámetros inválidos", exNulo.getMessage());
+
+        IllegalArgumentException exJornadaNula = assertThrows(IllegalArgumentException.class,
+            () -> cut.buscarPorPruebaJornadaYJornadaAulaRango(UUID.randomUUID(), null, "A-01", 0, 10));
+        assertEquals("Parámetros inválidos", exJornadaNula.getMessage());
+
+        IllegalArgumentException exAulaNula = assertThrows(IllegalArgumentException.class,
+            () -> cut.buscarPorPruebaJornadaYJornadaAulaRango(UUID.randomUUID(), UUID.randomUUID(), null, 0, 10));
+        assertEquals("Parámetros inválidos", exAulaNula.getMessage());
+
+        IllegalArgumentException exRango = assertThrows(IllegalArgumentException.class,
+                () -> cut.buscarPorPruebaJornadaYJornadaAulaRango(UUID.randomUUID(), UUID.randomUUID(), "A-01", -1, 10));
+        assertEquals("Parámetros inválidos", exRango.getMessage());
+
+        IllegalArgumentException exMax = assertThrows(IllegalArgumentException.class,
+            () -> cut.buscarPorPruebaJornadaYJornadaAulaRango(UUID.randomUUID(), UUID.randomUUID(), "A-01", 0, 0));
+        assertEquals("Parámetros inválidos", exMax.getMessage());
+    }
+
+    @Order(25)
+    @Test
+    public void testContarPorPruebaJornadaYJornadaAulaParametrosInvalidos() {
+        System.out.println("contarPorPruebaJornadaYJornadaAula parametros no validos");
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> cut.contarPorPruebaJornadaYJornadaAula(UUID.randomUUID(), UUID.randomUUID(), null));
+        assertEquals("Parámetros inválidos", ex.getMessage());
+
+        IllegalArgumentException exPruebaNula = assertThrows(IllegalArgumentException.class,
+            () -> cut.contarPorPruebaJornadaYJornadaAula(null, UUID.randomUUID(), "A-01"));
+        assertEquals("Parámetros inválidos", exPruebaNula.getMessage());
+
+        IllegalArgumentException exJornadaNula = assertThrows(IllegalArgumentException.class,
+            () -> cut.contarPorPruebaJornadaYJornadaAula(UUID.randomUUID(), null, "A-01"));
+        assertEquals("Parámetros inválidos", exJornadaNula.getMessage());
+    }
 }

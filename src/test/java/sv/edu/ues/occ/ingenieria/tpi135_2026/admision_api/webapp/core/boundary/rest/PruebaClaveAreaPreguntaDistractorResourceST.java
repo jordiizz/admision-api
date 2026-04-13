@@ -25,6 +25,7 @@ import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Are
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Distractor;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Pregunta;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Prueba;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClave;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveAreaPreguntaDistractor;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.TipoPrueba;
 
@@ -137,16 +138,20 @@ public class PruebaClaveAreaPreguntaDistractorResourceST extends AbstractIntegra
     }
 
     // Se crean por SQL porque no hay endpoint directo para estas relaciones encadenadas.
-    private UUID insertarPruebaClave(Connection conexion, UUID idPrueba) throws SQLException {
-        UUID idPruebaClave = UUID.randomUUID();
-        String sql = "INSERT INTO prueba_clave (id_prueba_clave, nombre_clave, id_prueba) VALUES (?, ?, ?)";
-        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
-            ps.setObject(1, idPruebaClave);
-            ps.setString(2, "CLAVE-ST-" + idPruebaClave.toString().substring(0, 8));
-            ps.setObject(3, idPrueba);
-            ps.executeUpdate();
-        }
-        return idPruebaClave;
+    private UUID crearPruebaClavePorApi(UUID idPrueba) {
+        PruebaClave nuevaClave = new PruebaClave();
+        nuevaClave.setNombreClave("CLAVE-ST-" + UUID.randomUUID().toString().substring(0, 8));
+
+        Response response = apiRoot().path("prueba")
+                .path(idPrueba.toString())
+                .path("clave")
+                .request(MediaType.APPLICATION_JSON)
+                .post(Entity.json(nuevaClave));
+
+        Assertions.assertEquals(201, response.getStatus());
+        Assertions.assertTrue(response.getHeaders().containsKey("Location"));
+        String location = response.getHeaderString("Location");
+        return UUID.fromString(location.substring(location.lastIndexOf('/') + 1));
     }
 
     private void insertarPreguntaArea(Connection conexion, UUID idPregunta, UUID idArea) throws SQLException {
@@ -203,9 +208,9 @@ public class PruebaClaveAreaPreguntaDistractorResourceST extends AbstractIntegra
         contexto.idArea = crearAreaPorApi();
         contexto.idPregunta = crearPreguntaPorApi();
         contexto.idDistractor = crearDistractorPorApi();
+        contexto.idPruebaClave = crearPruebaClavePorApi(contexto.idPrueba);
 
         try (Connection conexion = abrirConexion()) {
-            contexto.idPruebaClave = insertarPruebaClave(conexion, contexto.idPrueba);
             insertarPreguntaArea(conexion, contexto.idPregunta, contexto.idArea);
             insertarPruebaClaveArea(conexion, contexto.idPruebaClave, contexto.idArea);
             insertarPruebaClaveAreaPregunta(conexion, contexto.idPruebaClave, contexto.idArea, contexto.idPregunta);

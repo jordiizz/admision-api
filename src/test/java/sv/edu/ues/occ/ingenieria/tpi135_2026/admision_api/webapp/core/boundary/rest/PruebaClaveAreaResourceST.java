@@ -1,9 +1,6 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.boundary.rest;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -24,6 +21,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Area;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Prueba;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClave;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveArea;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.TipoPrueba;
 
@@ -41,12 +39,6 @@ public class PruebaClaveAreaResourceST extends AbstractIntegrationTest {
         UUID idPrueba;
         UUID idPruebaClave;
         UUID idArea;
-    }
-
-    // Conexion SQL para crear prueba_clave porque no hay endpoint dedicado para crearla.
-    private Connection abrirConexion() throws SQLException {
-        String url = String.format("jdbc:postgresql://localhost:%d/tpi135", postgres.getMappedPort(5432));
-        return DriverManager.getConnection(url, "postgres", "abc123");
     }
 
     // Raiz API comun para setup de entidades base.
@@ -104,16 +96,20 @@ public class PruebaClaveAreaResourceST extends AbstractIntegrationTest {
         return UUID.fromString(location.substring(location.lastIndexOf('/') + 1));
     }
 
-    private UUID insertarPruebaClave(Connection conexion, UUID idPrueba) throws SQLException {
-        UUID idPruebaClave = UUID.randomUUID();
-        String sql = "INSERT INTO prueba_clave (id_prueba_clave, nombre_clave, id_prueba) VALUES (?, ?, ?)";
-        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
-            ps.setObject(1, idPruebaClave);
-            ps.setString(2, "CLAVE-ST-" + idPruebaClave.toString().substring(0, 8));
-            ps.setObject(3, idPrueba);
-            ps.executeUpdate();
-        }
-        return idPruebaClave;
+    private UUID crearPruebaClavePorApi(UUID idPrueba) {
+        PruebaClave nuevaClave = new PruebaClave();
+        nuevaClave.setNombreClave("CLAVE-ST-" + UUID.randomUUID().toString().substring(0, 8));
+
+        Response response = apiRoot().path("prueba")
+                .path(idPrueba.toString())
+                .path("clave")
+                .request(MediaType.APPLICATION_JSON)
+                .post(Entity.json(nuevaClave));
+
+        Assertions.assertEquals(201, response.getStatus());
+        Assertions.assertTrue(response.getHeaders().containsKey("Location"));
+        String location = response.getHeaderString("Location");
+        return UUID.fromString(location.substring(location.lastIndexOf('/') + 1));
     }
 
     // Crea contexto funcional para operar con /prueba_clave/{id_prueba_clave}/area.
@@ -123,9 +119,7 @@ public class PruebaClaveAreaResourceST extends AbstractIntegrationTest {
         contexto.idPrueba = crearPruebaPorApi(idTipoPrueba);
         contexto.idArea = crearAreaPorApi();
 
-        try (Connection conexion = abrirConexion()) {
-            contexto.idPruebaClave = insertarPruebaClave(conexion, contexto.idPrueba);
-        }
+        contexto.idPruebaClave = crearPruebaClavePorApi(contexto.idPrueba);
 
         if (incluirRelacion) {
             PruebaClaveArea relacion = new PruebaClaveArea();
