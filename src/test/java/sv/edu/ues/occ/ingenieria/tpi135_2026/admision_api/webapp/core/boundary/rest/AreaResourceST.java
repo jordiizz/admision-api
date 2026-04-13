@@ -21,6 +21,8 @@ import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Are
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AreaResourceST extends AbstractIntegrationTest{
 
+    private UUID idCreado;
+
     @Override
     public String getResourceName(){
         return "area";
@@ -62,6 +64,44 @@ public class AreaResourceST extends AbstractIntegrationTest{
         Assertions.assertTrue(respuesta.getHeaders().containsKey("Location"));
         UUID id = UUID.fromString(respuesta.getHeaderString("Location").split("area/")[1]);
         Assertions.assertNotNull(id);
+        idCreado = id;
         System.out.print("ID: " + id);
+    }
+
+    @Order(3)
+    @Test
+    public void buscarPorIdTest(){
+        System.out.println("buscarPorId");
+
+        if (idCreado == null) {
+            Area nuevo = new Area();
+            nuevo.setNombre("AREA-BUSCAR-ST");
+            Response crear = target.request(MediaType.APPLICATION_JSON)
+                    .post(Entity.json(nuevo));
+            Assertions.assertEquals(201, crear.getStatus());
+            idCreado = UUID.fromString(crear.getHeaderString("Location").split("area/")[1]);
+        }
+
+        Response respuesta = target.path(idCreado.toString())
+                .request(MediaType.APPLICATION_JSON)
+                .get();
+
+        Assertions.assertNotNull(respuesta);
+        Assertions.assertEquals(200, respuesta.getStatus());
+        Area area = respuesta.readEntity(Area.class);
+        Assertions.assertNotNull(area);
+        Assertions.assertEquals(idCreado, area.getIdArea());
+    }
+
+    @Order(4)
+    @Test
+    public void buscarPorIdNoEncontradoTest(){
+        System.out.println("buscarPorIdNoEncontrado");
+
+        Response respuesta = target.path(UUID.randomUUID().toString())
+                .request(MediaType.APPLICATION_JSON)
+                .get();
+
+        Assertions.assertEquals(404, respuesta.getStatus());
     }
 }
