@@ -2,7 +2,6 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.UUID;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -10,7 +9,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Transient;
 import jakarta.persistence.Table;
 
 @Entity
@@ -35,12 +33,6 @@ public class PruebaJornada implements Serializable {
         this.idJornada = idJornada;
     }
 
-    public PruebaJornada(UUID legacyId) {
-        Prueba prueba = new Prueba();
-        prueba.setIdPrueba(legacyId);
-        this.idPrueba = prueba;
-    }
-
     
     public Prueba getIdPrueba() {
         return idPrueba;
@@ -59,21 +51,6 @@ public class PruebaJornada implements Serializable {
         this.idJornada = idJornada;
     }
 
-    @Transient
-    public UUID getIdPruebaJornada() {
-        return idPrueba != null ? idPrueba.getIdPrueba() : null;
-    }
-
-    public void setIdPruebaJornada(UUID legacyId) {
-        if (legacyId == null) {
-            this.idPrueba = null;
-            return;
-        }
-        if (this.idPrueba == null) {
-            this.idPrueba = new Prueba();
-        }
-        this.idPrueba.setIdPrueba(legacyId);
-    }
     @Override
     public int hashCode() {
         return Objects.hash(

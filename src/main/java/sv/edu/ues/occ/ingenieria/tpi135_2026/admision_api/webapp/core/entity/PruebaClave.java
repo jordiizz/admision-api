@@ -54,7 +54,6 @@ public class PruebaClave implements Serializable {
         this.nombreClave = nombreClave;
     }
 
-    @JsonbTransient
     public Prueba getIdPrueba() {
         return idPrueba;
     }

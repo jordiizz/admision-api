@@ -19,6 +19,7 @@ import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.Pr
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.AspiranteOpcion;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Jornada;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.JornadaAula;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Prueba;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornada;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornadaAulaAspiranteOpcion;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornadaAulaAspiranteOpcionPK;
@@ -72,8 +73,7 @@ public class PruebaJornadaAulaAspiranteOpcionResourceTest {
         entity.setIdAspiranteOpcion(idAO);
 
         UUID idJornadaCompartida = UUID.randomUUID();
-        PruebaJornada pj = new PruebaJornada(idPrueba);
-        pj.setIdJornada(new Jornada(idJornadaCompartida));
+        PruebaJornada pj = new PruebaJornada(new Prueba(idPrueba), new Jornada(idJornadaCompartida));
         JornadaAula ja = new JornadaAula();
         ja.setIdAula(idAula);
         ja.setIdJornada(new Jornada(idJornadaCompartida));
@@ -105,10 +105,12 @@ public class PruebaJornadaAulaAspiranteOpcionResourceTest {
 
     @Test
     public void crearJornadasNoCoincidenODesconocidasTest() {
+        // Valida diferentes formas en que la jornada queda inconsistente al crear.
         PruebaJornadaAulaAspiranteOpcion entity = new PruebaJornadaAulaAspiranteOpcion();
         entity.setIdAspiranteOpcion(UUID.randomUUID());
 
-        PruebaJornada pj = new PruebaJornada(idPrueba);
+        UUID idJornadaPrueba = UUID.randomUUID();
+        PruebaJornada pj = new PruebaJornada(new Prueba(idPrueba), new Jornada(idJornadaPrueba));
         JornadaAula ja = new JornadaAula();
         ja.setIdAula(idAula);
 
@@ -116,43 +118,28 @@ public class PruebaJornadaAulaAspiranteOpcionResourceTest {
         Mockito.when(mockJADAO.buscarPorJornadaYAula(idJornada, idAula)).thenReturn(ja);
         Mockito.when(mockAODAO.buscarPorId(Mockito.any())).thenReturn(new AspiranteOpcion());
 
-        // Escenario 1: aula.getIdJornada() == null
+        // Escenario 1: la jornada del aula no existe (null), por lo tanto no se puede validar pertenencia.
         Response res1 = cut.crear(idPrueba, idJornada, idAula, entity, mockUriInfo);
         assertEquals(400, res1.getStatus());
 
-        // Escenario 2: aula SÍ tiene jornada, pero prueba.getIdJornada() 
+        // Escenario 2: ambas jornadas existen, pero no coinciden entre prueba y aula.
         ja.setIdJornada(new Jornada(UUID.randomUUID()));
         Response res2 = cut.crear(idPrueba, idJornada, idAula, entity, mockUriInfo);
         assertEquals(400, res2.getStatus());
+        assertEquals("Conflicto de Jornada", res2.getHeaderString(ResponseHeaders.WRONG_PARAMETER.toString()));
+        Mockito.verify(mockDAO, Mockito.never()).crear(Mockito.any());
 
-        // Escenario 3: Ambas tienen jornada, pero los IDs son distintos
+        // Escenario 3: se cambia la jornada de prueba y se mantiene el conflicto con la jornada del aula.
         pj.setIdJornada(new Jornada(UUID.randomUUID())); // pj ahora tiene, pero distinta a ja
         Response res3 = cut.crear(idPrueba, idJornada, idAula, entity, mockUriInfo);
         assertEquals(400, res3.getStatus());
-    }
 
-    @Test
-    public void crearConflictoDePertenenciaJornadaTest() {
-        UUID idAO = UUID.randomUUID();
-        PruebaJornadaAulaAspiranteOpcion entity = new PruebaJornadaAulaAspiranteOpcion();
-        entity.setIdAspiranteOpcion(idAO);
-
-        PruebaJornada pj = new PruebaJornada(idPrueba);
-        pj.setIdJornada(new Jornada(UUID.randomUUID()));
-
-        JornadaAula ja = new JornadaAula();
-        ja.setIdAula(idAula);
+        // Escenario 4: la prueba no tiene jornada asociada (rama faltante del OR de conflicto).
+        pj.setIdJornada(null);
         ja.setIdJornada(new Jornada(UUID.randomUUID()));
-
-        Mockito.when(mockPJDAO.buscarPorId(Mockito.any(PruebaJornadaPK.class))).thenReturn(pj);
-        Mockito.when(mockJADAO.buscarPorJornadaYAula(idJornada, idAula)).thenReturn(ja);
-        Mockito.when(mockAODAO.buscarPorId(idAO)).thenReturn(new AspiranteOpcion(idAO));
-
-        Response res = cut.crear(idPrueba, idJornada, idAula, entity, mockUriInfo);
-
-        assertEquals(400, res.getStatus());
-        assertEquals("Conflicto de Jornada", res.getHeaderString(ResponseHeaders.WRONG_PARAMETER.toString()));
-        Mockito.verify(mockDAO, Mockito.never()).crear(Mockito.any());
+        Response res4 = cut.crear(idPrueba, idJornada, idAula, entity, mockUriInfo);
+        assertEquals(400, res4.getStatus());
+        assertEquals("Conflicto de Jornada", res4.getHeaderString(ResponseHeaders.WRONG_PARAMETER.toString()));
     }
 
     @Test
