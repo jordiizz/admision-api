@@ -43,10 +43,6 @@ public class PruebaClaveAreaPregunta implements Serializable{
         this.idPregunta = idPregunta;
     }
 
-    public PruebaClaveAreaPregunta(UUID legacyId) {
-        this.idPregunta = legacyId;
-    }
-
     public PruebaClaveAreaPregunta(){}
 
     public UUID getIdPruebaClave() {

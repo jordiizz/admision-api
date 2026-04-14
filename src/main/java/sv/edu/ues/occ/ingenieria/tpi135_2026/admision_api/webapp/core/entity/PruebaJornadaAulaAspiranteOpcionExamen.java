@@ -66,10 +66,6 @@ public class PruebaJornadaAulaAspiranteOpcionExamen implements Serializable {
         this.idAspiranteOpcion = idAspiranteOpcion;
     }
 
-    public PruebaJornadaAulaAspiranteOpcionExamen(UUID legacyId) {
-        this.idAspiranteOpcion = legacyId;
-    }
-
     public UUID getIdPrueba() {
         return idPrueba;
     }

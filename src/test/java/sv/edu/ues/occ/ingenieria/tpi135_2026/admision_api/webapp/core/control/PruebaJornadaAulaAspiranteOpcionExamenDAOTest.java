@@ -45,9 +45,13 @@ public class PruebaJornadaAulaAspiranteOpcionExamenDAOTest {
                 UUID idAspiranteOpcion = UUID.randomUUID();
         int first = 0;
         int max = 10;
+        PruebaJornadaAulaAspiranteOpcionExamen esperado1 = new PruebaJornadaAulaAspiranteOpcionExamen();
+        esperado1.setIdAspiranteOpcion(UUID.randomUUID());
+        PruebaJornadaAulaAspiranteOpcionExamen esperado2 = new PruebaJornadaAulaAspiranteOpcionExamen();
+        esperado2.setIdAspiranteOpcion(UUID.randomUUID());
         List<PruebaJornadaAulaAspiranteOpcionExamen> esperados = Arrays.asList(
-                new PruebaJornadaAulaAspiranteOpcionExamen(UUID.randomUUID()),
-                new PruebaJornadaAulaAspiranteOpcionExamen(UUID.randomUUID())
+                esperado1,
+                esperado2
         );
 
         PruebaJornadaAulaAspiranteOpcionExamenDAO cut = new PruebaJornadaAulaAspiranteOpcionExamenDAO();
