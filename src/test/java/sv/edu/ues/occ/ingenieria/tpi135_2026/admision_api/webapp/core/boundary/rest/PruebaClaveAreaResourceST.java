@@ -123,7 +123,7 @@ public class PruebaClaveAreaResourceST extends AbstractIntegrationTest {
 
         if (incluirRelacion) {
             PruebaClaveArea relacion = new PruebaClaveArea();
-            relacion.setIdPruebaClaveArea(contexto.idArea);
+            relacion.setIdArea(new Area(contexto.idArea));
 
             Response crear = target.path(contexto.idPruebaClave.toString())
                     .path("area")
@@ -143,7 +143,7 @@ public class PruebaClaveAreaResourceST extends AbstractIntegrationTest {
 
         ContextoPruebaClaveArea contexto = crearContexto(false);
         PruebaClaveArea nuevo = new PruebaClaveArea();
-        nuevo.setIdPruebaClaveArea(contexto.idArea);
+        nuevo.setIdArea(new Area(contexto.idArea));
 
         Response respuesta = target.path(contexto.idPruebaClave.toString())
                 .path("area")
@@ -179,7 +179,7 @@ public class PruebaClaveAreaResourceST extends AbstractIntegrationTest {
 
         ContextoPruebaClaveArea contexto = crearContexto(false);
         PruebaClaveArea nuevo = new PruebaClaveArea();
-        nuevo.setIdPruebaClaveArea(contexto.idArea);
+        nuevo.setIdArea(new Area(contexto.idArea));
 
         Response respuesta = target.path(UUID.randomUUID().toString())
                 .path("area")
@@ -246,7 +246,8 @@ public class PruebaClaveAreaResourceST extends AbstractIntegrationTest {
         Assertions.assertEquals(200, respuesta.getStatus());
         PruebaClaveArea encontrado = respuesta.readEntity(PruebaClaveArea.class);
         Assertions.assertNotNull(encontrado);
-        Assertions.assertEquals(contexto.idArea, encontrado.getIdPruebaClaveArea());
+        Assertions.assertNotNull(encontrado.getIdArea());
+        Assertions.assertEquals(contexto.idArea, encontrado.getIdArea().getIdArea());
     }
 
     @Order(7)
@@ -258,7 +259,7 @@ public class PruebaClaveAreaResourceST extends AbstractIntegrationTest {
         ContextoPruebaClaveArea contexto = crearContexto(true);
 
         PruebaClaveArea actualizar = new PruebaClaveArea();
-        actualizar.setIdPruebaClaveArea(contexto.idArea);
+        actualizar.setIdArea(new Area(contexto.idArea));
         actualizar.setCantidad(2);
         actualizar.setPorcentaje(new BigDecimal("60.00"));
 

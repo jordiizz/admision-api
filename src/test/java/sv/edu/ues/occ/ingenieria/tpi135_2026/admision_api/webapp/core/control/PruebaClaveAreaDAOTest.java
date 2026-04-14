@@ -13,6 +13,7 @@ import org.mockito.Mockito;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Area;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveArea;
 
 public class PruebaClaveAreaDAOTest {
@@ -42,22 +43,31 @@ public class PruebaClaveAreaDAOTest {
         UUID idPruebaClave = UUID.randomUUID();
         int first = 0;
         int max = 10;
+        PruebaClaveArea pca1 = new PruebaClaveArea();
+        pca1.setIdArea(new Area(UUID.randomUUID()));
+        PruebaClaveArea pca2 = new PruebaClaveArea();
+        pca2.setIdArea(new Area(UUID.randomUUID()));
         List<PruebaClaveArea> esperados = Arrays.asList(
-                new PruebaClaveArea(UUID.randomUUID()),
-                new PruebaClaveArea(UUID.randomUUID())
+            pca1,
+            pca2
         );
 
         PruebaClaveAreaDAO cut = new PruebaClaveAreaDAO();
 
-        assertThrows(IllegalArgumentException.class,
+        var exIdNulo = assertThrows(IllegalArgumentException.class,
             () -> cut.buscarPorPruebaClaveRango(null, first, max));
-        assertThrows(IllegalArgumentException.class,
+        var exFirstInvalido = assertThrows(IllegalArgumentException.class,
             () -> cut.buscarPorPruebaClaveRango(idPruebaClave, -1, max));
-        assertThrows(IllegalArgumentException.class,
+        var exMaxInvalido = assertThrows(IllegalArgumentException.class,
             () -> cut.buscarPorPruebaClaveRango(idPruebaClave, first, 0));
 
-        assertThrows(IllegalStateException.class,
+        var exSinEntityManager = assertThrows(IllegalStateException.class,
             () -> cut.buscarPorPruebaClaveRango(idPruebaClave, first, max));
+
+        assertNotNull(exIdNulo);
+        assertNotNull(exFirstInvalido);
+        assertNotNull(exMaxInvalido);
+        assertNotNull(exSinEntityManager);
 
         EntityManager mockEM = Mockito.mock(EntityManager.class);
         @SuppressWarnings("unchecked")
@@ -89,11 +99,14 @@ public class PruebaClaveAreaDAOTest {
 
         PruebaClaveAreaDAO cut = new PruebaClaveAreaDAO();
 
-        assertThrows(IllegalArgumentException.class,
+        var exContarIdNulo = assertThrows(IllegalArgumentException.class,
             () -> cut.contarPorPruebaClave(null));
 
-        assertThrows(IllegalStateException.class,
+        var exContarSinEntityManager = assertThrows(IllegalStateException.class,
             () -> cut.contarPorPruebaClave(idPruebaClave));
+
+        assertNotNull(exContarIdNulo);
+        assertNotNull(exContarSinEntityManager);
 
         EntityManager mockEM = Mockito.mock(EntityManager.class);
         @SuppressWarnings("unchecked")

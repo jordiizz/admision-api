@@ -55,6 +55,12 @@ public class PruebaClaveAreaResourceTest {
         cut.areaDAO = mockAreaDAO;
     }
 
+    private PruebaClaveArea nuevaConArea(UUID idArea) {
+        PruebaClaveArea nueva = new PruebaClaveArea();
+        nueva.setIdArea(new Area(idArea));
+        return nueva;
+    }
+
     // --- crear ---
 
     @Test
@@ -65,7 +71,21 @@ public class PruebaClaveAreaResourceTest {
         Response resultado = cut.crear(idPruebaClave, nueva, mockUriInfo);
 
         assertEquals(400, resultado.getStatus());
-        assertNull(nueva.getIdPruebaClaveArea());
+        assertNull(nueva.getIdArea());
+        Mockito.verifyNoInteractions(mockPCD);
+        Mockito.verifyNoInteractions(mockDAO);
+    }
+
+    @Test
+    // Verifica 400 cuando el body trae Area, pero con id interno nulo.
+    public void crearConAreaSinIdInternoTest() {
+        System.out.println("Ejecutando test: crearConAreaSinIdInternoTest en PruebaClaveAreaResource");
+        PruebaClaveArea nueva = new PruebaClaveArea();
+        nueva.setIdArea(new Area());
+
+        Response resultado = cut.crear(idPruebaClave, nueva, mockUriInfo);
+
+        assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockPCD);
         Mockito.verifyNoInteractions(mockDAO);
     }
@@ -73,7 +93,7 @@ public class PruebaClaveAreaResourceTest {
     @Test
     public void crearPruebaClaveNoEncontradaTest() {
         System.out.println("Ejecutando test: crearPruebaClaveNoEncontradaTest en PruebaClaveAreaResource");
-        PruebaClaveArea nueva = new PruebaClaveArea(idArea);
+        PruebaClaveArea nueva = nuevaConArea(idArea);
         Mockito.when(mockAreaDAO.buscarPorId(idArea)).thenReturn(new Area(idArea));
         Mockito.when(mockPCD.buscarPorId(idPruebaClave)).thenReturn(null);
 
@@ -88,7 +108,7 @@ public class PruebaClaveAreaResourceTest {
     // Valida 404 cuando la prueba clave existe pero el area asociada no existe.
     public void crearAreaNoEncontradaTest() {
         System.out.println("Ejecutando test: crearAreaNoEncontradaTest en PruebaClaveAreaResource");
-        PruebaClaveArea nueva = new PruebaClaveArea(idArea);
+        PruebaClaveArea nueva = nuevaConArea(idArea);
         Mockito.when(mockPCD.buscarPorId(idPruebaClave)).thenReturn(new PruebaClave(idPruebaClave));
         Mockito.when(mockAreaDAO.buscarPorId(idArea)).thenReturn(null);
 
@@ -102,7 +122,7 @@ public class PruebaClaveAreaResourceTest {
     // Cubre el flujo de creacion cuando el area recuperada no trae id interno.
     public void crearConAreaPersistidaSinIdTest() {
         System.out.println("Ejecutando test: crearConAreaPersistidaSinIdTest en PruebaClaveAreaResource");
-        PruebaClaveArea nueva = new PruebaClaveArea(idArea);
+        PruebaClaveArea nueva = nuevaConArea(idArea);
         Mockito.when(mockPCD.buscarPorId(idPruebaClave)).thenReturn(new PruebaClave(idPruebaClave));
         Mockito.when(mockAreaDAO.buscarPorId(idArea)).thenReturn(new Area());
 
@@ -116,7 +136,7 @@ public class PruebaClaveAreaResourceTest {
     public void crearConExcepcionTest() {
         System.out.println("Ejecutando test: crearConExcepcionTest en PruebaClaveAreaResource");
         PruebaClave pruebaClave = new PruebaClave(idPruebaClave);
-        PruebaClaveArea nueva = new PruebaClaveArea(idArea);
+        PruebaClaveArea nueva = nuevaConArea(idArea);
         Mockito.when(mockPCD.buscarPorId(idPruebaClave)).thenReturn(pruebaClave);
         Mockito.when(mockAreaDAO.buscarPorId(idArea)).thenReturn(new Area(idArea));
         Mockito.doThrow(new IllegalStateException("Error en base de datos")).when(mockDAO).crear(nueva);
@@ -140,7 +160,7 @@ public class PruebaClaveAreaResourceTest {
     @Test
     public void crearConIdTest() {
         System.out.println("Ejecutando test: crearConIdTest en PruebaClaveAreaResource");
-        PruebaClaveArea nueva = new PruebaClaveArea(idArea);
+        PruebaClaveArea nueva = nuevaConArea(idArea);
         Mockito.when(mockPCD.buscarPorId(idPruebaClave)).thenReturn(new PruebaClave(idPruebaClave));
         Mockito.when(mockAreaDAO.buscarPorId(idArea)).thenReturn(new Area(idArea));
 
@@ -164,7 +184,7 @@ public class PruebaClaveAreaResourceTest {
     @Test
     public void crearConIllegalArgumentExceptionTest() {
         System.out.println("Ejecutando test: crearConIllegalArgumentExceptionTest en PruebaClaveAreaResource");
-        PruebaClaveArea nueva = new PruebaClaveArea(idArea);
+        PruebaClaveArea nueva = nuevaConArea(idArea);
         Mockito.when(mockPCD.buscarPorId(idPruebaClave)).thenThrow(new IllegalArgumentException("Argumento inválido"));
 
         Response resultado = cut.crear(idPruebaClave, nueva, mockUriInfo);
@@ -178,7 +198,7 @@ public class PruebaClaveAreaResourceTest {
     @Test
     public void buscarPorRangoExitosoTest() {
         System.out.println("Ejecutando test: buscarPorRangoExitosoTest en PruebaClaveAreaResource");
-        List<PruebaClaveArea> registros = List.of(new PruebaClaveArea(idArea));
+        List<PruebaClaveArea> registros = List.of(nuevaConArea(idArea));
         Mockito.when(mockDAO.buscarPorPruebaClaveRango(idPruebaClave, 0, 50)).thenReturn(registros);
         Mockito.when(mockDAO.contarPorPruebaClave(idPruebaClave)).thenReturn(1L);
 
@@ -240,7 +260,7 @@ public class PruebaClaveAreaResourceTest {
     @Test
     public void buscarPorIdExitosoTest() {
         System.out.println("Ejecutando test: buscarPorIdExitosoTest en PruebaClaveAreaResource");
-        PruebaClaveArea encontrado = new PruebaClaveArea(idArea);
+        PruebaClaveArea encontrado = nuevaConArea(idArea);
         Mockito.when(mockDAO.buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea))).thenReturn(encontrado);
 
         Response resultado = cut.buscarPorId(idPruebaClave, idArea);
@@ -306,7 +326,8 @@ public class PruebaClaveAreaResourceTest {
 
         assertEquals(200, resultado.getStatus());
         assertNotNull(resultado.getEntity());
-        assertEquals(idArea, pruebaClaveArea.getIdPruebaClaveArea());
+        assertNotNull(pruebaClaveArea.getIdArea());
+        assertEquals(idArea, pruebaClaveArea.getIdArea().getIdArea());
         assertEquals(idPruebaClave, pruebaClaveArea.getIdPruebaClave().getIdPruebaClave());
         Mockito.verify(mockDAO).buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea));
         Mockito.verify(mockDAO).actualizar(pruebaClaveArea);
@@ -317,7 +338,7 @@ public class PruebaClaveAreaResourceTest {
         System.out.println("Ejecutando test: actualizarNoEncontradoTest en PruebaClaveAreaResource");
         Mockito.when(mockDAO.buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea))).thenReturn(null);
 
-        Response resultado = cut.actualizar(idPruebaClave, idArea, new PruebaClaveArea(idArea));
+        Response resultado = cut.actualizar(idPruebaClave, idArea, nuevaConArea(idArea));
 
         assertEquals(404, resultado.getStatus());
         Mockito.verify(mockDAO).buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea));
@@ -329,7 +350,7 @@ public class PruebaClaveAreaResourceTest {
     public void actualizarIdAreaBodyDistintoTest() {
         System.out.println("Ejecutando test: actualizarIdAreaBodyDistintoTest en PruebaClaveAreaResource");
         UUID idAreaBody = UUID.randomUUID();
-        PruebaClaveArea body = new PruebaClaveArea(idAreaBody);
+        PruebaClaveArea body = nuevaConArea(idAreaBody);
 
         Response resultado = cut.actualizar(idPruebaClave, idArea, body);
 
@@ -341,8 +362,8 @@ public class PruebaClaveAreaResourceTest {
     // Verifica 404 en actualizar cuando la relacion existe pero el area del body no existe.
     public void actualizarAreaNoEncontradaTest() {
         System.out.println("Ejecutando test: actualizarAreaNoEncontradaTest en PruebaClaveAreaResource");
-        PruebaClaveArea body = new PruebaClaveArea(idArea);
-        PruebaClaveArea existente = new PruebaClaveArea(idArea);
+        PruebaClaveArea body = nuevaConArea(idArea);
+        PruebaClaveArea existente = nuevaConArea(idArea);
         existente.setIdPruebaClave(new PruebaClave(idPruebaClave));
 
         Mockito.when(mockDAO.buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea))).thenReturn(existente);
@@ -357,8 +378,8 @@ public class PruebaClaveAreaResourceTest {
     @Test
     public void actualizarConExcepcionTest() {
         System.out.println("Ejecutando test: actualizarConExcepcionTest en PruebaClaveAreaResource");
-        PruebaClaveArea pruebaClaveArea = new PruebaClaveArea(idArea);
-        PruebaClaveArea existente = new PruebaClaveArea(idArea);
+        PruebaClaveArea pruebaClaveArea = nuevaConArea(idArea);
+        PruebaClaveArea existente = nuevaConArea(idArea);
         existente.setIdPruebaClave(new PruebaClave(idPruebaClave));
         Mockito.when(mockDAO.buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea))).thenReturn(existente);
         Mockito.when(mockAreaDAO.buscarPorId(idArea)).thenReturn(new Area(idArea));
@@ -399,9 +420,22 @@ public class PruebaClaveAreaResourceTest {
     }
 
     @Test
+    public void actualizarBodyConAreaSinIdInternoTest() {
+        // Verifica 400 cuando el body trae Area, pero con id interno nulo.
+        System.out.println("Ejecutando test: actualizarBodyConAreaSinIdInternoTest en PruebaClaveAreaResource");
+        PruebaClaveArea body = new PruebaClaveArea();
+        body.setIdArea(new Area());
+
+        Response resultado = cut.actualizar(idPruebaClave, idArea, body);
+
+        assertEquals(400, resultado.getStatus());
+        Mockito.verifyNoInteractions(mockDAO);
+    }
+
+    @Test
     public void actualizarIdPruebaClaveNullTest() {
         System.out.println("Ejecutando test: actualizarIdPruebaClaveNullTest en PruebaClaveAreaResource");
-        Response resultado = cut.actualizar(null, UUID.randomUUID(), new PruebaClaveArea(UUID.randomUUID()));
+        Response resultado = cut.actualizar(null, UUID.randomUUID(), nuevaConArea(UUID.randomUUID()));
         assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockDAO);
     }
@@ -409,8 +443,8 @@ public class PruebaClaveAreaResourceTest {
     @Test
     public void actualizarConIllegalArgumentExceptionTest() {
         System.out.println("Ejecutando test: actualizarConIllegalArgumentExceptionTest en PruebaClaveAreaResource");
-        PruebaClaveArea pruebaClaveArea = new PruebaClaveArea(idArea);
-        PruebaClaveArea existente = new PruebaClaveArea(idArea);
+        PruebaClaveArea pruebaClaveArea = nuevaConArea(idArea);
+        PruebaClaveArea existente = nuevaConArea(idArea);
         existente.setIdPruebaClave(new PruebaClave(idPruebaClave));
         Mockito.when(mockDAO.buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea))).thenReturn(existente);
         Mockito.when(mockAreaDAO.buscarPorId(idArea)).thenReturn(new Area(idArea));
@@ -427,7 +461,7 @@ public class PruebaClaveAreaResourceTest {
     @Test
     public void eliminarExitosoTest() {
         System.out.println("Ejecutando test: eliminarExitosoTest en PruebaClaveAreaResource");
-        PruebaClaveArea existente = new PruebaClaveArea(idArea);
+        PruebaClaveArea existente = nuevaConArea(idArea);
         Mockito.when(mockDAO.buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea))).thenReturn(existente);
         Mockito.doNothing().when(mockDAO).eliminar(existente);
 
@@ -453,7 +487,7 @@ public class PruebaClaveAreaResourceTest {
     @Test
     public void eliminarConExcepcionTest() {
         System.out.println("Ejecutando test: eliminarConExcepcionTest en PruebaClaveAreaResource");
-        PruebaClaveArea existente = new PruebaClaveArea(idArea);
+        PruebaClaveArea existente = nuevaConArea(idArea);
         Mockito.when(mockDAO.buscarPorId(new PruebaClaveAreaPK(idPruebaClave, idArea))).thenReturn(existente);
         Mockito.doThrow(new RuntimeException("Error en base de datos")).when(mockDAO).eliminar(existente);
 

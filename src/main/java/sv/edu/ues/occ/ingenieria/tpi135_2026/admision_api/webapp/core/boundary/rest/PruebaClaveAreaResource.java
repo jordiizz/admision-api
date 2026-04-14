@@ -47,7 +47,8 @@ public class PruebaClaveAreaResource implements Serializable {
             @PathParam("id_prueba_clave") UUID idPruebaClave,
             PruebaClaveArea pruebaClaveArea,
             @Context UriInfo uriInfo) {
-        if (pruebaClaveArea != null && idPruebaClave != null && pruebaClaveArea.getIdPruebaClaveArea() != null) {
+        if (pruebaClaveArea != null && idPruebaClave != null && pruebaClaveArea.getIdArea() != null
+                && pruebaClaveArea.getIdArea().getIdArea() != null) {
             try {
                 PruebaClave pruebaClave = pruebaClaveDAO.buscarPorId(idPruebaClave);
                 Area area = areaDAO.buscarPorId(pruebaClaveArea.getIdArea().getIdArea());
@@ -59,7 +60,7 @@ public class PruebaClaveAreaResource implements Serializable {
                 pruebaClaveArea.setIdArea(area);
                 pruebaClaveAreaDAO.crear(pruebaClaveArea);
                 UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
-                UUID idArea = pruebaClaveArea.getIdPruebaClaveArea();
+                UUID idArea = pruebaClaveArea.getIdArea().getIdArea();
                 if (idArea != null) {
                     uriBuilder.path(idArea.toString());
                 }
@@ -121,9 +122,10 @@ public class PruebaClaveAreaResource implements Serializable {
             @PathParam("id_prueba_clave") UUID idPruebaClave,
             @PathParam("id_area") UUID idArea,
             PruebaClaveArea pruebaClaveArea) {
-        if (pruebaClaveArea != null && idPruebaClave != null && idArea != null && pruebaClaveArea.getIdPruebaClaveArea() != null) {
+        if (pruebaClaveArea != null && idPruebaClave != null && idArea != null && pruebaClaveArea.getIdArea() != null
+                && pruebaClaveArea.getIdArea().getIdArea() != null) {
             try {
-                if (!idArea.equals(pruebaClaveArea.getIdPruebaClaveArea())) {
+                if (!idArea.equals(pruebaClaveArea.getIdArea().getIdArea())) {
                     return Response.status(Response.Status.BAD_REQUEST)
                             .header(ResponseHeaders.WRONG_PARAMETER.toString(), "El idArea del body debe coincidir con el id_area del path")
                             .build();

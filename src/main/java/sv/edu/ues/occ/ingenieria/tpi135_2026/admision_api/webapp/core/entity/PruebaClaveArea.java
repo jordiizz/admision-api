@@ -3,7 +3,6 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
-import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,7 +13,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
-import jakarta.persistence.Transient;
 import jakarta.persistence.Table;
 
 @NamedQueries({
@@ -53,12 +51,6 @@ public class PruebaClaveArea implements Serializable{
         this.idArea = idArea;
     }
 
-    public PruebaClaveArea(UUID legacyId) {
-        Area area = new Area();
-        area.setIdArea(legacyId);
-        this.idArea = area;
-    }
-
     public PruebaClaveArea(){}
 
     
@@ -77,22 +69,6 @@ public class PruebaClaveArea implements Serializable{
 
     public void setIdArea(Area idArea) {
         this.idArea = idArea;
-    }
-
-    @Transient
-    public UUID getIdPruebaClaveArea() {
-        return idArea != null ? idArea.getIdArea() : null;
-    }
-
-    public void setIdPruebaClaveArea(UUID legacyId) {
-        if (legacyId == null) {
-            this.idArea = null;
-            return;
-        }
-        if (this.idArea == null) {
-            this.idArea = new Area();
-        }
-        this.idArea.setIdArea(legacyId);
     }
 
     public Integer getCantidad() {
