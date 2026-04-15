@@ -57,7 +57,7 @@ public class PruebaJornadaAulaAspiranteOpcionResource implements Serializable {
         try {
             PruebaJornada prueba = pruebaJornadaDAO.buscarPorId(new PruebaJornadaPK(idPrueba, idJornada));
             JornadaAula aula = jornadaAulaDAO.buscarPorJornadaYAula(idJornada, idAula);
-            AspiranteOpcion aspirante = aspiranteOpcionDAO.buscarPorId(entity.getIdAspiranteOpcion());
+            AspiranteOpcion aspirante = aspiranteOpcionDAO.buscarPorId(entity.getIdAspiranteOpcion().getIdAspiranteOpcion());
 
             if (prueba == null || aula == null || aspirante == null) {
                 return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "Dependencia no encontrada").build();
@@ -69,9 +69,10 @@ public class PruebaJornadaAulaAspiranteOpcionResource implements Serializable {
                 return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "Conflicto de Jornada").build();
             }
 
-            entity.setIdPrueba(idPrueba);
-            entity.setIdJornada(idJornada);
+            entity.setIdPrueba(prueba.getIdPrueba());
+            entity.setIdJornada(prueba.getIdJornada());
             entity.setIdAula(idAula);
+            entity.setIdAspiranteOpcion(aspirante);
             
             pruebaJornadaAulaAspiranteOpcionDAO.crear(entity);
             UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
@@ -142,12 +143,12 @@ public class PruebaJornadaAulaAspiranteOpcionResource implements Serializable {
             PruebaJornadaAulaAspiranteOpcion entity) {
 
         if (idPrueba == null || idJornada == null || idAula == null || entity == null || idAspiranteOpcion == null
-                || entity.getIdAspiranteOpcion() == null) {
+                || entity.getIdAspiranteOpcion() == null || entity.getIdAspiranteOpcion().getIdAspiranteOpcion() == null) {
             return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "Datos incompletos").build();
         }
 
         try {
-            if (!idAspiranteOpcion.equals(entity.getIdAspiranteOpcion())) {
+            if (!idAspiranteOpcion.equals(entity.getIdAspiranteOpcion().getIdAspiranteOpcion())) {
                 return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "El idAspiranteOpcion del body debe coincidir con el id del path").build();
             }
             PruebaJornadaAulaAspiranteOpcion existente = pruebaJornadaAulaAspiranteOpcionDAO
@@ -156,14 +157,14 @@ public class PruebaJornadaAulaAspiranteOpcionResource implements Serializable {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
 
-            AspiranteOpcion aspirante = aspiranteOpcionDAO.buscarPorId(entity.getIdAspiranteOpcion());
+            AspiranteOpcion aspirante = aspiranteOpcionDAO.buscarPorId(entity.getIdAspiranteOpcion().getIdAspiranteOpcion());
             if (aspirante == null) {
                 return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "AspiranteOpcion no encontrada").build();
             }
-            entity.setIdAspiranteOpcion(aspirante.getIdAspiranteOpcion());
+            entity.setIdAspiranteOpcion(aspirante);
 
-            entity.setIdPrueba(idPrueba);
-            entity.setIdJornada(idJornada);
+            entity.setIdPrueba(existente.getIdPrueba());
+            entity.setIdJornada(existente.getIdJornada());
             entity.setIdAula(idAula);
             
             pruebaJornadaAulaAspiranteOpcionDAO.actualizar(entity);

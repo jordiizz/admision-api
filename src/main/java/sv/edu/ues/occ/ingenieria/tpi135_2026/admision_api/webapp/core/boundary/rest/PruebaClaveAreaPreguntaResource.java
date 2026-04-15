@@ -49,7 +49,7 @@ public class PruebaClaveAreaPreguntaResource implements Serializable{
                 Area a = aDAO.buscarPorId(idArea);
                 PruebaClave pC = pCDAO.buscarPorId(idPruebaClave);
                 if(p != null && a != null && pC != null) {
-                    PruebaClaveAreaPregunta pruebaClaveAreaPregunta = new PruebaClaveAreaPregunta(pC.getIdPruebaClave(), a.getIdArea(), p.getIdPregunta()); // Debería recibir entidades no?
+                    PruebaClaveAreaPregunta pruebaClaveAreaPregunta = new PruebaClaveAreaPregunta(pC, a, p);
                     pCAPDAO.crear(pruebaClaveAreaPregunta);
                     return Response.status(Response.Status.CREATED).build();
                 }

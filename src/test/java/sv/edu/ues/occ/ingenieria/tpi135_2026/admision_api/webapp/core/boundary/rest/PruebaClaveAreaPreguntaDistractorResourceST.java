@@ -377,10 +377,10 @@ public class PruebaClaveAreaPreguntaDistractorResourceST extends AbstractIntegra
         Assertions.assertEquals(200, respuesta.getStatus());
         PruebaClaveAreaPreguntaDistractor encontrado = respuesta.readEntity(PruebaClaveAreaPreguntaDistractor.class);
         Assertions.assertNotNull(encontrado);
-        Assertions.assertEquals(contexto.idPruebaClave, encontrado.getIdPruebaClave());
-        Assertions.assertEquals(contexto.idArea, encontrado.getIdArea());
-        Assertions.assertEquals(contexto.idPregunta, encontrado.getIdPregunta());
-        Assertions.assertEquals(contexto.idDistractor, encontrado.getIdDistractor());
+        Assertions.assertEquals(contexto.idPruebaClave, encontrado.getIdPruebaClave().getIdPruebaClave());
+        Assertions.assertEquals(contexto.idArea, encontrado.getIdArea().getIdArea());
+        Assertions.assertEquals(contexto.idPregunta, encontrado.getIdPregunta().getIdPregunta());
+        Assertions.assertEquals(contexto.idDistractor, encontrado.getIdDistractor().getIdDistractor());
     }
 
     @Order(8)

@@ -170,7 +170,9 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
 
     private void crearRelacionPorApi(ContextoSistema contexto, boolean activo) {
         PruebaJornadaAulaAspiranteOpcion relacion = new PruebaJornadaAulaAspiranteOpcion();
-        relacion.setIdAspiranteOpcion(contexto.idAspiranteOpcion);
+        AspiranteOpcion opcion = new AspiranteOpcion();
+        opcion.setIdAspiranteOpcion(contexto.idAspiranteOpcion);
+        relacion.setIdAspiranteOpcion(opcion);
         relacion.setActivo(activo);
 
         Response response = target.path(contexto.idPrueba.toString())
@@ -270,7 +272,9 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
 
         ContextoSistema contexto = crearContextoSistema(false);
         PruebaJornadaAulaAspiranteOpcion nuevo = new PruebaJornadaAulaAspiranteOpcion();
-        nuevo.setIdAspiranteOpcion(contexto.idAspiranteOpcion);
+        AspiranteOpcion opcion = new AspiranteOpcion();
+        opcion.setIdAspiranteOpcion(contexto.idAspiranteOpcion);
+        nuevo.setIdAspiranteOpcion(opcion);
         nuevo.setActivo(true);
 
         Response respuesta = target.path(contexto.idPrueba.toString())
@@ -319,7 +323,9 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
 
         ContextoSistema contexto = crearContextoSistema(false);
         PruebaJornadaAulaAspiranteOpcion nuevo = new PruebaJornadaAulaAspiranteOpcion();
-        nuevo.setIdAspiranteOpcion(UUID.randomUUID());
+        AspiranteOpcion opcion = new AspiranteOpcion();
+        opcion.setIdAspiranteOpcion(UUID.randomUUID());
+        nuevo.setIdAspiranteOpcion(opcion);
 
         Response respuesta = target.path(contexto.idPrueba.toString())
             .path("jornada")
@@ -354,10 +360,10 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
         Assertions.assertEquals(200, respuesta.getStatus());
         PruebaJornadaAulaAspiranteOpcion encontrado = respuesta.readEntity(PruebaJornadaAulaAspiranteOpcion.class);
         Assertions.assertNotNull(encontrado);
-        Assertions.assertEquals(contexto.idPrueba, encontrado.getIdPrueba());
-        Assertions.assertEquals(contexto.idJornada, encontrado.getIdJornada());
+        Assertions.assertEquals(contexto.idPrueba, encontrado.getIdPrueba().getIdPrueba());
+        Assertions.assertEquals(contexto.idJornada, encontrado.getIdJornada().getIdJornada());
         Assertions.assertEquals(contexto.idAula, encontrado.getIdAula());
-        Assertions.assertEquals(contexto.idAspiranteOpcion, encontrado.getIdAspiranteOpcion());
+        Assertions.assertEquals(contexto.idAspiranteOpcion, encontrado.getIdAspiranteOpcion().getIdAspiranteOpcion());
     }
 
     @Order(7)
@@ -391,7 +397,9 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
 
         PruebaJornadaAulaAspiranteOpcion actualizar = new PruebaJornadaAulaAspiranteOpcion();
         actualizar.setActivo(false);
-        actualizar.setIdAspiranteOpcion(contexto.idAspiranteOpcion);
+        AspiranteOpcion opcion = new AspiranteOpcion();
+        opcion.setIdAspiranteOpcion(contexto.idAspiranteOpcion);
+        actualizar.setIdAspiranteOpcion(opcion);
 
         Response respuesta = target.path(contexto.idPrueba.toString())
             .path("jornada")
@@ -407,7 +415,7 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
         PruebaJornadaAulaAspiranteOpcion actualizado = respuesta.readEntity(PruebaJornadaAulaAspiranteOpcion.class);
         Assertions.assertNotNull(actualizado);
         Assertions.assertFalse(Boolean.TRUE.equals(actualizado.getActivo()));
-        Assertions.assertEquals(contexto.idAspiranteOpcion, actualizado.getIdAspiranteOpcion());
+        Assertions.assertEquals(contexto.idAspiranteOpcion, actualizado.getIdAspiranteOpcion().getIdAspiranteOpcion());
     }
 
     @Order(9)
@@ -419,7 +427,9 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
         ContextoSistema contexto = crearContextoSistema(true);
 
         PruebaJornadaAulaAspiranteOpcion actualizar = new PruebaJornadaAulaAspiranteOpcion();
-        actualizar.setIdAspiranteOpcion(UUID.randomUUID());
+        AspiranteOpcion opcion = new AspiranteOpcion();
+        opcion.setIdAspiranteOpcion(UUID.randomUUID());
+        actualizar.setIdAspiranteOpcion(opcion);
 
         Response respuesta = target.path(contexto.idPrueba.toString())
             .path("jornada")
@@ -445,7 +455,9 @@ public class PruebaJornadaAulaAspiranteOpcionResourceST extends AbstractIntegrat
 
         PruebaJornadaAulaAspiranteOpcion actualizar = new PruebaJornadaAulaAspiranteOpcion();
         actualizar.setActivo(false);
-        actualizar.setIdAspiranteOpcion(idNoExistente);
+        AspiranteOpcion opcion = new AspiranteOpcion();
+        opcion.setIdAspiranteOpcion(idNoExistente);
+        actualizar.setIdAspiranteOpcion(opcion);
 
         Response respuesta = target.path(contexto.idPrueba.toString())
             .path("jornada")

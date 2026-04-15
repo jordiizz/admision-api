@@ -13,6 +13,7 @@ import org.mockito.Mockito;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.AspiranteOpcion;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornadaAulaAspiranteOpcionExamen;
 
 public class PruebaJornadaAulaAspiranteOpcionExamenDAOTest {
@@ -46,9 +47,9 @@ public class PruebaJornadaAulaAspiranteOpcionExamenDAOTest {
         int first = 0;
         int max = 10;
         PruebaJornadaAulaAspiranteOpcionExamen esperado1 = new PruebaJornadaAulaAspiranteOpcionExamen();
-        esperado1.setIdAspiranteOpcion(UUID.randomUUID());
+        esperado1.setIdAspiranteOpcion(new AspiranteOpcion(UUID.randomUUID()));
         PruebaJornadaAulaAspiranteOpcionExamen esperado2 = new PruebaJornadaAulaAspiranteOpcionExamen();
-        esperado2.setIdAspiranteOpcion(UUID.randomUUID());
+        esperado2.setIdAspiranteOpcion(new AspiranteOpcion(UUID.randomUUID()));
         List<PruebaJornadaAulaAspiranteOpcionExamen> esperados = Arrays.asList(
                 esperado1,
                 esperado2

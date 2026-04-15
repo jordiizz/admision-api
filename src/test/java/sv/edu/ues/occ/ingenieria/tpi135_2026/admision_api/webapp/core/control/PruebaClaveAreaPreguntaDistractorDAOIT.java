@@ -36,10 +36,10 @@ public class PruebaClaveAreaPreguntaDistractorDAOIT extends AbstractIntengration
     PruebaClaveAreaPreguntaDistractorDAO cut; // Class under test
 
     private static class ContextoCompleto {
-        UUID idPruebaClave;
-        UUID idArea;
-        UUID idPregunta;
-        UUID idDistractor;
+        PruebaClave pruebaClave;
+        Area area;
+        Pregunta pregunta;
+        Distractor distractor;
     }
 
     @BeforeEach
@@ -94,11 +94,11 @@ public class PruebaClaveAreaPreguntaDistractorDAOIT extends AbstractIntengration
         return pregunta;
     }
 
-    private UUID crearDistractor() {
+    private Distractor crearDistractor() {
         Distractor distractor = new Distractor(UUID.randomUUID());
         distractor.setValor("Distractor " + UUID.randomUUID());
         em.persist(distractor);
-        return distractor.getIdDistractor();
+        return distractor;
     }
 
     private void crearPreguntaArea(Pregunta pregunta, Area area) {
@@ -115,11 +115,20 @@ public class PruebaClaveAreaPreguntaDistractorDAOIT extends AbstractIntengration
 
     private void crearPruebaClaveAreaPregunta(PruebaClave pruebaClave, Area area, Pregunta pregunta) {
         PruebaClaveAreaPregunta pruebaClaveAreaPregunta = new PruebaClaveAreaPregunta(
-                pruebaClave.getIdPruebaClave(),
-                area.getIdArea(),
-                pregunta.getIdPregunta());
+                pruebaClave,
+                area,
+                pregunta);
         pruebaClaveAreaPregunta.setPorcentaje(new BigDecimal("50.00"));
         em.persist(pruebaClaveAreaPregunta);
+    }
+
+    private PruebaClaveAreaPreguntaDistractor nuevaEntidad(PruebaClave pruebaClave, Area area, Pregunta pregunta,
+            Distractor distractor) {
+        return new PruebaClaveAreaPreguntaDistractor(
+                pruebaClave,
+                area,
+                pregunta,
+                distractor);
     }
 
     private ContextoCompleto crearContextoCompleto() {
@@ -132,11 +141,11 @@ public class PruebaClaveAreaPreguntaDistractorDAOIT extends AbstractIntengration
         crearPruebaClaveAreaPregunta(pruebaClave, area, pregunta);
 
         ContextoCompleto ctx = new ContextoCompleto();
-        ctx.idPruebaClave = pruebaClave.getIdPruebaClave();
-        ctx.idArea = area.getIdArea();
-        ctx.idPregunta = pregunta.getIdPregunta();
+        ctx.pruebaClave = pruebaClave;
+        ctx.area = area;
+        ctx.pregunta = pregunta;
         // El distractor solo depende de su propia tabla y se enlaza aquí por id.
-        ctx.idDistractor = crearDistractor();
+        ctx.distractor = crearDistractor();
         return ctx;
     }
 
@@ -144,11 +153,11 @@ public class PruebaClaveAreaPreguntaDistractorDAOIT extends AbstractIntengration
         // Helper para reutilizar un registro completo y válido en pruebas CRUD.
         ContextoCompleto ctx = crearContextoCompleto();
 
-        PruebaClaveAreaPreguntaDistractor entidad = new PruebaClaveAreaPreguntaDistractor(
-                ctx.idPruebaClave,
-                ctx.idArea,
-                ctx.idPregunta,
-                ctx.idDistractor);
+        PruebaClaveAreaPreguntaDistractor entidad = nuevaEntidad(
+            ctx.pruebaClave,
+            ctx.area,
+            ctx.pregunta,
+            ctx.distractor);
         em.persist(entidad);
         return entidad;
     }
@@ -162,11 +171,11 @@ public class PruebaClaveAreaPreguntaDistractorDAOIT extends AbstractIntengration
         cut.em.getTransaction().begin();
         ContextoCompleto ctx = crearContextoCompleto();
 
-        PruebaClaveAreaPreguntaDistractor nuevo = new PruebaClaveAreaPreguntaDistractor(
-                ctx.idPruebaClave,
-                ctx.idArea,
-                ctx.idPregunta,
-                ctx.idDistractor);
+        PruebaClaveAreaPreguntaDistractor nuevo = nuevaEntidad(
+            ctx.pruebaClave,
+            ctx.area,
+            ctx.pregunta,
+            ctx.distractor);
 
         cut.crear(nuevo);
         cut.em.getTransaction().commit();
@@ -180,9 +189,9 @@ public class PruebaClaveAreaPreguntaDistractorDAOIT extends AbstractIntengration
     @Test
     public void testCrearEntidadNula() {
         System.out.println("Crear PruebaClaveAreaPreguntaDistractor entidad null");
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertNotNull(assertThrows(IllegalArgumentException.class, () -> {
             cut.crear(null);
-        });
+        }));
     }
 
     @Order(3)
@@ -190,9 +199,9 @@ public class PruebaClaveAreaPreguntaDistractorDAOIT extends AbstractIntengration
     public void testCrearEmNulo() {
         System.out.println("Crear PruebaClaveAreaPreguntaDistractor Entity manager null");
         cut.em = null;
-        assertThrows(IllegalStateException.class, () -> {
+        assertNotNull(assertThrows(IllegalStateException.class, () -> {
             cut.crear(new PruebaClaveAreaPreguntaDistractor());
-        });
+        }));
     }
 
     @Order(4)
@@ -209,7 +218,7 @@ public class PruebaClaveAreaPreguntaDistractorDAOIT extends AbstractIntengration
     public void testCountEmNulo() {
         System.out.println("Contar prueba_clave_area_pregunta_distractor Entity manager null");
         cut.em = null;
-        assertThrows(IllegalStateException.class, () -> cut.contar());
+        assertNotNull(assertThrows(IllegalStateException.class, () -> cut.contar()));
     }
 
     @Order(6)
@@ -219,7 +228,7 @@ public class PruebaClaveAreaPreguntaDistractorDAOIT extends AbstractIntengration
         EntityManager emCerrado = emf.createEntityManager();
         emCerrado.close();
         cut.em = emCerrado;
-        assertThrows(IllegalStateException.class, () -> cut.contar());
+        assertNotNull(assertThrows(IllegalStateException.class, () -> cut.contar()));
     }
 
     @Order(7)
@@ -232,17 +241,17 @@ public class PruebaClaveAreaPreguntaDistractorDAOIT extends AbstractIntengration
         cut.em.getTransaction().commit();
 
         PruebaClaveAreaPreguntaDistractorPK idBuscado = new PruebaClaveAreaPreguntaDistractorPK(
-                nuevo.getIdPruebaClave(),
-                nuevo.getIdArea(),
-                nuevo.getIdPregunta(),
-                nuevo.getIdDistractor());
+            nuevo.getIdPruebaClave().getIdPruebaClave(),
+            nuevo.getIdArea().getIdArea(),
+            nuevo.getIdPregunta().getIdPregunta(),
+            nuevo.getIdDistractor().getIdDistractor());
 
         PruebaClaveAreaPreguntaDistractor encontrado = cut.buscarPorId(idBuscado);
         assertNotNull(encontrado);
-        assertEquals(idBuscado.getIdPruebaClave(), encontrado.getIdPruebaClave());
-        assertEquals(idBuscado.getIdArea(), encontrado.getIdArea());
-        assertEquals(idBuscado.getIdPregunta(), encontrado.getIdPregunta());
-        assertEquals(idBuscado.getIdDistractor(), encontrado.getIdDistractor());
+        assertEquals(idBuscado.getIdPruebaClave(), encontrado.getIdPruebaClave().getIdPruebaClave());
+        assertEquals(idBuscado.getIdArea(), encontrado.getIdArea().getIdArea());
+        assertEquals(idBuscado.getIdPregunta(), encontrado.getIdPregunta().getIdPregunta());
+        assertEquals(idBuscado.getIdDistractor(), encontrado.getIdDistractor().getIdDistractor());
         System.out.println("IdDistractor: " + idBuscado.getIdDistractor());
     }
 
@@ -250,9 +259,9 @@ public class PruebaClaveAreaPreguntaDistractorDAOIT extends AbstractIntengration
     @Test
     public void testBuscarPorIdNulo() {
         System.out.println("BuscarPorId prueba_clave_area_pregunta_distractor null");
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertNotNull(assertThrows(IllegalArgumentException.class, () -> {
             cut.buscarPorId(null);
-        });
+        }));
     }
 
     @Order(9)
@@ -260,10 +269,10 @@ public class PruebaClaveAreaPreguntaDistractorDAOIT extends AbstractIntengration
     public void testBuscarPorIdEmNulo() {
         System.out.println("buscarPorId prueba_clave_area_pregunta_distractor em nulo");
         cut.em = null;
-        assertThrows(IllegalStateException.class, () -> {
+        assertNotNull(assertThrows(IllegalStateException.class, () -> {
             cut.buscarPorId(new PruebaClaveAreaPreguntaDistractorPK(
                     UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID()));
-        });
+        }));
     }
 
     @Order(10)
@@ -274,20 +283,20 @@ public class PruebaClaveAreaPreguntaDistractorDAOIT extends AbstractIntengration
         cut.em.getTransaction().begin();
         ContextoCompleto ctx = crearContextoCompleto();
 
-        PruebaClaveAreaPreguntaDistractor eliminado = new PruebaClaveAreaPreguntaDistractor(
-                ctx.idPruebaClave,
-                ctx.idArea,
-                ctx.idPregunta,
-                ctx.idDistractor);
+        PruebaClaveAreaPreguntaDistractor eliminado = nuevaEntidad(
+            ctx.pruebaClave,
+            ctx.area,
+            ctx.pregunta,
+            ctx.distractor);
 
         cut.eliminar(eliminado);
         cut.em.getTransaction().commit();
 
         PruebaClaveAreaPreguntaDistractorPK idEliminado = new PruebaClaveAreaPreguntaDistractorPK(
-                ctx.idPruebaClave,
-                ctx.idArea,
-                ctx.idPregunta,
-                ctx.idDistractor);
+            ctx.pruebaClave.getIdPruebaClave(),
+            ctx.area.getIdArea(),
+            ctx.pregunta.getIdPregunta(),
+            ctx.distractor.getIdDistractor());
 
         assertNull(cut.buscarPorId(idEliminado));
     }
@@ -302,10 +311,10 @@ public class PruebaClaveAreaPreguntaDistractorDAOIT extends AbstractIntengration
         cut.em.getTransaction().commit();
 
         PruebaClaveAreaPreguntaDistractorPK idEliminado = new PruebaClaveAreaPreguntaDistractorPK(
-                eliminado.getIdPruebaClave(),
-                eliminado.getIdArea(),
-                eliminado.getIdPregunta(),
-                eliminado.getIdDistractor());
+            eliminado.getIdPruebaClave().getIdPruebaClave(),
+            eliminado.getIdArea().getIdArea(),
+            eliminado.getIdPregunta().getIdPregunta(),
+            eliminado.getIdDistractor().getIdDistractor());
 
         cut.em.getTransaction().begin();
         cut.eliminar(eliminado);
@@ -318,9 +327,9 @@ public class PruebaClaveAreaPreguntaDistractorDAOIT extends AbstractIntengration
     @Test
     public void testEliminarEntidadNula() {
         System.out.println("eliminar prueba_clave_area_pregunta_distractor entidad nula");
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertNotNull(assertThrows(IllegalArgumentException.class, () -> {
             cut.eliminar(null);
-        });
+        }));
     }
 
     @Order(13)
@@ -329,9 +338,9 @@ public class PruebaClaveAreaPreguntaDistractorDAOIT extends AbstractIntengration
         System.out.println("eliminar prueba_clave_area_pregunta_distractor em nulo");
         cut.em = null;
         PruebaClaveAreaPreguntaDistractor eliminado = new PruebaClaveAreaPreguntaDistractor();
-        assertThrows(IllegalStateException.class, () -> {
+        assertNotNull(assertThrows(IllegalStateException.class, () -> {
             cut.eliminar(eliminado);
-        });
+        }));
     }
 
     @Order(14)
@@ -359,9 +368,9 @@ public class PruebaClaveAreaPreguntaDistractorDAOIT extends AbstractIntengration
     @Test
     public void testActualizarEntidadNula() {
         System.out.println("actualizar prueba_clave_area_pregunta_distractor entidad nula");
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertNotNull(assertThrows(IllegalArgumentException.class, () -> {
             cut.actualizar(null);
-        });
+        }));
     }
 
     @Order(16)
@@ -371,9 +380,9 @@ public class PruebaClaveAreaPreguntaDistractorDAOIT extends AbstractIntengration
         cut.em = null;
         PruebaClaveAreaPreguntaDistractor actualizado = new PruebaClaveAreaPreguntaDistractor();
 
-        assertThrows(IllegalStateException.class, () -> {
+        assertNotNull(assertThrows(IllegalStateException.class, () -> {
             cut.actualizar(actualizado);
-        });
+        }));
     }
 
     @Order(17)
@@ -391,12 +400,12 @@ public class PruebaClaveAreaPreguntaDistractorDAOIT extends AbstractIntengration
     @Test
     public void testBuscarPorRangoPametrosNoValidos() {
         System.out.println("buscarPorRango prueba_clave_area_pregunta_distractor parametros no validos");
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertNotNull(assertThrows(IllegalArgumentException.class, () -> {
             cut.buscarPorRango(0, -1);
-        });
-        assertThrows(IllegalArgumentException.class, () -> {
+        }));
+        assertNotNull(assertThrows(IllegalArgumentException.class, () -> {
             cut.buscarPorRango(-1, 50);
-        });
+        }));
     }
 
     @Order(19)
@@ -404,9 +413,9 @@ public class PruebaClaveAreaPreguntaDistractorDAOIT extends AbstractIntengration
     public void testBuscarPorRangoEmNull() {
         System.out.println("buscarPorRango prueba_clave_area_pregunta_distractor em nulo");
         cut.em = null;
-        assertThrows(IllegalStateException.class, () -> {
+        assertNotNull(assertThrows(IllegalStateException.class, () -> {
             cut.buscarPorRango(0, 50);
-        });
+        }));
     }
 
     @Order(20)
@@ -417,25 +426,29 @@ public class PruebaClaveAreaPreguntaDistractorDAOIT extends AbstractIntengration
         cut.em.getTransaction().begin();
         ContextoCompleto ctx = crearContextoCompleto();
 
-        PruebaClaveAreaPreguntaDistractor registro1 = new PruebaClaveAreaPreguntaDistractor(
-                ctx.idPruebaClave, ctx.idArea, ctx.idPregunta, ctx.idDistractor);
+        PruebaClaveAreaPreguntaDistractor registro1 = nuevaEntidad(
+            ctx.pruebaClave, ctx.area, ctx.pregunta, ctx.distractor);
         cut.crear(registro1);
 
-        UUID idDistractor2 = crearDistractor();
-        PruebaClaveAreaPreguntaDistractor registro2 = new PruebaClaveAreaPreguntaDistractor(
-                ctx.idPruebaClave, ctx.idArea, ctx.idPregunta, idDistractor2);
+        Distractor distractor2 = crearDistractor();
+        PruebaClaveAreaPreguntaDistractor registro2 = nuevaEntidad(
+            ctx.pruebaClave, ctx.area, ctx.pregunta, distractor2);
         cut.crear(registro2);
 
         // Registro de otro padre para validar que la consulta filtre correctamente.
         ContextoCompleto otroCtx = crearContextoCompleto();
-        PruebaClaveAreaPreguntaDistractor otroRegistro = new PruebaClaveAreaPreguntaDistractor(
-                otroCtx.idPruebaClave, otroCtx.idArea, otroCtx.idPregunta, otroCtx.idDistractor);
+        PruebaClaveAreaPreguntaDistractor otroRegistro = nuevaEntidad(
+            otroCtx.pruebaClave, otroCtx.area, otroCtx.pregunta, otroCtx.distractor);
         cut.crear(otroRegistro);
 
         cut.em.getTransaction().commit();
 
         List<PruebaClaveAreaPreguntaDistractor> resultados = cut.buscarPorPadreRango(
-                ctx.idPruebaClave, ctx.idArea, ctx.idPregunta, 0, 10);
+            ctx.pruebaClave.getIdPruebaClave(),
+            ctx.area.getIdArea(),
+            ctx.pregunta.getIdPregunta(),
+            0,
+            10);
 
         assertNotNull(resultados);
         assertEquals(2, resultados.size());
@@ -447,9 +460,9 @@ public class PruebaClaveAreaPreguntaDistractorDAOIT extends AbstractIntengration
     public void testBuscarPorPadreRangoEmNulo() {
         System.out.println("buscarPorPadreRango em nulo");
         cut.em = null;
-        assertThrows(IllegalStateException.class, () -> {
+        assertNotNull(assertThrows(IllegalStateException.class, () -> {
             cut.buscarPorPadreRango(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), 0, 10);
-        });
+        }));
     }
 
     @Order(22)
@@ -460,24 +473,26 @@ public class PruebaClaveAreaPreguntaDistractorDAOIT extends AbstractIntengration
         cut.em.getTransaction().begin();
         ContextoCompleto ctx = crearContextoCompleto();
 
-        PruebaClaveAreaPreguntaDistractor registro1 = new PruebaClaveAreaPreguntaDistractor(
-                ctx.idPruebaClave, ctx.idArea, ctx.idPregunta, ctx.idDistractor);
+        PruebaClaveAreaPreguntaDistractor registro1 = nuevaEntidad(ctx.pruebaClave, ctx.area, ctx.pregunta, ctx.distractor);
         cut.crear(registro1);
 
-        UUID idDistractor2 = crearDistractor();
-        PruebaClaveAreaPreguntaDistractor registro2 = new PruebaClaveAreaPreguntaDistractor(
-                ctx.idPruebaClave, ctx.idArea, ctx.idPregunta, idDistractor2);
+        Distractor distractor2 = crearDistractor();
+        PruebaClaveAreaPreguntaDistractor registro2 = nuevaEntidad(
+            ctx.pruebaClave, ctx.area, ctx.pregunta, distractor2);
         cut.crear(registro2);
 
         // Segundo conjunto para comprobar que el conteo sea por padre y no global.
         ContextoCompleto otroCtx = crearContextoCompleto();
-        PruebaClaveAreaPreguntaDistractor otroRegistro = new PruebaClaveAreaPreguntaDistractor(
-                otroCtx.idPruebaClave, otroCtx.idArea, otroCtx.idPregunta, otroCtx.idDistractor);
+        PruebaClaveAreaPreguntaDistractor otroRegistro = nuevaEntidad(
+            otroCtx.pruebaClave, otroCtx.area, otroCtx.pregunta, otroCtx.distractor);
         cut.crear(otroRegistro);
 
         cut.em.getTransaction().commit();
 
-        Long resultado = cut.contarPorPadre(ctx.idPruebaClave, ctx.idArea, ctx.idPregunta);
+        Long resultado = cut.contarPorPadre(
+            ctx.pruebaClave.getIdPruebaClave(),
+            ctx.area.getIdArea(),
+            ctx.pregunta.getIdPregunta());
         assertEquals(2L, resultado);
         System.out.println("Resultado contarPorPadre: " + resultado);
     }
@@ -487,9 +502,9 @@ public class PruebaClaveAreaPreguntaDistractorDAOIT extends AbstractIntengration
     public void testContarPorPadreEmNulo() {
         System.out.println("contarPorPadre em nulo");
         cut.em = null;
-        assertThrows(IllegalStateException.class, () -> {
+        assertNotNull(assertThrows(IllegalStateException.class, () -> {
             cut.contarPorPadre(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID());
-        });
+        }));
     }
 
     @Order(24)

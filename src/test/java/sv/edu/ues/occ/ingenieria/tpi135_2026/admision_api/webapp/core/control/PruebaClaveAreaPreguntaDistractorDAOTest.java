@@ -13,6 +13,10 @@ import org.mockito.Mockito;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Area;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Distractor;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Pregunta;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClave;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveAreaPreguntaDistractor;
 
 public class PruebaClaveAreaPreguntaDistractorDAOTest {
@@ -44,8 +48,8 @@ public class PruebaClaveAreaPreguntaDistractorDAOTest {
         int first = 0;
         int max = 10;
         List<PruebaClaveAreaPreguntaDistractor> esperados = Arrays.asList(
-            new PruebaClaveAreaPreguntaDistractor(idPruebaClave, idArea, idPregunta, UUID.randomUUID()),
-            new PruebaClaveAreaPreguntaDistractor(idPruebaClave, idArea, idPregunta, UUID.randomUUID())
+            new PruebaClaveAreaPreguntaDistractor(new PruebaClave(idPruebaClave), new Area(idArea), new Pregunta(idPregunta), new Distractor(UUID.randomUUID())),
+            new PruebaClaveAreaPreguntaDistractor(new PruebaClave(idPruebaClave), new Area(idArea), new Pregunta(idPregunta), new Distractor(UUID.randomUUID()))
         );
 
         PruebaClaveAreaPreguntaDistractorDAO cut = new PruebaClaveAreaPreguntaDistractorDAO();

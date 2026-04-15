@@ -51,7 +51,7 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResource implements Serializa
 
         if (idPrueba == null || idJornada == null || idAula == null || idAspiranteOpcion == null
                 || entity == null || entity.getResultado() == null
-            || entity.getIdPruebaClave() == null) {
+                || entity.getIdPruebaClave() == null || entity.getIdPruebaClave().getIdPruebaClave() == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .header(ResponseHeaders.WRONG_PARAMETER.toString(), "ID Padre, cuerpo o resultado faltantes")
                     .build();
@@ -60,7 +60,7 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResource implements Serializa
         try {
             PruebaJornadaAulaAspiranteOpcion padre = pruebaJornadaAulaAspiranteOpcionDAO
                     .buscarPorId(new PruebaJornadaAulaAspiranteOpcionPK(idPrueba, idJornada, idAula, idAspiranteOpcion));
-            PruebaClave pruebaClave = pruebaClaveDAO.buscarPorId(entity.getIdPruebaClave());
+            PruebaClave pruebaClave = pruebaClaveDAO.buscarPorId(entity.getIdPruebaClave().getIdPruebaClave());
             if (padre == null) {
                 return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "Padre no encontrado").build();
             }
@@ -72,14 +72,15 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResource implements Serializa
                 return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "Prueba clave no encontrada").build();
             }
 
-            entity.setIdPrueba(idPrueba);
-            entity.setIdJornada(idJornada);
+                entity.setIdPrueba(padre.getIdPrueba());
+                entity.setIdJornada(padre.getIdJornada());
             entity.setIdAula(idAula);
-            entity.setIdAspiranteOpcion(idAspiranteOpcion);
+                entity.setIdAspiranteOpcion(padre.getIdAspiranteOpcion());
+                entity.setIdPruebaClave(pruebaClave);
             pruebaJornadaAulaAspiranteOpcionExamenDAO.crear(entity);
 
             UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
-            uriBuilder.path(entity.getIdPruebaClave().toString());
+                uriBuilder.path(entity.getIdPruebaClave().getIdPruebaClave().toString());
             return Response.created(uriBuilder.build())
                     .entity(entity)
                     .build();
@@ -122,7 +123,7 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResource implements Serializa
             PruebaJornadaAulaAspiranteOpcionExamen entity) {
 
         if (idPrueba == null || idJornada == null || idAula == null || idAspiranteOpcion == null || entity == null
-                || entity.getIdPruebaClave() == null) {
+                || entity.getIdPruebaClave() == null || entity.getIdPruebaClave().getIdPruebaClave() == null) {
             return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "Datos insuficientes para actualizar").build();
         }
 
@@ -133,16 +134,16 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResource implements Serializa
                 return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "No encontrado").build();
             }
 
-            PruebaClave pruebaClave = pruebaClaveDAO.buscarPorId(entity.getIdPruebaClave());
+            PruebaClave pruebaClave = pruebaClaveDAO.buscarPorId(entity.getIdPruebaClave().getIdPruebaClave());
             if (pruebaClave == null) {
                 return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "Prueba clave no encontrada").build();
             }
-            entity.setIdPruebaClave(pruebaClave.getIdPruebaClave());
+            entity.setIdPruebaClave(pruebaClave);
 
-            entity.setIdPrueba(idPrueba);
-            entity.setIdJornada(idJornada);
+            entity.setIdPrueba(existente.getIdPrueba());
+            entity.setIdJornada(existente.getIdJornada());
             entity.setIdAula(idAula);
-            entity.setIdAspiranteOpcion(idAspiranteOpcion);
+            entity.setIdAspiranteOpcion(existente.getIdAspiranteOpcion());
             pruebaJornadaAulaAspiranteOpcionExamenDAO.actualizar(entity);
             return Response.ok(entity).build();
         } catch (Exception e) {

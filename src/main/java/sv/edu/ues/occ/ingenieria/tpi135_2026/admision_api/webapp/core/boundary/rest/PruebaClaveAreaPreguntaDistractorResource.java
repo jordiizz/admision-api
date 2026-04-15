@@ -61,10 +61,10 @@ public class PruebaClaveAreaPreguntaDistractorResource implements Serializable {
                 return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), message).build();
             }
             PruebaClaveAreaPreguntaDistractor entity = new PruebaClaveAreaPreguntaDistractor();
-            entity.setIdPruebaClave(idPruebaClave);
-            entity.setIdArea(idArea);
-            entity.setIdPregunta(idPregunta);
-            entity.setIdDistractor(idDistractor);
+            entity.setIdPruebaClave(padre.getIdPruebaClave());
+            entity.setIdArea(padre.getIdArea());
+            entity.setIdPregunta(padre.getIdPregunta());
+            entity.setIdDistractor(distractor);
             pruebaClaveAreaPreguntaDistractorDAO.crear(entity);
             return Response.created(uriInfo.getAbsolutePath()).entity(entity).build();
         } catch (Exception e) {

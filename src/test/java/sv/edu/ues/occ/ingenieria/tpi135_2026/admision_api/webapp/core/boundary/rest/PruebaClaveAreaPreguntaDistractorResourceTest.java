@@ -18,7 +18,10 @@ import jakarta.ws.rs.core.UriInfo;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.DistractorDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PruebaClaveAreaPreguntaDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PruebaClaveAreaPreguntaDistractorDAO;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Area;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Distractor;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Pregunta;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClave;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveAreaPregunta;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveAreaPreguntaDistractor;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveAreaPreguntaDistractorPK;
@@ -61,8 +64,8 @@ class PruebaClaveAreaPreguntaDistractorResourceTest {
     @Test
     void crearExitosoTest() {
         System.out.println("Ejecutando test: crearExitosoTest en PruebaClaveAreaPreguntaDistractorResource");
-        when(mockPadreDAO.buscarPorId(any())).thenReturn(new PruebaClaveAreaPregunta());
-        when(mockDistractorDAO.buscarPorId(any())).thenReturn(new Distractor());
+        when(mockPadreDAO.buscarPorId(any())).thenReturn(new PruebaClaveAreaPregunta(new PruebaClave(idPruebaClave), new Area(idArea), new Pregunta(idPregunta)));
+        when(mockDistractorDAO.buscarPorId(any())).thenReturn(new Distractor(idDistractor));
 
         UriInfo uriInfo = mock(UriInfo.class);
         UriBuilder uriBuilder = UriBuilder.fromUri("http://localhost/test");
@@ -72,10 +75,10 @@ class PruebaClaveAreaPreguntaDistractorResourceTest {
 
         assertEquals(201, response.getStatus());
         PruebaClaveAreaPreguntaDistractor creada = (PruebaClaveAreaPreguntaDistractor) response.getEntity();
-        assertEquals(idPruebaClave, creada.getIdPruebaClave());
-        assertEquals(idArea, creada.getIdArea());
-        assertEquals(idPregunta, creada.getIdPregunta());
-        assertEquals(idDistractor, creada.getIdDistractor());
+        assertEquals(idPruebaClave, creada.getIdPruebaClave().getIdPruebaClave());
+        assertEquals(idArea, creada.getIdArea().getIdArea());
+        assertEquals(idPregunta, creada.getIdPregunta().getIdPregunta());
+        assertEquals(idDistractor, creada.getIdDistractor().getIdDistractor());
         verify(mockDAO).crear(any(PruebaClaveAreaPreguntaDistractor.class));
     }
 

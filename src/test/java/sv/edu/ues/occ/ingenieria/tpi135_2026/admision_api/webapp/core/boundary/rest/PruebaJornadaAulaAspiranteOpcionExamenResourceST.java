@@ -184,7 +184,9 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResourceST extends AbstractIn
     // Crea el recurso padre necesario para operar con /examen.
     private void crearRelacionPorApi(ContextoExamen contexto) {
         PruebaJornadaAulaAspiranteOpcion relacion = new PruebaJornadaAulaAspiranteOpcion();
-        relacion.setIdAspiranteOpcion(contexto.idAspiranteOpcion);
+        AspiranteOpcion opcion = new AspiranteOpcion();
+        opcion.setIdAspiranteOpcion(contexto.idAspiranteOpcion);
+        relacion.setIdAspiranteOpcion(opcion);
         relacion.setActivo(true);
 
         Response response = target.path(contexto.idPrueba.toString())
@@ -202,7 +204,9 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResourceST extends AbstractIn
     // Inserta un examen inicial para pruebas de lectura, duplicado, update y delete.
     private void crearExamenPorApi(ContextoExamen contexto, UUID idPruebaClave, BigDecimal resultado) {
         PruebaJornadaAulaAspiranteOpcionExamen examen = new PruebaJornadaAulaAspiranteOpcionExamen();
-        examen.setIdPruebaClave(idPruebaClave);
+        PruebaClave pruebaClave = new PruebaClave();
+        pruebaClave.setIdPruebaClave(idPruebaClave);
+        examen.setIdPruebaClave(pruebaClave);
         examen.setResultado(resultado);
 
         Response response = target.path(contexto.idPrueba.toString())
@@ -250,7 +254,9 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResourceST extends AbstractIn
 
         ContextoExamen contexto = crearContextoExamen(false);
         PruebaJornadaAulaAspiranteOpcionExamen nuevo = new PruebaJornadaAulaAspiranteOpcionExamen();
-        nuevo.setIdPruebaClave(contexto.idPruebaClave);
+        PruebaClave pruebaClave = new PruebaClave();
+        pruebaClave.setIdPruebaClave(contexto.idPruebaClave);
+        nuevo.setIdPruebaClave(pruebaClave);
         nuevo.setResultado(new BigDecimal("9.25"));
 
         Response respuesta = target.path(contexto.idPrueba.toString())
@@ -299,7 +305,9 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResourceST extends AbstractIn
 
         ContextoExamen contexto = crearContextoExamen(false);
         PruebaJornadaAulaAspiranteOpcionExamen nuevo = new PruebaJornadaAulaAspiranteOpcionExamen();
-        nuevo.setIdPruebaClave(UUID.randomUUID());
+        PruebaClave pruebaClave = new PruebaClave();
+        pruebaClave.setIdPruebaClave(UUID.randomUUID());
+        nuevo.setIdPruebaClave(pruebaClave);
         nuevo.setResultado(new BigDecimal("8.00"));
 
         Response respuesta = target.path(contexto.idPrueba.toString())
@@ -324,7 +332,9 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResourceST extends AbstractIn
 
         ContextoExamen contexto = crearContextoExamen(true);
         PruebaJornadaAulaAspiranteOpcionExamen nuevo = new PruebaJornadaAulaAspiranteOpcionExamen();
-        nuevo.setIdPruebaClave(contexto.idPruebaClave);
+        PruebaClave pruebaClave = new PruebaClave();
+        pruebaClave.setIdPruebaClave(contexto.idPruebaClave);
+        nuevo.setIdPruebaClave(pruebaClave);
         nuevo.setResultado(new BigDecimal("7.50"));
 
         Response respuesta = target.path(contexto.idPrueba.toString())
@@ -364,10 +374,10 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResourceST extends AbstractIn
         PruebaJornadaAulaAspiranteOpcionExamen examen =
                 respuesta.readEntity(PruebaJornadaAulaAspiranteOpcionExamen.class);
         Assertions.assertNotNull(examen);
-        Assertions.assertEquals(contexto.idPrueba, examen.getIdPrueba());
-        Assertions.assertEquals(contexto.idJornada, examen.getIdJornada());
+        Assertions.assertEquals(contexto.idPrueba, examen.getIdPrueba().getIdPrueba());
+        Assertions.assertEquals(contexto.idJornada, examen.getIdJornada().getIdJornada());
         Assertions.assertEquals(contexto.idAula, examen.getIdAula());
-        Assertions.assertEquals(contexto.idAspiranteOpcion, examen.getIdAspiranteOpcion());
+        Assertions.assertEquals(contexto.idAspiranteOpcion, examen.getIdAspiranteOpcion().getIdAspiranteOpcion());
     }
 
     @Order(6)
@@ -401,7 +411,9 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResourceST extends AbstractIn
         ContextoExamen contexto = crearContextoExamen(true);
         PruebaJornadaAulaAspiranteOpcionExamen actualizar = new PruebaJornadaAulaAspiranteOpcionExamen();
         actualizar.setResultado(new BigDecimal("9.75"));
-        actualizar.setIdPruebaClave(contexto.idPruebaClave);
+        PruebaClave pruebaClave = new PruebaClave();
+        pruebaClave.setIdPruebaClave(contexto.idPruebaClave);
+        actualizar.setIdPruebaClave(pruebaClave);
 
         Response respuesta = target.path(contexto.idPrueba.toString())
                 .path("jornada")
@@ -430,7 +442,9 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResourceST extends AbstractIn
         ContextoExamen contexto = crearContextoExamen(false);
         PruebaJornadaAulaAspiranteOpcionExamen actualizar = new PruebaJornadaAulaAspiranteOpcionExamen();
         actualizar.setResultado(new BigDecimal("6.25"));
-        actualizar.setIdPruebaClave(contexto.idPruebaClave);
+        PruebaClave pruebaClave = new PruebaClave();
+        pruebaClave.setIdPruebaClave(contexto.idPruebaClave);
+        actualizar.setIdPruebaClave(pruebaClave);
 
         Response respuesta = target.path(contexto.idPrueba.toString())
                 .path("jornada")
@@ -455,7 +469,9 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResourceST extends AbstractIn
         ContextoExamen contexto = crearContextoExamen(true);
         PruebaJornadaAulaAspiranteOpcionExamen actualizar = new PruebaJornadaAulaAspiranteOpcionExamen();
         actualizar.setResultado(new BigDecimal("8.25"));
-        actualizar.setIdPruebaClave(UUID.randomUUID());
+        PruebaClave pruebaClave = new PruebaClave();
+        pruebaClave.setIdPruebaClave(UUID.randomUUID());
+        actualizar.setIdPruebaClave(pruebaClave);
 
         Response respuesta = target.path(contexto.idPrueba.toString())
                 .path("jornada")

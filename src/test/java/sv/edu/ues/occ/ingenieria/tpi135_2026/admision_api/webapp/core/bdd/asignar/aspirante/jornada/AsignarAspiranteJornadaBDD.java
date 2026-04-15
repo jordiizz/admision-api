@@ -8,7 +8,6 @@ import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.bdd.AbstractBDD;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.*;
@@ -147,7 +146,7 @@ public class AsignarAspiranteJornadaBDD extends AbstractBDD {
 
         PruebaJornadaAulaAspiranteOpcion entidad = new PruebaJornadaAulaAspiranteOpcion();
         entidad.setFecha(OffsetDateTime.now().withNano(0));
-        entidad.setIdAspiranteOpcion(aspiranteOpcion.getIdAspiranteOpcion());
+        entidad.setIdAspiranteOpcion(aspiranteOpcion);
 
         Response respuesta = target.path("prueba")
                 .path(prueba.getIdPrueba().toString())
@@ -191,11 +190,11 @@ public class AsignarAspiranteJornadaBDD extends AbstractBDD {
         PruebaJornadaAulaAspiranteOpcion entidad = respuesta.readEntity(PruebaJornadaAulaAspiranteOpcion.class);
         Assertions.assertNotNull(entidad);
         Assertions.assertEquals(entidad.getIdAula(), string);
-        Assertions.assertEquals(entidad.getIdJornada(), jornada.getIdJornada());
-        Assertions.assertEquals(entidad.getIdPrueba(), prueba.getIdPrueba());
-        Assertions.assertEquals(entidad.getIdAspiranteOpcion(), aspiranteOpcion.getIdAspiranteOpcion());
+        Assertions.assertEquals(entidad.getIdJornada().getIdJornada(), jornada.getIdJornada());
+        Assertions.assertEquals(entidad.getIdPrueba().getIdPrueba(), prueba.getIdPrueba());
+        Assertions.assertEquals(entidad.getIdAspiranteOpcion().getIdAspiranteOpcion(), aspiranteOpcion.getIdAspiranteOpcion());
         System.out.println("Aula: " + entidad.getIdAula());
-        System.out.println("AspiranteOpcion: " + entidad.getIdAspiranteOpcion());
+        System.out.println("AspiranteOpcion: " + entidad.getIdAspiranteOpcion().getIdAspiranteOpcion());
     }
 
 }

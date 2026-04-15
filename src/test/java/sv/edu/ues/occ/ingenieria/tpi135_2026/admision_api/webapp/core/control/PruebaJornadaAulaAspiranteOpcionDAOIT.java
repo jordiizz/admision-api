@@ -35,8 +35,8 @@ public class PruebaJornadaAulaAspiranteOpcionDAOIT extends AbstractIntengrationD
     PruebaJornadaAulaAspiranteOpcionDAO cut; // Class under test
 
     private static class ContextoPruebaJornadaAula {
-        UUID idPrueba;
-        UUID idJornada;
+        Prueba prueba;
+        Jornada jornada;
         String idAula;
     }
 
@@ -95,14 +95,14 @@ public class PruebaJornadaAulaAspiranteOpcionDAOIT extends AbstractIntengrationD
         crearPruebaJornada(prueba, jornada);
         crearJornadaAula(jornada, idAula);
 
-        ctx.idPrueba = prueba.getIdPrueba();
-        ctx.idJornada = jornada.getIdJornada();
+        ctx.prueba = prueba;
+        ctx.jornada = jornada;
         ctx.idAula = idAula;
 
         return ctx;
     }
 
-    private UUID crearAspiranteOpcion() {
+    private AspiranteOpcion crearAspiranteOpcion() {
         UUID uniq = UUID.randomUUID();
 
         Aspirante aspirante = new Aspirante(UUID.randomUUID());
@@ -119,18 +119,27 @@ public class PruebaJornadaAulaAspiranteOpcionDAOIT extends AbstractIntengrationD
         aspiranteOpcion.setFechaCreacion(OffsetDateTime.now());
         em.persist(aspiranteOpcion);
 
-        return aspiranteOpcion.getIdAspiranteOpcion();
+        return aspiranteOpcion;
+    }
+
+    private PruebaJornadaAulaAspiranteOpcion crearRelacion(Prueba prueba, Jornada jornada, String idAula,
+            AspiranteOpcion aspiranteOpcion) {
+        return new PruebaJornadaAulaAspiranteOpcion(
+                prueba,
+                jornada,
+                idAula,
+                aspiranteOpcion);
     }
 
     private PruebaJornadaAulaAspiranteOpcion crearEntidadValidaPersistida() {
         ContextoPruebaJornadaAula ctx = crearContextoPruebaJornadaAula("A-01");
-        UUID idAspiranteOpcion = crearAspiranteOpcion();
+        AspiranteOpcion aspiranteOpcion = crearAspiranteOpcion();
 
-        PruebaJornadaAulaAspiranteOpcion entidad = new PruebaJornadaAulaAspiranteOpcion(
-                ctx.idPrueba,
-                ctx.idJornada,
+        PruebaJornadaAulaAspiranteOpcion entidad = crearRelacion(
+                ctx.prueba,
+                ctx.jornada,
                 ctx.idAula,
-                idAspiranteOpcion);
+                aspiranteOpcion);
         entidad.setFecha(OffsetDateTime.now());
         entidad.setActivo(true);
         em.persist(entidad);
@@ -144,13 +153,13 @@ public class PruebaJornadaAulaAspiranteOpcionDAOIT extends AbstractIntengrationD
 
         cut.em.getTransaction().begin();
         ContextoPruebaJornadaAula ctx = crearContextoPruebaJornadaAula("A-01");
-        UUID idAspiranteOpcion = crearAspiranteOpcion();
+        AspiranteOpcion aspiranteOpcion = crearAspiranteOpcion();
 
-        PruebaJornadaAulaAspiranteOpcion nuevo = new PruebaJornadaAulaAspiranteOpcion(
-                ctx.idPrueba,
-                ctx.idJornada,
+        PruebaJornadaAulaAspiranteOpcion nuevo = crearRelacion(
+            ctx.prueba,
+            ctx.jornada,
                 ctx.idAula,
-                idAspiranteOpcion);
+            aspiranteOpcion);
 
         cut.crear(nuevo);
         cut.em.getTransaction().commit();
@@ -181,7 +190,7 @@ public class PruebaJornadaAulaAspiranteOpcionDAOIT extends AbstractIntengrationD
     public void testCountExitoso() {
         System.out.println("Contar prueba_jornada_aula_aspirante_opcion exitoso");
         Long resultado = cut.contar();
-        assertEquals(resultado, 1);
+        assertEquals(1, resultado);
         System.out.println("Resultado: " + resultado);
     }
 
@@ -213,17 +222,17 @@ public class PruebaJornadaAulaAspiranteOpcionDAOIT extends AbstractIntengrationD
         cut.em.getTransaction().commit();
 
         PruebaJornadaAulaAspiranteOpcionPK idBuscado = new PruebaJornadaAulaAspiranteOpcionPK(
-                nuevo.getIdPrueba(),
-                nuevo.getIdJornada(),
+            nuevo.getIdPrueba().getIdPrueba(),
+            nuevo.getIdJornada().getIdJornada(),
                 nuevo.getIdAula(),
-                nuevo.getIdAspiranteOpcion());
+            nuevo.getIdAspiranteOpcion().getIdAspiranteOpcion());
 
         PruebaJornadaAulaAspiranteOpcion encontrado = cut.buscarPorId(idBuscado);
         assertNotNull(encontrado);
-        assertEquals(idBuscado.getIdPrueba(), encontrado.getIdPrueba());
-        assertEquals(idBuscado.getIdJornada(), encontrado.getIdJornada());
+        assertEquals(idBuscado.getIdPrueba(), encontrado.getIdPrueba().getIdPrueba());
+        assertEquals(idBuscado.getIdJornada(), encontrado.getIdJornada().getIdJornada());
         assertEquals(idBuscado.getIdAula(), encontrado.getIdAula());
-        assertEquals(idBuscado.getIdAspiranteOpcion(), encontrado.getIdAspiranteOpcion());
+        assertEquals(idBuscado.getIdAspiranteOpcion(), encontrado.getIdAspiranteOpcion().getIdAspiranteOpcion());
         System.out.println("IdAspiranteOpcion: " + idBuscado.getIdAspiranteOpcion());
     }
 
@@ -250,21 +259,13 @@ public class PruebaJornadaAulaAspiranteOpcionDAOIT extends AbstractIntengrationD
 
         cut.em.getTransaction().begin();
         ContextoPruebaJornadaAula ctx = crearContextoPruebaJornadaAula("A-02");
-        UUID idAspiranteOpcion = crearAspiranteOpcion();
+        AspiranteOpcion aspiranteOpcion = crearAspiranteOpcion();
 
-        PruebaJornadaAulaAspiranteOpcion eliminado = new PruebaJornadaAulaAspiranteOpcion(
-                ctx.idPrueba,
-                ctx.idJornada,
-                ctx.idAula,
-                idAspiranteOpcion);
+        PruebaJornadaAulaAspiranteOpcion eliminado = crearRelacion(ctx.prueba,ctx.jornada, ctx.idAula, aspiranteOpcion);
         cut.eliminar(eliminado);
         cut.em.getTransaction().commit();
 
-        PruebaJornadaAulaAspiranteOpcionPK idEliminado = new PruebaJornadaAulaAspiranteOpcionPK(
-                ctx.idPrueba,
-                ctx.idJornada,
-                ctx.idAula,
-                idAspiranteOpcion);
+        PruebaJornadaAulaAspiranteOpcionPK idEliminado = new PruebaJornadaAulaAspiranteOpcionPK(ctx.prueba.getIdPrueba(), ctx.jornada.getIdJornada(), ctx.idAula, aspiranteOpcion.getIdAspiranteOpcion());
 
         assertNull(cut.buscarPorId(idEliminado));
     }
@@ -279,10 +280,10 @@ public class PruebaJornadaAulaAspiranteOpcionDAOIT extends AbstractIntengrationD
         cut.em.getTransaction().commit();
 
         PruebaJornadaAulaAspiranteOpcionPK idEliminado = new PruebaJornadaAulaAspiranteOpcionPK(
-                eliminado.getIdPrueba(),
-                eliminado.getIdJornada(),
+            eliminado.getIdPrueba().getIdPrueba(),
+            eliminado.getIdJornada().getIdJornada(),
                 eliminado.getIdAula(),
-                eliminado.getIdAspiranteOpcion());
+            eliminado.getIdAspiranteOpcion().getIdAspiranteOpcion());
 
         // eliminamos
         cut.em.getTransaction().begin();
@@ -383,27 +384,36 @@ public class PruebaJornadaAulaAspiranteOpcionDAOIT extends AbstractIntengrationD
         ContextoPruebaJornadaAula ctx = crearContextoPruebaJornadaAula("A-10");
 
         // Dos registros que sí deben aparecer en el resultado filtrado
-        UUID idAspiranteOpcion1 = crearAspiranteOpcion();
-        PruebaJornadaAulaAspiranteOpcion relacion1 = new PruebaJornadaAulaAspiranteOpcion(
-                ctx.idPrueba, ctx.idJornada, ctx.idAula, idAspiranteOpcion1);
+        AspiranteOpcion aspiranteOpcion1 = crearAspiranteOpcion();
+        PruebaJornadaAulaAspiranteOpcion relacion1 = crearRelacion(
+            ctx.prueba,
+            ctx.jornada,
+            ctx.idAula,
+            aspiranteOpcion1);
         cut.crear(relacion1);
 
-        UUID idAspiranteOpcion2 = crearAspiranteOpcion();
-        PruebaJornadaAulaAspiranteOpcion relacion2 = new PruebaJornadaAulaAspiranteOpcion(
-                ctx.idPrueba, ctx.idJornada, ctx.idAula, idAspiranteOpcion2);
+        AspiranteOpcion aspiranteOpcion2 = crearAspiranteOpcion();
+        PruebaJornadaAulaAspiranteOpcion relacion2 = crearRelacion(
+            ctx.prueba,
+            ctx.jornada,
+            ctx.idAula,
+            aspiranteOpcion2);
         cut.crear(relacion2);
 
         // Registro de otro contexto para comprobar que no se incluya en el filtro
         ContextoPruebaJornadaAula otroCtx = crearContextoPruebaJornadaAula("A-11");
-        UUID idAspiranteOpcion3 = crearAspiranteOpcion();
-        PruebaJornadaAulaAspiranteOpcion relacion3 = new PruebaJornadaAulaAspiranteOpcion(
-                otroCtx.idPrueba, otroCtx.idJornada, otroCtx.idAula, idAspiranteOpcion3);
+        AspiranteOpcion aspiranteOpcion3 = crearAspiranteOpcion();
+        PruebaJornadaAulaAspiranteOpcion relacion3 = crearRelacion(
+            otroCtx.prueba,
+            otroCtx.jornada,
+            otroCtx.idAula,
+            aspiranteOpcion3);
         cut.crear(relacion3);
 
         cut.em.getTransaction().commit();
 
         List<PruebaJornadaAulaAspiranteOpcion> resultados = cut.buscarPorPruebaJornadaYJornadaAulaRango(
-                ctx.idPrueba, ctx.idJornada, ctx.idAula, 0, 10);
+            ctx.prueba.getIdPrueba(), ctx.jornada.getIdJornada(), ctx.idAula, 0, 10);
 
         assertNotNull(resultados);
         // Deben regresar solo los 2 del contexto objetivo
@@ -428,19 +438,22 @@ public class PruebaJornadaAulaAspiranteOpcionDAOIT extends AbstractIntengrationD
         cut.em.getTransaction().begin();
         ContextoPruebaJornadaAula ctx = crearContextoPruebaJornadaAula("A-20");
 
-        UUID idAspiranteOpcion1 = crearAspiranteOpcion();
-        cut.crear(new PruebaJornadaAulaAspiranteOpcion(ctx.idPrueba, ctx.idJornada, ctx.idAula, idAspiranteOpcion1));
+        AspiranteOpcion aspiranteOpcion1 = crearAspiranteOpcion();
+        cut.crear(crearRelacion(ctx.prueba, ctx.jornada, ctx.idAula, aspiranteOpcion1));
 
-        UUID idAspiranteOpcion2 = crearAspiranteOpcion();
-        cut.crear(new PruebaJornadaAulaAspiranteOpcion(ctx.idPrueba, ctx.idJornada, ctx.idAula, idAspiranteOpcion2));
+        AspiranteOpcion aspiranteOpcion2 = crearAspiranteOpcion();
+        cut.crear(crearRelacion(ctx.prueba, ctx.jornada, ctx.idAula, aspiranteOpcion2));
 
         ContextoPruebaJornadaAula otroCtx = crearContextoPruebaJornadaAula("A-21");
-        UUID idAspiranteOpcion3 = crearAspiranteOpcion();
-        cut.crear(new PruebaJornadaAulaAspiranteOpcion(otroCtx.idPrueba, otroCtx.idJornada, otroCtx.idAula, idAspiranteOpcion3));
+        AspiranteOpcion aspiranteOpcion3 = crearAspiranteOpcion();
+        cut.crear(crearRelacion(otroCtx.prueba, otroCtx.jornada, otroCtx.idAula, aspiranteOpcion3));
 
         cut.em.getTransaction().commit();
 
-        Long resultado = cut.contarPorPruebaJornadaYJornadaAula(ctx.idPrueba, ctx.idJornada, ctx.idAula);
+        Long resultado = cut.contarPorPruebaJornadaYJornadaAula(
+            ctx.prueba.getIdPrueba(),
+            ctx.jornada.getIdJornada(),
+            ctx.idAula);
         assertEquals(2L, resultado);
         System.out.println("Resultado contarPorPruebaJornadaYJornadaAula: " + resultado);
     }
