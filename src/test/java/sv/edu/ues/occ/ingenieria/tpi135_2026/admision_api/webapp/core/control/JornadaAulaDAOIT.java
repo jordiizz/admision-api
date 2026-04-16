@@ -11,11 +11,11 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.JornadaAula;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Jornada;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -34,7 +34,7 @@ public class JornadaAulaDAOIT extends AbstractIntengrationDAOTest{
     UUID idAula = UUID.randomUUID();
     UUID idAula2 = UUID.randomUUID();
     UUID idAula3 = UUID.randomUUID();
-    
+
     @BeforeEach
     public void setUp() {
         jornadaDAO.em = em;
@@ -74,20 +74,77 @@ public class JornadaAulaDAOIT extends AbstractIntengrationDAOTest{
         cut.crear(jornadaAula3);
         Long registrosDespues = cut.contar();
         em.getTransaction().commit();
-        
+
         assertTrue(registrosDespues > registros);
     }
 
     @Order(2)
     @Test
-    public void testBuscarPorJornadaYAula(){
-        JornadaAula resultado = cut.buscarPorJornadaYAula(jornada.getIdJornada(), idAula.toString());
-        assertEquals(resultado, jornadaAula);
+    public void testCrearEmNull(){
+        cut.em = null;
+        try{
+            cut.crear(jornadaAula);
+        } catch (Exception ex) {
+            assertEquals(IllegalStateException.class, ex.getClass());
+        }
     }
 
     @Order(3)
     @Test
+    public void testCrearParametrosInvalidos(){
+        cut.em = em;
+        try{
+            cut.crear(null);
+        } catch (Exception ex) {
+            assertEquals(IllegalArgumentException.class, ex.getClass());
+        }
+    }
+
+    @Order(4)
+    @Test
+    public void testBuscarPorJornadaYAula(){
+        cut.em = em;
+        JornadaAula resultado = cut.buscarPorJornadaYAula(jornada.getIdJornada(), idAula.toString());
+        assertEquals(resultado, jornadaAula);
+    }
+
+    @Order(5)
+    @Test
+    public void testBuscarPorJornadaYAulaEmNull(){
+        cut.em = null;
+        try{
+            cut.buscarPorJornadaYAula(jornada.getIdJornada(), idAula.toString());
+        } catch (Exception ex) {
+            assertEquals(IllegalStateException.class, ex.getClass());
+        }
+    }
+
+    @Order(6)
+    @Test
+    public void testBuscarPorJornadaYAulaIdJornadaNull(){
+        cut.em = em;
+        try{
+            cut.buscarPorJornadaYAula(null, idAula.toString());
+        } catch (Exception ex) {
+            assertEquals(IllegalArgumentException.class, ex.getClass());
+        }
+    }
+
+    @Order(7)
+    @Test
+    public void testBuscarPorJornadaYAulaIdAulaNull(){
+        cut.em = em;
+        try{
+            cut.buscarPorJornadaYAula(jornada.getIdJornada(), null);
+        } catch (Exception ex) {
+            assertEquals(IllegalArgumentException.class, ex.getClass());
+        }
+    }
+
+    @Order(8)
+    @Test
     public void testListarPorJornada(){
+        cut.em = em;
         List<JornadaAula> resultados = cut.listarPorJornada(jornada.getIdJornada());
         assertTrue(resultados.size() >= 2);
         for (JornadaAula resultado: resultados) {
@@ -95,23 +152,103 @@ public class JornadaAulaDAOIT extends AbstractIntengrationDAOTest{
         }
     }
 
-    @Order(4)
+    @Order(9)
+    @Test
+    public void testListarPorJornadaEmNull(){
+        cut.em = null;
+        try{
+            cut.listarPorJornada(jornada.getIdJornada());
+        } catch (Exception ex) {
+            assertEquals(IllegalStateException.class, ex.getClass());
+        }
+    }
+
+    @Order(10)
+    @Test
+    public void testListarPorJornadaIdJornadaNull(){
+        cut.em = em;
+        try{
+            cut.listarPorJornada(null);
+        } catch (Exception ex) {
+            assertEquals(IllegalArgumentException.class, ex.getClass());
+        }
+    }
+
+    @Order(11)
     @Test
     public void testBuscarPorId(){
+        cut.em = em;
         JornadaAula resultado = cut.buscarPorId(jornadaAula.getIdJornadaAula());
         assertEquals(resultado, jornadaAula);
     }
 
-    @Order(5)
+    @Order(12)
+    @Test
+    public void testBuscarPorIdEmNull(){
+        cut.em = null;
+        try{
+            cut.buscarPorId(jornadaAula.getIdJornadaAula());
+        } catch (Exception ex) {
+            assertEquals(IllegalStateException.class, ex.getClass());
+        }
+    }
+
+    @Order(13)
+    @Test
+    public void testBuscarPorIdParametroNull(){
+        cut.em = em;
+        try{
+            cut.buscarPorId(null);
+        } catch (Exception ex) {
+            assertEquals(IllegalArgumentException.class, ex.getClass());
+        }
+    }
+
+    @Order(14)
     @Test
     public void testBuscarPorRango(){
+        cut.em = em;
         List<JornadaAula> resultados = cut.buscarPorRango(0, 10);
         assertTrue(resultados.size() >= 3);
     }
 
-    @Order(6)
+    @Order(15)
+    @Test
+    public void testBuscarPorRangoEmNull(){
+        cut.em = null;
+        try{
+            cut.buscarPorRango(0, 10);
+        } catch (Exception ex) {
+            assertEquals(IllegalStateException.class, ex.getClass());
+        }
+    }
+
+    @Order(16)
+    @Test
+    public void testBuscarPorRangoFirstNegativo(){
+        cut.em = em;
+        try{
+            cut.buscarPorRango(-1, 10);
+        } catch (Exception ex) {
+            assertEquals(IllegalArgumentException.class, ex.getClass());
+        }
+    }
+
+    @Order(17)
+    @Test
+    public void testBuscarPorRangoMaxNegativo(){
+        cut.em = em;
+        try{
+            cut.buscarPorRango(0, -1);
+        } catch (Exception ex) {
+            assertEquals(IllegalArgumentException.class, ex.getClass());
+        }
+    }
+
+    @Order(18)
     @Test
     public void testActualizar(){
+        cut.em = em;
         Long registros = cut.contar();
         jornadaAula.setIdAula(idAula2.toString());
         cut.actualizar(jornadaAula);
@@ -122,9 +259,32 @@ public class JornadaAulaDAOIT extends AbstractIntengrationDAOTest{
         assertEquals(resultado.getIdAula(), idAula2.toString());
     }
 
-    @Order(7)
+    @Order(19)
+    @Test
+    public void testActualizarEmNull(){
+        cut.em = null;
+        try{
+            cut.actualizar(jornadaAula);
+        } catch (Exception ex) {
+            assertEquals(IllegalStateException.class, ex.getClass());
+        }
+    }
+
+    @Order(20)
+    @Test
+    public void testActualizarParametroNull(){
+        cut.em = em;
+        try{
+            cut.actualizar(null);
+        } catch (Exception ex) {
+            assertEquals(IllegalArgumentException.class, ex.getClass());
+        }
+    }
+
+    @Order(21)
     @Test
     public void testEliminar(){
+        cut.em = em;
         em.getTransaction().begin();
         Long registros = cut.contar();
         cut.eliminar(jornadaAula);
@@ -134,4 +294,48 @@ public class JornadaAulaDAOIT extends AbstractIntengrationDAOTest{
         assertTrue(resultado == null);
         em.getTransaction().commit();
     }
+
+    @Order(22)
+    @Test
+    public void testEliminarEmNull(){
+        cut.em = null;
+        try{
+            cut.eliminar(jornadaAula2);
+        } catch (Exception ex) {
+            assertEquals(IllegalStateException.class, ex.getClass());
+        }
+    }
+
+    @Order(23)
+    @Test
+    public void testEliminarParametroNull(){
+        cut.em = em;
+        try{
+            cut.eliminar(null);
+        } catch (Exception ex) {
+            assertEquals(IllegalArgumentException.class, ex.getClass());
+        }
+    }
+
+    @Order(24)
+    @Test
+    public void testContarEmNull(){
+        cut.em = null;
+        try{
+            cut.contar();
+        } catch (Exception ex) {
+            assertEquals(IllegalStateException.class, ex.getClass());
+        }
+    }
+
+    @Order(25)
+    @Test
+    public void testEliminarNoContained(){
+        em.clear();
+        cut.eliminar(jornadaAula2);
+        JornadaAula encontrado = cut.buscarPorId(jornadaAula2.getIdJornadaAula());
+
+        assertNull(encontrado);
+    }
+
 }
