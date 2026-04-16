@@ -51,7 +51,7 @@ public class PruebaClaveAreaPreguntaResource implements Serializable{
                 if(p != null && a != null && pC != null) {
                     PruebaClaveAreaPregunta pruebaClaveAreaPregunta = new PruebaClaveAreaPregunta(pC, a, p);
                     pCAPDAO.crear(pruebaClaveAreaPregunta);
-                    return Response.status(Response.Status.CREATED).build();
+                    return Response.status(Response.Status.CREATED).entity(pruebaClaveAreaPregunta).build();
                 }
                 return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(),"pruebaClave, area o pregunta").build();
             } catch (Exception e) {
