@@ -26,7 +26,13 @@ public class PruebaClaveAreaPreguntaDAO extends DefaultDAO<PruebaClaveAreaPregun
         return em;
     }
 
-    public List<PruebaClaveAreaPregunta> buscarPorClaveYPregunta(UUID idPruebaClave, UUID idArea){
+    /**
+     * Busca la lista de preguntas pertenencientes a un area y una clave
+     * @param idPruebaClave
+     * @param idArea
+     * @return PruebaClaveAreaPregunta de toda el area de esa clave
+     */
+    public List<PruebaClaveAreaPregunta> buscarPorClaveYArea(UUID idPruebaClave, UUID idArea){
         if(idPruebaClave != null && idArea != null ){
             try {   
                 return em.createNamedQuery("PruebaClaveAreaPregunta.findByClaveAndArea", PruebaClaveAreaPregunta.class)

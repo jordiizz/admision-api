@@ -90,7 +90,7 @@ public class PruebaClaveAreaPreguntaResource implements Serializable{
 
         if(idPruebaClave != null && idArea != null ) {
             try {
-                List<PruebaClaveAreaPregunta> pruebaClaveAreaPreguntas = pCAPDAO.buscarPorClaveYPregunta(idPruebaClave, idArea);
+                List<PruebaClaveAreaPregunta> pruebaClaveAreaPreguntas = pCAPDAO.buscarPorClaveYArea(idPruebaClave, idArea);
                if(pruebaClaveAreaPreguntas != null){
                     return Response.status(Response.Status.OK).entity(pruebaClaveAreaPreguntas).build();
                }

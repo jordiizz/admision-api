@@ -65,6 +65,7 @@ public class AspiranteOpcionDAOIT extends AbstractIntengrationDAOTest{
         cut.crear(aspiranteOpcion2);
         Long registrosDespues = cut.contar();
         em.getTransaction().commit();
+        assertTrue(registrosDespues > registros);
     }
 
     @Order(2)

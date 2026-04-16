@@ -177,7 +177,7 @@ class PruebaClaveAreaPreguntaResourceTest {
         @DisplayName("Debe retornar la lista y 200")
         void listar_Exitoso() {
             List<PruebaClaveAreaPregunta> lista = Arrays.asList(new PruebaClaveAreaPregunta());
-            when(pCAPDAO.buscarPorClaveYPregunta(idPruebaClave, idArea)).thenReturn(lista);
+            when(pCAPDAO.buscarPorClaveYArea(idPruebaClave, idArea)).thenReturn(lista);
 
             Response response = resource.listar(idPruebaClave, idArea);
 
@@ -188,7 +188,7 @@ class PruebaClaveAreaPreguntaResourceTest {
         @Test
         @DisplayName("Debe retornar 404 si la lista es nula")
         void listar_Nulo() {
-            when(pCAPDAO.buscarPorClaveYPregunta(idPruebaClave, idArea)).thenReturn(null);
+            when(pCAPDAO.buscarPorClaveYArea(idPruebaClave, idArea)).thenReturn(null);
 
             Response response = resource.listar(idPruebaClave, idArea);
 
@@ -206,7 +206,7 @@ class PruebaClaveAreaPreguntaResourceTest {
         @Test
         @DisplayName("Debe retornar 500 si ocurre una excepción")
         void listar_Excepcion() {
-            when(pCAPDAO.buscarPorClaveYPregunta(idPruebaClave, idArea))
+            when(pCAPDAO.buscarPorClaveYArea(idPruebaClave, idArea))
                     .thenThrow(new RuntimeException("Error de consulta"));
 
             Response response = resource.listar(idPruebaClave, idArea);
