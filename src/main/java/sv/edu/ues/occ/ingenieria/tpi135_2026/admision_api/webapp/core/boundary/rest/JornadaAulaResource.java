@@ -93,7 +93,7 @@ public class JornadaAulaResource implements Serializable {
                     jA.setIdAula(idAula);
                     jA.setIdJornada(j);
                     jADAO.crear(jA);
-                    return Response.status(Response.Status.CREATED).build();
+                    return Response.status(Response.Status.CREATED).entity(jA).build();
                 }
                 return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "jornada").build();
 
