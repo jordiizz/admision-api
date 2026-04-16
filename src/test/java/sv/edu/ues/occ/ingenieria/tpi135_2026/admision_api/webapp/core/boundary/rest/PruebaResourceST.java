@@ -93,6 +93,7 @@ public class PruebaResourceST extends AbstractIntegrationTest {
 
         Assertions.assertEquals(201, respuesta.getStatus());
         Assertions.assertTrue(respuesta.getHeaders().containsKey("Location"));
+        Assertions.assertNotNull(respuesta.getLocation());
     }
 
     @Order(2)
