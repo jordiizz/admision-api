@@ -99,8 +99,8 @@ public class PruebaClaveResourceST extends AbstractIntegrationTest{
                 .get();
         assertEquals(Response.Status.OK.getStatusCode(), respuesta.getStatus());
 
-        //pruebaClave.setIdPruebaClave(UUID.fromString(idClave));
-        //assertEquals(pruebaClave, respuesta.readEntity(PruebaClave.class));
+        pruebaClave.setIdPruebaClave(UUID.fromString(idClave));
+        assertEquals(pruebaClave, respuesta.readEntity(PruebaClave.class));
     }
 
     @Order(3)
