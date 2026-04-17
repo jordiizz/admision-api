@@ -77,7 +77,7 @@ public class PreguntaResource implements Serializable{
                 if(pExistente != null){
                     p.setIdPregunta(idPregunta);
                     pDAO.actualizar(p);
-                    return Response.status(Response.Status.OK).build();
+                    return Response.status(Response.Status.OK).entity(p).build();
                 }
                 return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "PREGUNTA").build();
             } catch (Exception e) {

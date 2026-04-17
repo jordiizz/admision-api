@@ -72,15 +72,15 @@ public class PruebaJornadaAulaAspiranteOpcionExamenResource implements Serializa
                 return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "Prueba clave no encontrada").build();
             }
 
-                entity.setIdPrueba(padre.getIdPrueba());
-                entity.setIdJornada(padre.getIdJornada());
+            entity.setIdPrueba(padre.getIdPrueba());
+            entity.setIdJornada(padre.getIdJornada());
             entity.setIdAula(idAula);
-                entity.setIdAspiranteOpcion(padre.getIdAspiranteOpcion());
-                entity.setIdPruebaClave(pruebaClave);
+            entity.setIdAspiranteOpcion(padre.getIdAspiranteOpcion());
+            entity.setIdPruebaClave(pruebaClave);
             pruebaJornadaAulaAspiranteOpcionExamenDAO.crear(entity);
 
             UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
-                uriBuilder.path(entity.getIdPruebaClave().getIdPruebaClave().toString());
+            uriBuilder.path(entity.getIdPruebaClave().getIdPruebaClave().toString());
             return Response.created(uriBuilder.build())
                     .entity(entity)
                     .build();
