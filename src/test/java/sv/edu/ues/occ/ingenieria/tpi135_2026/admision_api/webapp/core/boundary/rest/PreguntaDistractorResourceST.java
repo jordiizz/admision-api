@@ -116,9 +116,19 @@ public class PreguntaDistractorResourceST extends AbstractIntegrationTest{
                 .request(MediaType.APPLICATION_JSON).get();
         List<PreguntaDistractor> encontrados = respuesta.readEntity(new GenericType<List<PreguntaDistractor>>() {});
 
+        assertEquals(Response.Status.OK.getStatusCode(), respuesta.getStatus());
         assertEquals(2, encontrados.size());
         assertTrue(encontrados.contains(preguntaDistractor));
         assertTrue(encontrados.contains(preguntaDistractor2));
     }
 
+    @Order(3)
+    @Test
+    public void testEliminar(){
+        Response respuesta = target.path(RESOURCE_NAME_PREGUNTA).path(idPregunta)
+                .path(RESOURCE_NAME_DISTRACTOR)
+                .path(idDistractor)
+                .request().delete();
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), respuesta.getStatus());
+    }
 }

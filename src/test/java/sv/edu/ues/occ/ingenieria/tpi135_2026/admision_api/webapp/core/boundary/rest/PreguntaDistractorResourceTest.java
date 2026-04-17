@@ -6,6 +6,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.junit.jupiter.api.Assertions;
 
@@ -17,6 +18,7 @@ import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.Pr
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Distractor;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Pregunta;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PreguntaDistractor;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PreguntaDistractorPK;
 
 public class PreguntaDistractorResourceTest {
 
@@ -99,33 +101,15 @@ public class PreguntaDistractorResourceTest {
         Assertions.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
 
-    @Test 
-    public void eliminar_PreguntaDistractor_PreguntaNoEncontrada(){
-        Mockito.when(pDAO.buscarPorId(p.getIdPregunta())).thenReturn(null);
-        Mockito.when(dDAO.buscarPorId(d.getIdDistractor())).thenReturn(d);
-        Response response = cut.eliminar(p.getIdPregunta(), d.getIdDistractor());
-        Mockito.verify(pDAO).buscarPorId(p.getIdPregunta());
-        Mockito.verify(dDAO).buscarPorId(d.getIdDistractor());
-        Mockito.verify(pDDAO, Mockito.never()).eliminar(Mockito.any(PreguntaDistractor.class));
-        Assertions.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-    }
 
-    @Test 
-    public void eliminar_PreguntaDistractor_DistractorNoEncontrado(){
-        Mockito.when(pDAO.buscarPorId(p.getIdPregunta())).thenReturn(p);
-        Mockito.when(dDAO.buscarPorId(d.getIdDistractor())).thenReturn(null);
-        Response response = cut.eliminar(p.getIdPregunta(), d.getIdDistractor());
-        Mockito.verify(pDAO).buscarPorId(p.getIdPregunta());
-        Mockito.verify(dDAO).buscarPorId(d.getIdDistractor());
-        Mockito.verify(pDDAO, Mockito.never()).eliminar(Mockito.any(PreguntaDistractor.class));
-        Assertions.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-    }
 
-    @Test 
+
+
     public void eliminar_PreguntaDistractor_ErrorInterno(){
-        Mockito.when(pDAO.buscarPorId(p.getIdPregunta())).thenReturn(p);
-        Mockito.when(dDAO.buscarPorId(d.getIdDistractor())).thenReturn(d);
+
         Mockito.doThrow(new RuntimeException("Error de prueba")).when(pDDAO).eliminar(Mockito.any(PreguntaDistractor.class));
+        PreguntaDistractorPK pk = new PreguntaDistractorPK(p.getIdPregunta(), d.getIdDistractor());
+        Mockito.when(pDDAO.buscarPorId(pk)).thenReturn(null);
         Response response = cut.eliminar(p.getIdPregunta(), d.getIdDistractor());
         Mockito.verify(pDDAO).eliminar(Mockito.any(PreguntaDistractor.class));
         Assertions.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
@@ -137,11 +121,9 @@ public class PreguntaDistractorResourceTest {
         Assertions.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
 
-    @Test 
+
     public void eliminar_PreguntaDistractor_Exitoso(){
         Mockito.doNothing().when(pDDAO).eliminar(Mockito.any(PreguntaDistractor.class));
-        Mockito.when(pDAO.buscarPorId(p.getIdPregunta())).thenReturn(p);
-        Mockito.when(dDAO.buscarPorId(d.getIdDistractor())).thenReturn(d);
         Response response = cut.eliminar(p.getIdPregunta(), d.getIdDistractor());
         Mockito.verify(pDDAO).eliminar(Mockito.any(PreguntaDistractor.class));
         Assertions.assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());

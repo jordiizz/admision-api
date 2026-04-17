@@ -18,10 +18,7 @@ import jakarta.ws.rs.core.Response;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.DistractorDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PreguntaDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PreguntaDistractorDAO;
-import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Distractor;
-import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Pregunta;
-import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PreguntaDistractor;
-import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PreguntaDistractorPK;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.*;
 
 @Path("pregunta/{id_pregunta}/distractor")
 public class PreguntaDistractorResource implements Serializable {
@@ -65,14 +62,11 @@ public class PreguntaDistractorResource implements Serializable {
     public Response eliminar(@PathParam("id_pregunta") UUID idPregunta, @PathParam("id_distractor") UUID idDistractor){
         if(idPregunta != null && idDistractor != null){
             try {
-                Pregunta p = pDAO.buscarPorId(idPregunta);
-                Distractor d = dDAO.buscarPorId(idDistractor);
-                PreguntaDistractorPK pk = new PreguntaDistractorPK(p.getIdPregunta(), d.getIdDistractor());
-                PreguntaDistractor pD = pDDAO.buscarPorId(pk);
-                if(p != null && d != null && pD != null){
-                    pDDAO.eliminar(pD);
-                    return Response.status(Response.Status.NO_CONTENT).build();
-                }
+                    PreguntaDistractor eliminado = pDDAO.buscarPorId(new PreguntaDistractorPK(idPregunta, idDistractor));
+                    if(eliminado != null){
+                        pDDAO.eliminar(eliminado);
+                        return Response.status(Response.Status.NO_CONTENT).build();
+                    }
                 return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "pregunta o distractor").build();
             } catch (Exception e) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
