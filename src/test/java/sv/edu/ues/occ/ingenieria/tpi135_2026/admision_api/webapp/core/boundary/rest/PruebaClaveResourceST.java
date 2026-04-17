@@ -13,6 +13,7 @@ import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Tip
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -56,14 +57,6 @@ public class PruebaClaveResourceST extends AbstractIntegrationTest{
 
     }
 
-    public void crearContexto(){
-        Response responseTipoPrueba = target.path("tipo_prueba").request(MediaType.APPLICATION_JSON)
-                .post(Entity.json(tipoPrueba));
-        Response responsePrueba = target.path("prueba").request(MediaType.APPLICATION_JSON)
-                .post(Entity.json(prueba));
-        //responsePrueba.getHeaderString("Location").split("prueba/")[1];
-    }
-
     @Order(1)
     @Test
     public void testAsignarClave(){
@@ -81,15 +74,18 @@ public class PruebaClaveResourceST extends AbstractIntegrationTest{
 
         // TEST REAL, YA TENGO UNA PRUEBA EN LA BD
         idPrueba = respuestaPrueba.getLocation().toString().split("prueba/")[1];
+
         Response respuesta = target.path(RESOURCE_NAME_PRUEBA).path(idPrueba).path(RESOURCE_NAME_CLAVE)
                 .request(MediaType.APPLICATION_JSON).post(Entity.json(pruebaClave));
         idClave = respuesta.getLocation().toString().split("clave/")[1];
+
         assertEquals(Response.Status.CREATED.getStatusCode(), respuesta.getStatus());
         assertNotNull(respuesta.getLocation());
 
         Response respuesta2 = target.path(RESOURCE_NAME_PRUEBA).path(idPrueba).path(RESOURCE_NAME_CLAVE)
                 .request(MediaType.APPLICATION_JSON).post(Entity.json(pruebaClave2));
         idClave2 = respuesta2.getLocation().toString().split("clave/")[1];
+
         assertNotNull(respuesta2.getLocation());
         assertEquals(Response.Status.CREATED.getStatusCode(), respuesta2.getStatus());
 
@@ -97,9 +93,22 @@ public class PruebaClaveResourceST extends AbstractIntegrationTest{
 
     @Order(2)
     @Test
+    public void testBuscarPorId(){
+        Response respuesta = target.path(RESOURCE_NAME_PRUEBA).path(idPrueba).path(RESOURCE_NAME_CLAVE).path(idClave)
+                .request(MediaType.APPLICATION_JSON)
+                .get();
+        assertEquals(Response.Status.OK.getStatusCode(), respuesta.getStatus());
+
+        //pruebaClave.setIdPruebaClave(UUID.fromString(idClave));
+        //assertEquals(pruebaClave, respuesta.readEntity(PruebaClave.class));
+    }
+
+    @Order(3)
+    @Test
     public void testListarClaves(){
         Response respuesta = target.path(RESOURCE_NAME_PRUEBA).path(idPrueba).path(RESOURCE_NAME_CLAVE)
-                .request(MediaType.APPLICATION_JSON).get();
+                .request(MediaType.APPLICATION_JSON)
+                .get();
 
         assertEquals(Response.Status.OK.getStatusCode(), respuesta.getStatus());
         List<PruebaClave> encontrados = respuesta.readEntity(new GenericType<List<PruebaClave>>() {});
@@ -107,13 +116,16 @@ public class PruebaClaveResourceST extends AbstractIntegrationTest{
         assertFalse(encontrados.isEmpty());
     }
 
-    @Order(3)
+
+    @Order(4)
     @Test
     public void testEliminar(){
-        Response respuesta = target.path(RESOURCE_NAME_PRUEBA).path(idPrueba).path(RESOURCE_NAME_CLAVE).path(idClave)
+        Response respuestae = target.path(RESOURCE_NAME_PRUEBA).path(idPrueba).path(RESOURCE_NAME_CLAVE).path(idClave)
                 .request().delete();
-        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), respuesta.getStatus());
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), respuestae.getStatus());
     }
+
+
 
 }
 

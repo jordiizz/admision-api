@@ -10,6 +10,7 @@ import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import jakarta.ws.rs.core.Response;
@@ -169,6 +170,16 @@ public class PruebaClaveResourceTest {
         Mockito.when(pDAO.buscarPorId(Mockito.any(UUID.class))).thenReturn(null);
         Response respuesta = cut.eliminarClave(UUID.randomUUID(), UUID.randomUUID());
         assertEquals(respuesta.getStatus(), Response.Status.NOT_FOUND.getStatusCode());
+    }
+
+    @Test
+    public void test_PruebaClave_buscarPorId(){
+
+        PruebaClave pC = new PruebaClave(UUID.randomUUID());
+        Mockito.when(pCDAO.buscarPorId(pC.getIdPruebaClave())).thenReturn(pC);
+        Response respuesta = cut.buscarPorId(UUID.randomUUID(), pC.getIdPruebaClave());
+        assertEquals(respuesta.getStatus(), Response.Status.OK.getStatusCode());
+
     }
 
 }

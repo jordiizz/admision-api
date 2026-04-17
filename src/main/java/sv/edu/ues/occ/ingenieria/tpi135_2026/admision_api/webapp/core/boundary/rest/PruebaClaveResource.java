@@ -54,6 +54,7 @@ public class PruebaClaveResource implements Serializable{
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
+
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public Response listarClaves(@PathParam("id_prueba") UUID idPrueba) {
@@ -68,7 +69,7 @@ public class PruebaClaveResource implements Serializable{
                 }
                 return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(),"prueba").build();
             } catch (Exception e) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
             }
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
@@ -90,10 +91,28 @@ public class PruebaClaveResource implements Serializable{
                 }
                 return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(),"prueba").build();
             } catch (Exception e) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
+            }
+        }
+        return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "idClave o idPrueba").build();
+    }
+
+
+    @GET
+    @Path("/{id_clave}")
+    public Response buscarPorId(@PathParam("id_prueba") UUID idPrueba, @PathParam("id_clave") UUID idPruebaClave){
+        if(idPrueba != null && idPruebaClave != null){
+            try{
+                PruebaClave encontrado = pCDAO.buscarPorId(idPruebaClave);
+                if(encontrado != null){
+                    return Response.status(Response.Status.OK).entity(encontrado).build();
+                }
+                return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(),"clave").build();
+            }catch (Exception e){
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
             }
         }
-        return Response.status(Response.Status.BAD_REQUEST).build();
+        return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "idPrueba o idClave").build();
     }
 
 }
