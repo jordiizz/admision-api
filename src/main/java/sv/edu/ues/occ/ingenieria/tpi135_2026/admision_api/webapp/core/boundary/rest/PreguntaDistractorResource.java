@@ -21,6 +21,7 @@ import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.Pr
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Distractor;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Pregunta;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PreguntaDistractor;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PreguntaDistractorPK;
 
 @Path("pregunta/{id_pregunta}/distractor")
 public class PreguntaDistractorResource implements Serializable {
@@ -66,10 +67,9 @@ public class PreguntaDistractorResource implements Serializable {
             try {
                 Pregunta p = pDAO.buscarPorId(idPregunta);
                 Distractor d = dDAO.buscarPorId(idDistractor);
-                if(p != null && d != null){
-                    PreguntaDistractor pD = new PreguntaDistractor();
-                    pD.setIdPregunta(p);
-                    pD.setIdDistractor(d);
+                PreguntaDistractorPK pk = new PreguntaDistractorPK(p.getIdPregunta(), d.getIdDistractor());
+                PreguntaDistractor pD = pDDAO.buscarPorId(pk);
+                if(p != null && d != null && pD != null){
                     pDDAO.eliminar(pD);
                     return Response.status(Response.Status.NO_CONTENT).build();
                 }
