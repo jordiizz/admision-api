@@ -5,15 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import jakarta.inject.Inject;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.DefaultValue;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -50,7 +42,7 @@ public class TipoPruebaResource implements Serializable{
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    public Response buscarPorRango(@PathParam("first") @DefaultValue("0") int first, @PathParam("max") @DefaultValue("10") int max){
+    public Response buscarPorRango(@QueryParam("first") @DefaultValue("0") int first, @QueryParam("max") @DefaultValue("10") int max){
         if(first < 0 || max <= 0){
             return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "Los parámetros 'first' y 'max' deben ser números enteros positivos").build();
         }
