@@ -1,9 +1,6 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.boundary.rest;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -24,8 +21,11 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Area;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Distractor;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Pregunta;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PreguntaDistractor;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Prueba;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClave;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveArea;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveAreaPregunta;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveAreaPreguntaDistractor;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.TipoPrueba;
 
@@ -46,12 +46,6 @@ public class PruebaClaveAreaPreguntaDistractorResourceST extends AbstractIntegra
         UUID idArea;
         UUID idPregunta;
         UUID idDistractor;
-    }
-
-    // Conexion SQL para relaciones sin endpoint dedicado.
-    private Connection abrirConexion() throws SQLException {
-        String url = String.format("jdbc:postgresql://localhost:%d/tpi135", postgres.getMappedPort(5432));
-        return DriverManager.getConnection(url, "postgres", "abc123");
     }
 
     // Raiz API para setup E2E.
@@ -137,7 +131,6 @@ public class PruebaClaveAreaPreguntaDistractorResourceST extends AbstractIntegra
         return UUID.fromString(location.substring(location.lastIndexOf('/') + 1));
     }
 
-    // Se crean por SQL porque no hay endpoint directo para estas relaciones encadenadas.
     private UUID crearPruebaClavePorApi(UUID idPrueba) {
         PruebaClave nuevaClave = new PruebaClave();
         nuevaClave.setNombreClave("CLAVE-ST-" + UUID.randomUUID().toString().substring(0, 8));
@@ -154,46 +147,56 @@ public class PruebaClaveAreaPreguntaDistractorResourceST extends AbstractIntegra
         return UUID.fromString(location.substring(location.lastIndexOf('/') + 1));
     }
 
-    private void insertarPreguntaArea(Connection conexion, UUID idPregunta, UUID idArea) throws SQLException {
-        String sql = "INSERT INTO pregunta_area (id_pregunta, id_area) VALUES (?, ?)";
-        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
-            ps.setObject(1, idPregunta);
-            ps.setObject(2, idArea);
-            ps.executeUpdate();
-        }
+    private void crearPreguntaAreaPorApi(UUID idPregunta, UUID idArea) {
+        Response response = apiRoot().path("pregunta")
+                .path(idPregunta.toString())
+                .path("area")
+                .path(idArea.toString())
+                .request(MediaType.APPLICATION_JSON)
+                .post(null);
+
+        Assertions.assertEquals(201, response.getStatus());
     }
 
-    private void insertarPruebaClaveArea(Connection conexion, UUID idPruebaClave, UUID idArea) throws SQLException {
-        String sql = "INSERT INTO prueba_clave_area (id_prueba_clave, id_area, cantidad, porcentaje) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
-            ps.setObject(1, idPruebaClave);
-            ps.setObject(2, idArea);
-            ps.setInt(3, 1);
-            ps.setBigDecimal(4, new BigDecimal("50.00"));
-            ps.executeUpdate();
-        }
+    private void crearPruebaClaveAreaPorApi(UUID idPruebaClave, UUID idArea) {
+        PruebaClaveArea relacion = new PruebaClaveArea();
+        relacion.setIdArea(new Area(idArea));
+
+        Response response = target.path(idPruebaClave.toString())
+                .path("area")
+                .request(MediaType.APPLICATION_JSON)
+                .post(Entity.json(relacion));
+
+        Assertions.assertEquals(201, response.getStatus());
     }
 
-    private void insertarPruebaClaveAreaPregunta(Connection conexion, UUID idPruebaClave, UUID idArea, UUID idPregunta)
-            throws SQLException {
-        String sql = "INSERT INTO prueba_clave_area_pregunta (id_prueba_clave, id_area, id_pregunta, porcentaje) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
-            ps.setObject(1, idPruebaClave);
-            ps.setObject(2, idArea);
-            ps.setObject(3, idPregunta);
-            ps.setBigDecimal(4, new BigDecimal("50.00"));
-            ps.executeUpdate();
-        }
+    private void crearPruebaClaveAreaPreguntaPorApi(UUID idPruebaClave, UUID idArea, UUID idPregunta) {
+        PruebaClaveAreaPregunta relacion = new PruebaClaveAreaPregunta();
+        relacion.setIdPregunta(new Pregunta(idPregunta));
+        relacion.setPorcentaje(new BigDecimal("5.00"));
+
+        Response response = target.path(idPruebaClave.toString())
+                .path("area")
+                .path(idArea.toString())
+                .path("pregunta")
+                .request(MediaType.APPLICATION_JSON)
+                .post(Entity.json(relacion));
+
+        Assertions.assertEquals(201, response.getStatus());
     }
 
-    private void insertarPreguntaDistractor(Connection conexion, UUID idPregunta, UUID idDistractor) throws SQLException {
-        String sql = "INSERT INTO pregunta_distractor (id_pregunta, id_distractor, correcto) VALUES (?, ?, ?)";
-        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
-            ps.setObject(1, idPregunta);
-            ps.setObject(2, idDistractor);
-            ps.setBoolean(3, false);
-            ps.executeUpdate();
-        }
+    private void crearPreguntaDistractorPorApi(UUID idPregunta, UUID idDistractor) {
+        PreguntaDistractor relacion = new PreguntaDistractor();
+        relacion.setCorrecto(false);
+
+        Response response = apiRoot().path("pregunta")
+                .path(idPregunta.toString())
+                .path("distractor")
+                .path(idDistractor.toString())
+                .request(MediaType.APPLICATION_JSON)
+                .post(Entity.json(relacion));
+
+        Assertions.assertEquals(201, response.getStatus());
     }
 
     private void crearRelacionPorApi(ContextoDistractor contexto, UUID idDistractor) {
@@ -210,7 +213,7 @@ public class PruebaClaveAreaPreguntaDistractorResourceST extends AbstractIntegra
         Assertions.assertEquals(201, response.getStatus());
     }
 
-    // Contexto completo: API para entidades base + SQL para relaciones intermedias.
+    // Contexto completo: API para entidades base y relaciones intermedias.
     private ContextoDistractor crearContexto(boolean incluirRelacion) throws SQLException {
         ContextoDistractor contexto = new ContextoDistractor();
         UUID idTipoPrueba = crearTipoPruebaPorApi();
@@ -220,12 +223,10 @@ public class PruebaClaveAreaPreguntaDistractorResourceST extends AbstractIntegra
         contexto.idDistractor = crearDistractorPorApi();
         contexto.idPruebaClave = crearPruebaClavePorApi(contexto.idPrueba);
 
-        try (Connection conexion = abrirConexion()) {
-            insertarPreguntaArea(conexion, contexto.idPregunta, contexto.idArea);
-            insertarPreguntaDistractor(conexion, contexto.idPregunta, contexto.idDistractor);
-            insertarPruebaClaveArea(conexion, contexto.idPruebaClave, contexto.idArea);
-            insertarPruebaClaveAreaPregunta(conexion, contexto.idPruebaClave, contexto.idArea, contexto.idPregunta);
-        }
+        crearPreguntaAreaPorApi(contexto.idPregunta, contexto.idArea);
+        crearPreguntaDistractorPorApi(contexto.idPregunta, contexto.idDistractor);
+        crearPruebaClaveAreaPorApi(contexto.idPruebaClave, contexto.idArea);
+        crearPruebaClaveAreaPreguntaPorApi(contexto.idPruebaClave, contexto.idArea, contexto.idPregunta);
 
         if (incluirRelacion) {
             crearRelacionPorApi(contexto, contexto.idDistractor);
