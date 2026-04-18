@@ -17,7 +17,11 @@ import jakarta.persistence.Table;
 
 @NamedQueries({
     @NamedQuery(name = "PruebaClaveAreaPregunta.findByClaveAndArea", 
-                query = "SELECT pcap FROM PruebaClaveAreaPregunta pcap WHERE pcap.idPruebaClave.idPruebaClave = :idPruebaClave AND pcap.idArea.idArea = :idArea")
+                query = "SELECT pcap FROM PruebaClaveAreaPregunta pcap WHERE pcap.idPruebaClave.idPruebaClave = :idPruebaClave AND pcap.idArea.idArea = :idArea"),
+    @NamedQuery(
+            name = "PruebaClaveAreaPregunta.findTotalPorcentajeByPruebaClave",
+            query = "SELECT SUM(pcap.porcentaje) FROM PruebaClaveAreaPregunta pcap WHERE pcap.idPruebaClave.idPruebaClave = :idPruebaClave"
+    )
 })
 @Entity
 @IdClass(PruebaClaveAreaPreguntaPK.class)
