@@ -186,6 +186,16 @@ public class PruebaClaveAreaPreguntaDistractorResourceST extends AbstractIntegra
         }
     }
 
+    private void insertarPreguntaDistractor(Connection conexion, UUID idPregunta, UUID idDistractor) throws SQLException {
+        String sql = "INSERT INTO pregunta_distractor (id_pregunta, id_distractor, correcto) VALUES (?, ?, ?)";
+        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
+            ps.setObject(1, idPregunta);
+            ps.setObject(2, idDistractor);
+            ps.setBoolean(3, false);
+            ps.executeUpdate();
+        }
+    }
+
     private void crearRelacionPorApi(ContextoDistractor contexto, UUID idDistractor) {
         Response response = target.path(contexto.idPruebaClave.toString())
                 .path("area")
@@ -212,6 +222,7 @@ public class PruebaClaveAreaPreguntaDistractorResourceST extends AbstractIntegra
 
         try (Connection conexion = abrirConexion()) {
             insertarPreguntaArea(conexion, contexto.idPregunta, contexto.idArea);
+            insertarPreguntaDistractor(conexion, contexto.idPregunta, contexto.idDistractor);
             insertarPruebaClaveArea(conexion, contexto.idPruebaClave, contexto.idArea);
             insertarPruebaClaveAreaPregunta(conexion, contexto.idPruebaClave, contexto.idArea, contexto.idPregunta);
         }
