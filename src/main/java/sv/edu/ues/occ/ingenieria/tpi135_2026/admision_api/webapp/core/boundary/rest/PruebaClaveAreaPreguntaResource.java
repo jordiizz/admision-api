@@ -107,6 +107,27 @@ public class PruebaClaveAreaPreguntaResource implements Serializable{
 
     }
 
+    @GET
+    @Path("{id_pregunta}")
+    public Response buscarPorId(@PathParam("id_prueba_clave") UUID idPruebaClave,
+                                @PathParam("id_area") UUID idArea,
+                                @PathParam("id_pregunta") UUID idPregunta) {
+
+        if(idPruebaClave != null && idArea != null && idPregunta != null) {
+            try {
+                PruebaClaveAreaPreguntaPK pk = new PruebaClaveAreaPreguntaPK(idPruebaClave, idArea, idPregunta);
+                PruebaClaveAreaPregunta pruebaClaveAreaPregunta = pruebaClaveAreaPreguntaDAO.buscarPorId(pk);
+                if(pruebaClaveAreaPregunta != null) {
+                    return Response.status(Response.Status.OK).entity(pruebaClaveAreaPregunta).build();
+                }
+                return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(),"pruebaClave, area o pregunta").build();
+            } catch (Exception e) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+            }
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
+    }
+
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     public Response actualizar(@PathParam("id_prueba_clave") UUID idPruebaClave,

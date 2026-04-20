@@ -177,6 +177,25 @@ public class PruebaClaveAreaPreguntaResourceST extends AbstractIntegrationTest{
         assertEquals(new BigDecimal(50), pruebaClaveAreaPregunta.getPorcentaje());
     }
 
+        @Order(2)
+        @Test
+        public void testBuscarPorId(){
+                Response respuesta = target.path(RESOURCE_NAME_PRUEBA_CLAVE)
+                                .path(idPruebaClave)
+                                .path(RESOURCE_NAME_AREA)
+                                .path(idArea)
+                                .path(RESOURCE_NAME_PREGUNTA)
+                                .path(idPregunta)
+                                .request(MediaType.APPLICATION_JSON)
+                                .get();
+
+                assertEquals(Response.Status.OK.getStatusCode(), respuesta.getStatus());
+                PruebaClaveAreaPregunta encontrado = respuesta.readEntity(PruebaClaveAreaPregunta.class);
+                assertNotNull(encontrado);
+                assertNotNull(encontrado.getIdPregunta());
+                assertEquals(UUID.fromString(idPregunta), encontrado.getIdPregunta().getIdPregunta());
+        }
+
     @Order(3)
     @Test
     public void testListar(){

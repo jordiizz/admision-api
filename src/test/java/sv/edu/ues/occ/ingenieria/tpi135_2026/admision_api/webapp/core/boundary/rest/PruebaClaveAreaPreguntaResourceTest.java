@@ -306,6 +306,65 @@ class PruebaClaveAreaPreguntaResourceTest {
             assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
         }
     }
+
+    @Test
+    @DisplayName("Debe retornar el registro y 200")
+    void buscarPorId_Exitoso() {
+        PruebaClaveAreaPreguntaPK pk = new PruebaClaveAreaPreguntaPK(idPruebaClave, idArea, idPregunta);
+        when(pCAPDAO.buscarPorId(pk)).thenReturn(pruebaClaveAreaPregunta);
+
+        Response response = resource.buscarPorId(idPruebaClave, idArea, idPregunta);
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(pruebaClaveAreaPregunta, response.getEntity());
+    }
+
+    @Test
+    @DisplayName("Debe retornar 404 si no se encuentra el registro")
+    void buscarPorId_NoEncontrado() {
+        PruebaClaveAreaPreguntaPK pk = new PruebaClaveAreaPreguntaPK(idPruebaClave, idArea, idPregunta);
+        when(pCAPDAO.buscarPorId(pk)).thenReturn(null);
+
+        Response response = resource.buscarPorId(idPruebaClave, idArea, idPregunta);
+
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    @DisplayName("Debe retornar 400 si idPruebaClave es nulo")
+    void buscarPorId_IdPruebaClaveNulo() {
+        Response response = resource.buscarPorId(null, idArea, idPregunta);
+
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    @DisplayName("Debe retornar 400 si idArea es nulo")
+    void buscarPorId_IdAreaNulo() {
+        Response response = resource.buscarPorId(idPruebaClave, null, idPregunta);
+
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    @DisplayName("Debe retornar 400 si idPregunta es nulo")
+    void buscarPorId_IdPreguntaNulo() {
+        Response response = resource.buscarPorId(idPruebaClave, idArea, null);
+
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    @DisplayName("Debe retornar 500 si ocurre una excepción")
+    void buscarPorId_Excepcion() {
+        PruebaClaveAreaPreguntaPK pk = new PruebaClaveAreaPreguntaPK(idPruebaClave, idArea, idPregunta);
+        when(pCAPDAO.buscarPorId(pk)).thenThrow(new RuntimeException("Error de consulta"));
+
+        Response response = resource.buscarPorId(idPruebaClave, idArea, idPregunta);
+
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+    }
+
     @Nested
     @DisplayName("Pruebas para el método actuaizar")
     class ActualizarTests {
