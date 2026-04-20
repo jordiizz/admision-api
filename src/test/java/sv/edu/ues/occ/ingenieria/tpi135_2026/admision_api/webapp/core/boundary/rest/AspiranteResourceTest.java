@@ -1,6 +1,8 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.boundary.rest;
 
 import java.net.URI;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,14 +15,21 @@ import org.mockito.Mockito;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriInfo;
-import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.AspiranteDAO;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.*;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Aspirante;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Prueba;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornadaAulaAspiranteOpcionExamen;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.TipoPrueba;
 
 public class AspiranteResourceTest {
 
     private UriInfo mockUriInfo;
     private AspiranteDAO mockAD;
     private AspiranteResource cut;
+
+    PruebaDAO mockPD;
+    PruebaJornadaAulaAspiranteOpcionExamenDAO mockPJAOED;
+    ExamenDefaultStrategy mockStrategy;
 
     @BeforeEach
     public void setup(){
@@ -37,6 +46,14 @@ public class AspiranteResourceTest {
 
         cut = new AspiranteResource();
         cut.aspiranteDAO = mockAD;
+        mockPD = Mockito.mock(PruebaDAO.class);
+        mockPJAOED = Mockito.mock(PruebaJornadaAulaAspiranteOpcionExamenDAO.class);
+        mockStrategy = Mockito.mock(ExamenDefaultStrategy.class);
+
+        cut.pruebaDAO = mockPD;
+        cut.pruebaJornadaAulaAspiranteOpcionExamenDAO = mockPJAOED;
+        cut.estrategiasEstado = new HashMap<>();
+        cut.examenDefaultStrategy = mockStrategy;
     }
 
     @Test
@@ -277,6 +294,74 @@ public class AspiranteResourceTest {
         Response resultado = cut.actualizar(aspirante.getIdAspirante(), aspirante);
         assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockAD);
+    }
+
+    @Test
+    public void listarResultadoExamenExitosoTest() {
+        UUID idA = UUID.randomUUID();
+        UUID idP = UUID.randomUUID();
+        Prueba p = new Prueba();
+        p.setIdPrueba(idP);
+        p.setIdTipoPrueba(new TipoPrueba(UUID.randomUUID()));
+        PruebaJornadaAulaAspiranteOpcionExamen ex = new PruebaJornadaAulaAspiranteOpcionExamen();
+        ex.setIdPrueba(p);
+
+        Mockito.when(mockPJAOED.obtenerResultadoExamenPorAspiranteYPrueba(idA, idP)).thenReturn(ex);
+        Mockito.when(mockStrategy.obtenerEstado(Mockito.any(), Mockito.any())).thenReturn(ExamenResultadosEnum.APROBADO);
+
+        Response res = cut.listarResultadoExamen(idA, idP);
+        assertEquals(200, res.getStatus());
+    }
+
+    @Test
+    public void listarResultadoExamenNullTest() {
+        Response res = cut.listarResultadoExamen(null, null);
+        assertEquals(400, res.getStatus());
+    }
+
+    @Test
+    public void listarResultadoExamenNoEncontradoTest() {
+        UUID id = UUID.randomUUID();
+        Mockito.when(mockPJAOED.obtenerResultadoExamenPorAspiranteYPrueba(id, id)).thenReturn(null);
+        Response res = cut.listarResultadoExamen(id, id);
+        assertEquals(404, res.getStatus());
+    }
+
+    @Test
+    public void listarResultadoExamenErrorTest() {
+        Mockito.when(mockPJAOED.obtenerResultadoExamenPorAspiranteYPrueba(Mockito.any(), Mockito.any())).thenThrow(new RuntimeException());
+        Response res = cut.listarResultadoExamen(UUID.randomUUID(), UUID.randomUUID());
+        assertEquals(500, res.getStatus());
+    }
+
+    @Test
+    public void listarPruebasPorAspiranteExitosoTest() {
+        UUID id = UUID.randomUUID();
+        Mockito.when(mockPD.findByIdAspirante(id)).thenReturn(List.of(new Prueba()));
+        Response res = cut.listarPruebasPorAspirante(id);
+        assertEquals(200, res.getStatus());
+    }
+
+    @Test
+    public void listarPruebasPorAspiranteNullTest() {
+        Response res = cut.listarPruebasPorAspirante(null);
+        assertEquals(400, res.getStatus());
+    }
+
+    @Test
+    public void listarPruebasPorAspiranteVacioTest() {
+        UUID id = UUID.randomUUID();
+        Mockito.when(mockPD.findByIdAspirante(id)).thenReturn(Collections.emptyList());
+        Response res = cut.listarPruebasPorAspirante(id);
+        assertEquals(404, res.getStatus());
+    }
+
+    @Test
+    public void listarPruebasPorAspiranteErrorTest() {
+        UUID id = UUID.randomUUID();
+        Mockito.when(mockPD.findByIdAspirante(id)).thenThrow(new RuntimeException());
+        Response res = cut.listarPruebasPorAspirante(id);
+        assertEquals(500, res.getStatus());
     }
 
 }

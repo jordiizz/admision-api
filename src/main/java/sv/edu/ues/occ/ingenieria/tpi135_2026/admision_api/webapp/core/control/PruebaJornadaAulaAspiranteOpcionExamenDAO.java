@@ -1,6 +1,7 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -93,6 +94,22 @@ public class PruebaJornadaAulaAspiranteOpcionExamenDAO
             }
         }
         throw new IllegalArgumentException("Parámetros inválidos");
+    }
+
+
+    public PruebaJornadaAulaAspiranteOpcionExamen obtenerResultadoExamenPorAspiranteYPrueba(UUID idAspirante, UUID idPrueba) {
+        if(idAspirante != null && idPrueba != null){
+            if(em != null){
+                return em.createNamedQuery("PruebaJornadaAulaAspiranteOpcionExamen.findByIdAspiranteAndIdPrueba", PruebaJornadaAulaAspiranteOpcionExamen.class)
+                        .setParameter("idAspirante", idAspirante)
+                        .setParameter("idPrueba", idPrueba)
+                        .getResultStream()
+                        .findFirst()
+                        .orElse(null);
+            }
+           throw new IllegalStateException("El repositorio es nulo");
+        }
+        throw new IllegalArgumentException("idAspirante y idPrueba no pueden ser nulos");
     }
 }
 

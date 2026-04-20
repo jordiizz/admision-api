@@ -80,4 +80,61 @@ public class JornadaAulaDAOTest {
         Mockito.verify(mockQuery, Mockito.times(2)).getResultList();
         System.out.println("JornadaAulaDAOTest.buscarPorJornadaYAulaTest - finalizado");
     }
+
+    @Test
+    public void listarPorJornadaTest() {
+        System.out.println("JornadaAulaDAOTest.listarPorJornadaTest");
+        JornadaAulaDAO cut = new JornadaAulaDAO();
+        EntityManager mockEM = Mockito.mock(EntityManager.class);
+        @SuppressWarnings("unchecked")
+        TypedQuery<JornadaAula> mockQuery = Mockito.mock(TypedQuery.class);
+
+        UUID idJornada = UUID.randomUUID();
+        JornadaAula jornadaAula = new JornadaAula(UUID.randomUUID());
+        List<JornadaAula> listaEsperada = List.of(jornadaAula);
+
+        // Validaciones: parámetro nulo y sin EntityManager
+        assertThrows(IllegalArgumentException.class, () -> cut.listarPorJornada(null));
+        assertThrows(IllegalStateException.class, () -> cut.listarPorJornada(idJornada));
+
+        // Configurar mock
+        cut.em = mockEM;
+        Mockito.when(mockEM.createNamedQuery("JornadaAula.findByIdJornada", JornadaAula.class)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idJornada", idJornada)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.getResultList()).thenReturn(listaEsperada);
+
+        // Act
+        List<JornadaAula> resultado = cut.listarPorJornada(idJornada);
+
+        // Assert
+        assertNotNull(resultado);
+        assertEquals(1, resultado.size());
+        assertEquals(jornadaAula, resultado.get(0));
+        System.out.println("JornadaAulaDAOTest.listarPorJornadaTest - finalizado");
+    }
+
+    @Test
+    public void listarPorJornadaVacioTest() {
+        System.out.println("JornadaAulaDAOTest.listarPorJornadaVacioTest");
+        JornadaAulaDAO cut = new JornadaAulaDAO();
+        EntityManager mockEM = Mockito.mock(EntityManager.class);
+        @SuppressWarnings("unchecked")
+        TypedQuery<JornadaAula> mockQuery = Mockito.mock(TypedQuery.class);
+
+        UUID idJornada = UUID.randomUUID();
+
+        cut.em = mockEM;
+        Mockito.when(mockEM.createNamedQuery("JornadaAula.findByIdJornada", JornadaAula.class)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idJornada", idJornada)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.getResultList()).thenReturn(List.of());
+
+        // Act
+        List<JornadaAula> resultado = cut.listarPorJornada(idJornada);
+
+        // Assert
+        assertNotNull(resultado);
+        assertEquals(0, resultado.size());
+        System.out.println("JornadaAulaDAOTest.listarPorJornadaVacioTest - finalizado");
+    }
+
 }

@@ -7,16 +7,18 @@ import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
+
+
 
 @Entity
 @Table(name = "prueba")
+@NamedQueries({
+        @NamedQuery(name = "Prueba.findByIdAspirante",
+                query = "SELECT ex.idPrueba FROM PruebaJornadaAulaAspiranteOpcionExamen ex WHERE ex.idAspiranteOpcion.idAspirante.idAspirante = :idAspirante"
+        )
+})
 public class Prueba implements Serializable{
 
     @Id

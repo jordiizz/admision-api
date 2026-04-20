@@ -578,4 +578,103 @@ public class PruebaJornadaAulaAspiranteOpcionExamenDAOIT extends AbstractIntengr
             () -> cut.contarPorPadre(UUID.randomUUID(), UUID.randomUUID(), "A-01", null));
         assertEquals("Parámetros inválidos", exAspiranteNulo.getMessage());
     }
+
+    @Order(26)
+    @Test
+    public void testObtenerResultadoExamenPorAspiranteYPruebaExitoso() {
+        System.out.println("obtenerResultadoExamenPorAspiranteYPrueba - exitoso");
+
+        cut.em.getTransaction().begin();
+        ContextoCompleto ctx = crearContextoCompleto("A-30");
+
+        PruebaJornadaAulaAspiranteOpcionExamen examen = crearExamen(
+            ctx.prueba,
+            ctx.jornada,
+            ctx.idAula,
+            ctx.aspiranteOpcion,
+            ctx.pruebaClave);
+        examen.setResultado(new BigDecimal("8.50"));
+        examen.setFechaResultado(OffsetDateTime.now());
+        cut.crear(examen);
+        cut.em.getTransaction().commit();
+
+        // Act
+        PruebaJornadaAulaAspiranteOpcionExamen resultado = cut.obtenerResultadoExamenPorAspiranteYPrueba(
+            ctx.aspiranteOpcion.getIdAspirante().getIdAspirante(),
+            ctx.prueba.getIdPrueba());
+
+        // Assert
+        assertNotNull(resultado);
+        assertEquals(examen.getIdPrueba().getIdPrueba(), resultado.getIdPrueba().getIdPrueba());
+        assertEquals(examen.getResultado(), resultado.getResultado());
+        System.out.println("Resultado encontrado: " + resultado.getResultado());
+    }
+
+    @Order(27)
+    @Test
+    public void testObtenerResultadoExamenPorAspiranteYPruebaNoEncontrado() {
+        System.out.println("obtenerResultadoExamenPorAspiranteYPrueba - no encontrado");
+
+        UUID idAspiranteNoExistente = UUID.randomUUID();
+        UUID idPruebaNoExistente = UUID.randomUUID();
+
+        // Act
+        PruebaJornadaAulaAspiranteOpcionExamen resultado = cut.obtenerResultadoExamenPorAspiranteYPrueba(
+            idAspiranteNoExistente,
+            idPruebaNoExistente);
+
+        // Assert
+        assertNull(resultado);
+        System.out.println("Resultado esperado: null (entidad no encontrada)");
+    }
+
+    @Order(28)
+    @Test
+    public void testObtenerResultadoExamenPorAspiranteYPruebaIdAspiranteNulo() {
+        System.out.println("obtenerResultadoExamenPorAspiranteYPrueba - idAspirante nulo");
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
+            cut.obtenerResultadoExamenPorAspiranteYPrueba(null, UUID.randomUUID());
+        });
+
+        assertEquals("idAspirante y idPrueba no pueden ser nulos", ex.getMessage());
+    }
+
+    @Order(29)
+    @Test
+    public void testObtenerResultadoExamenPorAspiranteYPruebaIdPruebaNulo() {
+        System.out.println("obtenerResultadoExamenPorAspiranteYPrueba - idPrueba nulo");
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
+            cut.obtenerResultadoExamenPorAspiranteYPrueba(UUID.randomUUID(), null);
+        });
+
+        assertEquals("idAspirante y idPrueba no pueden ser nulos", ex.getMessage());
+    }
+
+    @Order(30)
+    @Test
+    public void testObtenerResultadoExamenPorAspiranteYPruebaAmbosParametrosNulos() {
+        System.out.println("obtenerResultadoExamenPorAspiranteYPrueba - ambos parámetros nulos");
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
+            cut.obtenerResultadoExamenPorAspiranteYPrueba(null, null);
+        });
+
+        assertEquals("idAspirante y idPrueba no pueden ser nulos", ex.getMessage());
+    }
+
+    @Order(31)
+    @Test
+    public void testObtenerResultadoExamenPorAspiranteYPruebaEmNulo() {
+        System.out.println("obtenerResultadoExamenPorAspiranteYPrueba - em nulo");
+
+        cut.em = null;
+
+        IllegalStateException ex = assertThrows(IllegalStateException.class, () -> {
+            cut.obtenerResultadoExamenPorAspiranteYPrueba(UUID.randomUUID(), UUID.randomUUID());
+        });
+
+        assertEquals("El repositorio es nulo", ex.getMessage());
+    }
 }

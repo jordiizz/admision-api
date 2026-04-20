@@ -327,4 +327,110 @@ public class PruebaDAOIT extends AbstractIntengrationDAOTest {
             cut.buscarPorRango(0, 50);
         });
     }
+
+    @Order(20)
+    @Test
+    public void testFindByIdAspiranteExitoso() {
+        System.out.println("findByIdAspirante - exitoso");
+
+        cut.em.getTransaction().begin();
+        // Crear tipo de prueba
+        TipoPrueba tipoPrueba = new TipoPrueba(UUID.randomUUID());
+        tipoPrueba.setValor("Tipo Prueba " + UUID.randomUUID());
+        em.persist(tipoPrueba);
+
+        // Crear prueba 1
+        Prueba prueba1 = new Prueba(UUID.randomUUID());
+        prueba1.setNombre("Prueba 1 - findByIdAspirante");
+        prueba1.setIndicaciones("Indicaciones 1");
+        prueba1.setPuntajeMaximo(new BigDecimal("20.00"));
+        prueba1.setNotaAprobacion(new BigDecimal("12.00"));
+        prueba1.setDuracion(90);
+        prueba1.setFechaCreacion(OffsetDateTime.now());
+        prueba1.setIdTipoPrueba(tipoPrueba);
+        em.persist(prueba1);
+
+        // Crear prueba 2
+        Prueba prueba2 = new Prueba(UUID.randomUUID());
+        prueba2.setNombre("Prueba 2 - findByIdAspirante");
+        prueba2.setIndicaciones("Indicaciones 2");
+        prueba2.setPuntajeMaximo(new BigDecimal("10.00"));
+        prueba2.setNotaAprobacion(new BigDecimal("6.00"));
+        prueba2.setDuracion(60);
+        prueba2.setFechaCreacion(OffsetDateTime.now());
+        prueba2.setIdTipoPrueba(tipoPrueba);
+        em.persist(prueba2);
+
+        cut.em.getTransaction().commit();
+
+        // Act
+        List<Prueba> resultado = cut.findByIdAspirante(UUID.randomUUID());
+
+        // Assert
+        assertNotNull(resultado);
+        System.out.println("Total de pruebas encontradas: " + resultado.size());
+    }
+
+    @Order(21)
+    @Test
+    public void testFindByIdAspiranteVacio() {
+        System.out.println("findByIdAspirante - lista vacía");
+
+        // Act: Buscar con un ID de aspirante que no tiene pruebas asociadas
+        UUID idAspiranteNoExistente = UUID.randomUUID();
+        List<Prueba> resultado = cut.findByIdAspirante(idAspiranteNoExistente);
+
+        // Assert
+        assertNotNull(resultado);
+        assertEquals(0, resultado.size());
+        System.out.println("Resultado esperado: lista vacía");
+    }
+
+    @Order(22)
+    @Test
+    public void testFindByIdAspiranteIdNulo() {
+        System.out.println("findByIdAspirante - idAspirante nulo");
+
+        // Act & Assert
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
+            cut.findByIdAspirante(null);
+        });
+
+        assertEquals("El id del aspirante no puede ser nulo", ex.getMessage());
+        System.out.println("Excepción esperada: " + ex.getMessage());
+    }
+
+    @Order(23)
+    @Test
+    public void testFindByIdAspiranteEmNulo() {
+        System.out.println("findByIdAspirante - em nulo");
+
+        cut.em = null;
+
+        // Act & Assert
+        IllegalStateException ex = assertThrows(IllegalStateException.class, () -> {
+            cut.findByIdAspirante(UUID.randomUUID());
+        });
+
+        assertNotNull(ex);
+        System.out.println("Excepción esperada lanzada");
+    }
+
+    @Order(24)
+    @Test
+    public void testFindByIdAspiranteEmCerrado() {
+        System.out.println("findByIdAspirante - em cerrado");
+
+        EntityManager emCerrado = emf.createEntityManager();
+        emCerrado.close();
+        cut.em = emCerrado;
+
+        // Act & Assert
+        IllegalStateException ex = assertThrows(IllegalStateException.class, () -> {
+            cut.findByIdAspirante(UUID.randomUUID());
+        });
+
+        assertNotNull(ex);
+        System.out.println("Excepción esperada lanzada");
+    }
 }
