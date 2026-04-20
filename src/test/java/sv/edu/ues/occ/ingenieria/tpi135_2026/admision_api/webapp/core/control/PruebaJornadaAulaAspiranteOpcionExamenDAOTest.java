@@ -151,4 +151,137 @@ public class PruebaJornadaAulaAspiranteOpcionExamenDAOTest {
         Mockito.verify(mockQuery).getSingleResult();
         System.out.println("PruebaJornadaAulaAspiranteOpcionExamenDAOTest.contarPorPadreTest - finalizado");
     }
+
+    @Test
+    public void testObtenerResultadoExamenPorAspiranteYPruebaExitoso() {
+        System.out.println("PruebaJornadaAulaAspiranteOpcionExamenDAOTest.testObtenerResultadoExamenPorAspiranteYPruebaExitoso");
+
+        // Arrange
+        PruebaJornadaAulaAspiranteOpcionExamenDAO cut = new PruebaJornadaAulaAspiranteOpcionExamenDAO();
+        EntityManager mockEM = Mockito.mock(EntityManager.class);
+        cut.em = mockEM;
+
+        UUID idAspirante = UUID.randomUUID();
+        UUID idPrueba = UUID.randomUUID();
+        PruebaJornadaAulaAspiranteOpcionExamen examenEsperado = new PruebaJornadaAulaAspiranteOpcionExamen();
+
+        @SuppressWarnings("unchecked")
+        TypedQuery<PruebaJornadaAulaAspiranteOpcionExamen> mockQuery = Mockito.mock(TypedQuery.class);
+        Mockito.when(mockEM.createNamedQuery("PruebaJornadaAulaAspiranteOpcionExamen.findByIdAspiranteAndIdPrueba",
+                PruebaJornadaAulaAspiranteOpcionExamen.class)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idAspirante", idAspirante)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idPrueba", idPrueba)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.getResultStream()).thenReturn(java.util.stream.Stream.of(examenEsperado));
+
+        // Act
+        PruebaJornadaAulaAspiranteOpcionExamen resultado = cut.obtenerResultadoExamenPorAspiranteYPrueba(idAspirante, idPrueba);
+
+        // Assert
+        assertNotNull(resultado);
+        assertEquals(examenEsperado, resultado);
+        System.out.println("PruebaJornadaAulaAspiranteOpcionExamenDAOTest.testObtenerResultadoExamenPorAspiranteYPruebaExitoso - finalizado");
+    }
+
+    @Test
+    public void testObtenerResultadoExamenPorAspiranteYPruebaNoEncontrado() {
+        System.out.println("PruebaJornadaAulaAspiranteOpcionExamenDAOTest.testObtenerResultadoExamenPorAspiranteYPruebaNoEncontrado");
+
+        // Arrange
+        PruebaJornadaAulaAspiranteOpcionExamenDAO cut = new PruebaJornadaAulaAspiranteOpcionExamenDAO();
+        EntityManager mockEM = Mockito.mock(EntityManager.class);
+        cut.em = mockEM;
+
+        UUID idAspirante = UUID.randomUUID();
+        UUID idPrueba = UUID.randomUUID();
+
+        @SuppressWarnings("unchecked")
+        TypedQuery<PruebaJornadaAulaAspiranteOpcionExamen> mockQuery = Mockito.mock(TypedQuery.class);
+        Mockito.when(mockEM.createNamedQuery("PruebaJornadaAulaAspiranteOpcionExamen.findByIdAspiranteAndIdPrueba",
+                PruebaJornadaAulaAspiranteOpcionExamen.class)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idAspirante", idAspirante)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.setParameter("idPrueba", idPrueba)).thenReturn(mockQuery);
+        Mockito.when(mockQuery.getResultStream()).thenReturn(java.util.stream.Stream.empty());
+
+        // Act
+        PruebaJornadaAulaAspiranteOpcionExamen resultado = cut.obtenerResultadoExamenPorAspiranteYPrueba(idAspirante, idPrueba);
+
+        // Assert
+        assertNull(resultado);
+        System.out.println("PruebaJornadaAulaAspiranteOpcionExamenDAOTest.testObtenerResultadoExamenPorAspiranteYPruebaNoEncontrado - finalizado");
+    }
+
+    @Test
+    public void testObtenerResultadoExamenPorAspiranteYPruebaIdAspiranteNulo() {
+        System.out.println("PruebaJornadaAulaAspiranteOpcionExamenDAOTest.testObtenerResultadoExamenPorAspiranteYPruebaIdAspiranteNulo");
+
+        // Arrange
+        PruebaJornadaAulaAspiranteOpcionExamenDAO cut = new PruebaJornadaAulaAspiranteOpcionExamenDAO();
+        EntityManager mockEM = Mockito.mock(EntityManager.class);
+        cut.em = mockEM;
+
+        UUID idPrueba = UUID.randomUUID();
+
+        // Act & Assert
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> cut.obtenerResultadoExamenPorAspiranteYPrueba(null, idPrueba));
+
+        assertEquals("idAspirante y idPrueba no pueden ser nulos", ex.getMessage());
+        System.out.println("PruebaJornadaAulaAspiranteOpcionExamenDAOTest.testObtenerResultadoExamenPorAspiranteYPruebaIdAspiranteNulo - finalizado");
+    }
+
+    @Test
+    public void testObtenerResultadoExamenPorAspiranteYPruebaIdPruebaNulo() {
+        System.out.println("PruebaJornadaAulaAspiranteOpcionExamenDAOTest.testObtenerResultadoExamenPorAspiranteYPruebaIdPruebaNulo");
+
+        // Arrange
+        PruebaJornadaAulaAspiranteOpcionExamenDAO cut = new PruebaJornadaAulaAspiranteOpcionExamenDAO();
+        EntityManager mockEM = Mockito.mock(EntityManager.class);
+        cut.em = mockEM;
+
+        UUID idAspirante = UUID.randomUUID();
+
+        // Act & Assert
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> cut.obtenerResultadoExamenPorAspiranteYPrueba(idAspirante, null));
+
+        assertEquals("idAspirante y idPrueba no pueden ser nulos", ex.getMessage());
+        System.out.println("PruebaJornadaAulaAspiranteOpcionExamenDAOTest.testObtenerResultadoExamenPorAspiranteYPruebaIdPruebaNulo - finalizado");
+    }
+
+    @Test
+    public void testObtenerResultadoExamenPorAspiranteYPruebaAmbosParametrosNulos() {
+        System.out.println("PruebaJornadaAulaAspiranteOpcionExamenDAOTest.testObtenerResultadoExamenPorAspiranteYPruebaAmbosParametrosNulos");
+
+        // Arrange
+        PruebaJornadaAulaAspiranteOpcionExamenDAO cut = new PruebaJornadaAulaAspiranteOpcionExamenDAO();
+        EntityManager mockEM = Mockito.mock(EntityManager.class);
+        cut.em = mockEM;
+
+        // Act & Assert
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> cut.obtenerResultadoExamenPorAspiranteYPrueba(null, null));
+
+        assertEquals("idAspirante y idPrueba no pueden ser nulos", ex.getMessage());
+        System.out.println("PruebaJornadaAulaAspiranteOpcionExamenDAOTest.testObtenerResultadoExamenPorAspiranteYPruebaAmbosParametrosNulos - finalizado");
+    }
+
+    @Test
+    public void testObtenerResultadoExamenPorAspiranteYPruebaEmNulo() {
+        System.out.println("PruebaJornadaAulaAspiranteOpcionExamenDAOTest.testObtenerResultadoExamenPorAspiranteYPruebaEmNulo");
+
+        // Arrange
+        PruebaJornadaAulaAspiranteOpcionExamenDAO cut = new PruebaJornadaAulaAspiranteOpcionExamenDAO();
+        cut.em = null;
+
+        UUID idAspirante = UUID.randomUUID();
+        UUID idPrueba = UUID.randomUUID();
+
+        // Act & Assert
+        IllegalStateException ex = assertThrows(IllegalStateException.class,
+                () -> cut.obtenerResultadoExamenPorAspiranteYPrueba(idAspirante, idPrueba));
+
+        assertEquals("El repositorio es nulo", ex.getMessage());
+        System.out.println("PruebaJornadaAulaAspiranteOpcionExamenDAOTest.testObtenerResultadoExamenPorAspiranteYPruebaEmNulo - finalizado");
+    }
+
 }
