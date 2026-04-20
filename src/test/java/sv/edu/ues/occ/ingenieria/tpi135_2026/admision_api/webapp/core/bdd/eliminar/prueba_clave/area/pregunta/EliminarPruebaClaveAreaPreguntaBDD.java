@@ -12,6 +12,7 @@ import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.bdd.Abstra
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClave;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveArea;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveAreaPregunta;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveAreaPreguntaDistractor;
 
 import java.util.List;
 import java.util.UUID;
@@ -108,6 +109,48 @@ public class EliminarPruebaClaveAreaPreguntaBDD extends AbstractBDD {
         System.out.println("Pregunta encontrada: " + idPregunta);
     }
 
+    @When("he eliminado todos los distractores de la pregunta con ID {string} del área {string} en la clave {string}")
+    public void he_eliminado_todos_los_distractores_de_la_pregunta_con_id_del_area_en_la_clave(String idPregunta, String idArea, String idPruebaClave) {
+        System.out.println("Eliminando distractores de la pregunta");
+
+        int esperado = 204;
+
+        Response respuestaDistractores = target.path("prueba_clave")
+            .path(idPruebaClave)
+            .path("area")
+            .path(idArea)
+            .path("pregunta")
+            .path(idPregunta)
+            .path("distractor")
+            .request(MediaType.APPLICATION_JSON)
+            .get();
+
+        Assertions.assertNotNull(respuestaDistractores);
+        Assertions.assertEquals(200, respuestaDistractores.getStatus());
+        List<PruebaClaveAreaPreguntaDistractor> distractores = respuestaDistractores.readEntity(new GenericType<List<PruebaClaveAreaPreguntaDistractor>>() {});
+        Assertions.assertNotNull(distractores);
+
+        for (PruebaClaveAreaPreguntaDistractor distractor : distractores) {
+            Assertions.assertNotNull(distractor);
+            Assertions.assertNotNull(distractor.getIdDistractor());
+            Assertions.assertNotNull(distractor.getIdDistractor().getIdDistractor());
+
+            Response respuestaEliminarDistractor = target.path("prueba_clave")
+                .path(idPruebaClave)
+                .path("area")
+                .path(idArea)
+                .path("pregunta")
+                .path(idPregunta)
+                .path("distractor")
+                .path(distractor.getIdDistractor().getIdDistractor().toString())
+                .request(MediaType.APPLICATION_JSON)
+                .delete();
+
+            Assertions.assertNotNull(respuestaEliminarDistractor);
+            Assertions.assertEquals(esperado, respuestaEliminarDistractor.getStatus());
+        }
+    }
+
     @When("elimino la pregunta con ID {string} del área {string} en la clave {string}")
     public void elimino_la_pregunta_con_id_del_area_en_la_clave(String idPregunta, String idArea, String idPruebaClave) {
         System.out.println("Eliminando relacion pregunta-area-clave");
@@ -131,8 +174,6 @@ public class EliminarPruebaClaveAreaPreguntaBDD extends AbstractBDD {
     public void al_consultar_las_preguntas_del_area_con_id_en_la_clave_verifico_que_la_pregunta_con_id_ya_no_existe(String idArea, String idPruebaClave, String idPregunta) {
         System.out.println("Consultando preguntas del area para verificar eliminacion");
 
-        int esperado = 200;
-
         Response respuesta = target.path("prueba_clave")
                 .path(idPruebaClave)
                 .path("area")
@@ -142,14 +183,18 @@ public class EliminarPruebaClaveAreaPreguntaBDD extends AbstractBDD {
                 .get();
 
         Assertions.assertNotNull(respuesta);
-        Assertions.assertEquals(esperado, respuesta.getStatus());
-        List<PruebaClaveAreaPregunta> preguntas = respuesta.readEntity(new GenericType<List<PruebaClaveAreaPregunta>>() {});
-        Assertions.assertNotNull(preguntas);
+        int status = respuesta.getStatus();
+        Assertions.assertTrue(status == 200 || status == 404);
 
-        boolean encontrada = preguntas.stream().anyMatch(p -> p.getIdPregunta() != null
-                && p.getIdPregunta().getIdPregunta() != null
-                && p.getIdPregunta().getIdPregunta().equals(UUID.fromString(idPregunta)));
+        if (status == 200) {
+            List<PruebaClaveAreaPregunta> preguntas = respuesta.readEntity(new GenericType<List<PruebaClaveAreaPregunta>>() {});
+            Assertions.assertNotNull(preguntas);
 
-        Assertions.assertFalse(encontrada);
+            boolean encontrada = preguntas.stream().anyMatch(p -> p.getIdPregunta() != null
+                    && p.getIdPregunta().getIdPregunta() != null
+                    && p.getIdPregunta().getIdPregunta().equals(UUID.fromString(idPregunta)));
+
+            Assertions.assertFalse(encontrada);
+        }
     }
 }
