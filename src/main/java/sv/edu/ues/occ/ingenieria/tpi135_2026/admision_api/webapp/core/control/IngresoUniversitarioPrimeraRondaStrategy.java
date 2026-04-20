@@ -1,7 +1,10 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control;
 
+import jakarta.enterprise.context.ApplicationScoped;
+
 import java.math.BigDecimal;
 
+@ApplicationScoped
 public class IngresoUniversitarioPrimeraRondaStrategy implements ExamenStrategy{
 
     private final BigDecimal NOTA_MINIMA_SEGUNDA_RONDA = new BigDecimal(30);
