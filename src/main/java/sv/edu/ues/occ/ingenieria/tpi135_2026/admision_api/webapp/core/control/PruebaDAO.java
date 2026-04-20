@@ -1,6 +1,8 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.UUID;
 
 import jakarta.ejb.LocalBean;
 import jakarta.ejb.Stateless;
@@ -23,4 +25,20 @@ public class PruebaDAO extends DefaultDAO<Prueba> implements Serializable {
     public EntityManager getEntityManager() {
         return em;
     }
+
+    public List<Prueba> findByIdAspirante(UUID idAspirante) {
+        if(idAspirante == null){
+            throw new IllegalArgumentException("El id del aspirante no puede ser nulo");
+        }
+        try {
+            return em.createNamedQuery("Prueba.findByIdAspirante", Prueba.class)
+                    .setParameter("idAspirante", idAspirante)
+                    .getResultList();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+
+    }
+
+
 }
