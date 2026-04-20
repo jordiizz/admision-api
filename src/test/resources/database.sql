@@ -312,12 +312,11 @@ ALTER TABLE IF EXISTS public.prueba_clave_area_pregunta_distractor
 
 
 ALTER TABLE IF EXISTS public.prueba_clave_area_pregunta_distractor
-    ADD CONSTRAINT id_distractor FOREIGN KEY (id_distractor)
-    REFERENCES public.distractor (id_distractor) MATCH SIMPLE
+    ADD CONSTRAINT fk_integridad_pregunta_distractor FOREIGN KEY (id_pregunta, id_distractor)
+    REFERENCES public.pregunta_distractor (id_pregunta, id_distractor) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
-
 
 ALTER TABLE IF EXISTS public.prueba_jornada
     ADD CONSTRAINT id_jornada FOREIGN KEY (id_jornada)

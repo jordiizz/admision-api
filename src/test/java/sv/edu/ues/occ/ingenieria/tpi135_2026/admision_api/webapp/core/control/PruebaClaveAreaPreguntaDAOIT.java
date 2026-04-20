@@ -330,4 +330,106 @@ public class PruebaClaveAreaPreguntaDAOIT extends AbstractIntengrationDAOTest{
         }
     }
 
+    @Order(24)
+    @Test
+    public void testValidarPorcentajePruebaValido(){
+
+        boolean resultado = cut.validarPorcentajePrueba(pruebaClave, pruebaClaveAreaPregunta2);
+
+        assertTrue(resultado, "El porcentaje total (2) no debe exceder el máximo (100)");
+    }
+
+    @Order(25)
+    @Test
+    public void testValidarPorcentajePruebaExactamente(){
+        em.getTransaction().begin();
+
+        Pregunta pregunta4 = new Pregunta(UUID.randomUUID());
+        pregunta4.setValor("¿Cuánto es 10 * 10?");
+        pregunta4.setActivo(true);
+        preguntaDAO.crear(pregunta4);
+
+        PreguntaArea preguntaArea4 = new PreguntaArea(pregunta4, area);
+        preguntaAreaDAO.crear(preguntaArea4);
+
+        PruebaClaveAreaPregunta pruebaClaveAreaPregunta5 = new PruebaClaveAreaPregunta(pruebaClave, area, pregunta4);
+        pruebaClaveAreaPregunta5.setPorcentaje(new BigDecimal(98)); // Suma parcial = 2 + 98 = 100
+
+        em.getTransaction().commit();
+
+        // Act: Validar que 98 cabe exactamente (2 + 98 = 100)
+        boolean resultado = cut.validarPorcentajePrueba(pruebaClave, pruebaClaveAreaPregunta5);
+
+        assertTrue(resultado, "El porcentaje total (100) debe ser igual al máximo (100)");
+    }
+
+    @Order(26)
+    @Test
+    public void testValidarPorcentajePruebaExcedido(){
+        em.getTransaction().begin();
+
+        Pregunta pregunta3 = new Pregunta(UUID.randomUUID());
+        pregunta3.setValor("¿Cuánto es 8 / 2?");
+        pregunta3.setActivo(true);
+        preguntaDAO.crear(pregunta3);
+
+        PreguntaArea preguntaArea3 = new PreguntaArea(pregunta3, area);
+        preguntaAreaDAO.crear(preguntaArea3);
+
+        PruebaClaveAreaPregunta pruebaClaveAreaPregunta3 = new PruebaClaveAreaPregunta(pruebaClave, area, pregunta3);
+        pruebaClaveAreaPregunta3.setPorcentaje(new BigDecimal(99));
+        cut.crear(pruebaClaveAreaPregunta3);
+
+        em.getTransaction().commit();
+
+        PruebaClaveAreaPregunta pruebaClaveAreaPregunta4 = new PruebaClaveAreaPregunta(pruebaClave, area, pregunta);
+        pruebaClaveAreaPregunta4.setPorcentaje(new BigDecimal(10)); // 99 + 10 = 109 > 100
+
+        boolean resultado = cut.validarPorcentajePrueba(pruebaClave, pruebaClaveAreaPregunta4);
+
+        assertFalse(resultado, "El porcentaje total (109) debe exceder el máximo (100)");
+    }
+
+    @Order(27)
+    @Test
+    public void testValidarPorcentajePruebaPruebaClaveNull(){
+
+        try{
+            cut.validarPorcentajePrueba(null, pruebaClaveAreaPregunta);
+        } catch (Exception ex) {
+            assertEquals(IllegalArgumentException.class, ex.getClass());
+        }
+    }
+
+    @Order(28)
+    @Test
+    public void testValidarPorcentajePruebaAreaPreguntaNull(){
+        try{
+            cut.validarPorcentajePrueba(pruebaClave, null);
+        } catch (Exception ex) {
+            assertEquals(IllegalArgumentException.class, ex.getClass());
+        }
+    }
+
+    @Order(29)
+    @Test
+    public void testValidarPorcentajePruebaBothNull(){
+        try{
+            cut.validarPorcentajePrueba(null, null);
+        } catch (Exception ex) {
+            assertEquals(IllegalArgumentException.class, ex.getClass());
+        }
+    }
+
+    @Order(30)
+    @Test
+    public void testValidarPorcentajePruebaEmNull(){
+        cut.em = null;
+        try{
+            cut.validarPorcentajePrueba(pruebaClave, pruebaClaveAreaPregunta);
+        } catch (Exception ex) {
+            assertEquals(IllegalStateException.class, ex.getClass());
+        }
+    }
+
 }

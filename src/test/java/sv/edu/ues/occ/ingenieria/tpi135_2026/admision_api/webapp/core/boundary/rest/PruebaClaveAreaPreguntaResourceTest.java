@@ -8,6 +8,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -26,11 +27,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PreguntaDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.AreaDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PruebaClaveDAO;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PruebaClaveAreaDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PruebaClaveAreaPreguntaDAO;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Pregunta;
 
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Area;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClave;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveArea;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveAreaPK;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveAreaPregunta;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaClaveAreaPreguntaPK;
 
@@ -44,7 +48,7 @@ class PruebaClaveAreaPreguntaResourceTest {
     private AreaDAO aDAO;
 
     @Mock
-    private PruebaClaveDAO pCDAO;
+    private PruebaClaveAreaDAO pCADAO;
 
     @Mock
     private PruebaClaveAreaPreguntaDAO pCAPDAO;
@@ -52,15 +56,35 @@ class PruebaClaveAreaPreguntaResourceTest {
     @InjectMocks
     private PruebaClaveAreaPreguntaResource resource;
 
+    PruebaClave pruebaClave = new PruebaClave();
     private UUID idPruebaClave;
+    Area area = new Area();
     private UUID idArea;
+    Pregunta pregunta = new Pregunta();
     private UUID idPregunta;
+
+    PruebaClaveArea pruebaClaveArea = new PruebaClaveArea();
+    PruebaClaveAreaPK pkArea = new PruebaClaveAreaPK();
+
+    PruebaClaveAreaPregunta pruebaClaveAreaPregunta = new PruebaClaveAreaPregunta();
 
     @BeforeEach
     void setUp() {
         idPruebaClave = UUID.randomUUID();
         idArea = UUID.randomUUID();
         idPregunta = UUID.randomUUID();
+
+        pruebaClave.setIdPruebaClave(idPruebaClave);
+        area.setIdArea(idArea);
+        pregunta.setIdPregunta(idPregunta);
+
+        pruebaClaveArea.setIdPruebaClave(pruebaClave);
+        pruebaClaveArea.setIdArea(area);
+        pkArea = new PruebaClaveAreaPK(idPruebaClave, idArea);
+
+        pruebaClaveAreaPregunta.setIdArea(area);
+        pruebaClaveAreaPregunta.setIdPregunta(pregunta);
+        pruebaClaveAreaPregunta.setPorcentaje(new BigDecimal(1));
     }
 
     @Nested
@@ -70,57 +94,91 @@ class PruebaClaveAreaPreguntaResourceTest {
         @Test
         @DisplayName("Debe crear exitosamente y retornar 201")
         void crear_Exitoso() {
-            // Arrange
-            Pregunta p = new Pregunta();
-            p.setIdPregunta(idPregunta);
-            Area a = new Area();
-            a.setIdArea(idArea);
-            PruebaClave pC = new PruebaClave();
-            pC.setIdPruebaClave(idPruebaClave);
+            PruebaClaveAreaPK pk = new PruebaClaveAreaPK(idPruebaClave, idArea);
+            when(pCADAO.buscarPorId(pk)).thenReturn(pruebaClaveArea);
+            when(pDAO.buscarPorId(pruebaClaveAreaPregunta.getIdPregunta().getIdPregunta())).thenReturn(pruebaClaveAreaPregunta.getIdPregunta());
+            when(pCAPDAO.validarPorcentajePrueba(pruebaClave, pruebaClaveAreaPregunta)).thenReturn(true);
 
-            when(pDAO.buscarPorId(idPregunta)).thenReturn(p);
-            when(aDAO.buscarPorId(idArea)).thenReturn(a);
-            when(pCDAO.buscarPorId(idPruebaClave)).thenReturn(pC);
+            Response response = resource.crear(idPruebaClave, idArea, pruebaClaveAreaPregunta);
 
-            // Act
-            Response response = resource.crear(idPruebaClave, idArea, idPregunta);
-
-            // Assert
             assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
             verify(pCAPDAO).crear(any(PruebaClaveAreaPregunta.class));
         }
 
         @Test
-        @DisplayName("Debe retornar 404 si alguna entidad no existe")
-        void crear_EntidadNoEncontrada() {
-            // Simulamos que la pregunta no existe
-            when(pDAO.buscarPorId(idPregunta)).thenReturn(null);
+        @DisplayName("Debe retornar 404 si pruebaClaveArea no existe")
+        void crear_PruebaClaveAreaNoEncontrada() {
+            PruebaClaveAreaPK pk = new PruebaClaveAreaPK(idPruebaClave, idArea);
+            when(pCADAO.buscarPorId(pk)).thenReturn(null);
 
-            Response response = resource.crear(idPruebaClave, idArea, idPregunta);
+            Response response = resource.crear(idPruebaClave, idArea, pruebaClaveAreaPregunta);
 
             assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
             verify(pCAPDAO, never()).crear(any());
         }
+        @Test
+        @DisplayName("Debe retornar 404 si la pregunta no existe")
+        void crear_PreguntaNoEncontrada() {
+            PruebaClaveAreaPK pk = new PruebaClaveAreaPK(idPruebaClave, idArea);
+            pruebaClaveArea.setIdPruebaClave(pruebaClave);
+            when(pCADAO.buscarPorId(pk)).thenReturn(pruebaClaveArea);
+            when(pDAO.buscarPorId(pruebaClaveAreaPregunta.getIdPregunta().getIdPregunta())).thenReturn(null);
+            Response response = resource.crear(idPruebaClave, idArea, pruebaClaveAreaPregunta);
+            assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+            verify(pCAPDAO, never()).crear(any());
+            }
 
         @Test
-        @DisplayName("Debe retornar 400 si algún parámetro es nulo")
-        void crear_ParametroNulo() {
-            Response response = resource.crear(null, idArea, idPregunta);
+        @DisplayName("Debe retornar 400 si idPruebaClave es nulo")
+        void crear_IdPruebaClaveNulo() {
+            Response response = resource.crear(null, idArea, pruebaClaveAreaPregunta);
 
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
         }
 
         @Test
+        @DisplayName("Debe retornar 400 si idArea es nulo")
+        void crear_IdAreaNulo() {
+            Response response = resource.crear(idPruebaClave, null, pruebaClaveAreaPregunta);
+
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        }
+
+        @Test
+        @DisplayName("Debe retornar 400 si pruebaClaveAreaPregunta es nulo")
+        void crear_PruebaClaveAreaPreguntaNulo() {
+            Response response = resource.crear(idPruebaClave, idArea, null);
+
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        }
+
+        @Test
+        @DisplayName("Debe retornar 409 CONFLICT si se excede el porcentaje máximo")
+        void crear_PorcentajeExcedido() {
+            PruebaClaveAreaPK pk = new PruebaClaveAreaPK(idPruebaClave, idArea);
+            when(pCADAO.buscarPorId(pk)).thenReturn(pruebaClaveArea);
+            when(pDAO.buscarPorId(pruebaClaveAreaPregunta.getIdPregunta().getIdPregunta())).thenReturn(pruebaClaveAreaPregunta.getIdPregunta());
+            when(pCAPDAO.validarPorcentajePrueba(pruebaClave, pruebaClaveAreaPregunta)).thenReturn(false);
+
+            Response response = resource.crear(idPruebaClave, idArea, pruebaClaveAreaPregunta);
+
+            assertEquals(Response.Status.CONFLICT.getStatusCode(), response.getStatus());
+            verify(pCAPDAO, never()).crear(any(PruebaClaveAreaPregunta.class));
+        }
+
+        @Test
         @DisplayName("Debe retornar 500 si ocurre una excepción")
         void crear_Excepcion() {
-            when(pDAO.buscarPorId(idPregunta)).thenThrow(new RuntimeException("Error de BD"));
+            PruebaClaveAreaPK pk = new PruebaClaveAreaPK(idPruebaClave, idArea);
+            when(pCADAO.buscarPorId(pk)).thenThrow(new RuntimeException("Error de BD"));
 
-            Response response = resource.crear(idPruebaClave, idArea, idPregunta);
+            Response response = resource.crear(idPruebaClave, idArea, pruebaClaveAreaPregunta);
 
             assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-            assertEquals("Error de BD", response.getEntity());
         }
     }
+
+
 
     @Nested
     @DisplayName("Pruebas para el método eliminar")
@@ -150,9 +208,25 @@ class PruebaClaveAreaPreguntaResourceTest {
         }
 
         @Test
-        @DisplayName("Debe retornar 400 si algún parámetro es nulo")
-        void eliminar_ParametroNulo() {
+        @DisplayName("Debe retornar 400 si idPruebaClave es nulo")
+        void eliminar_IdPruebaClaveNulo() {
+            Response response = resource.eliminar(null, idArea, idPregunta);
+
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        }
+
+        @Test
+        @DisplayName("Debe retornar 400 si idArea es nulo")
+        void eliminar_IdAreaNulo() {
             Response response = resource.eliminar(idPruebaClave, null, idPregunta);
+
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        }
+
+        @Test
+        @DisplayName("Debe retornar 400 si idPregunta es nulo")
+        void eliminar_IdPreguntaNulo() {
+            Response response = resource.eliminar(idPruebaClave, idArea, null);
 
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
         }
@@ -196,9 +270,27 @@ class PruebaClaveAreaPreguntaResourceTest {
         }
 
         @Test
-        @DisplayName("Debe retornar 400 si algún parámetro es nulo")
-        void listar_ParametroNulo() {
+        @DisplayName("Debe retornar 404 si la lista está vacía")
+        void listar_ListaVacia() {
+            when(pCAPDAO.buscarPorClaveYArea(idPruebaClave, idArea)).thenReturn(List.of());
+
+            Response response = resource.listar(idPruebaClave, idArea);
+
+            assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+        }
+
+        @Test
+        @DisplayName("Debe retornar 400 si idPruebaClave es nulo")
+        void listar_IdPruebaClaveNulo() {
             Response response = resource.listar(null, idArea);
+
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        }
+
+        @Test
+        @DisplayName("Debe retornar 400 si idArea es nulo")
+        void listar_IdAreaNulo() {
+            Response response = resource.listar(idPruebaClave, null);
 
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
         }
@@ -214,4 +306,97 @@ class PruebaClaveAreaPreguntaResourceTest {
             assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
         }
     }
+    @Nested
+    @DisplayName("Pruebas para el método actuaizar")
+    class ActualizarTests {
+
+        @Test
+        @DisplayName("Debe crear exitosamente y retornar 201")
+        void actualizarrExitoso() {
+            PruebaClaveAreaPK pk = new PruebaClaveAreaPK(idPruebaClave, idArea);
+            when(pCADAO.buscarPorId(pk)).thenReturn(pruebaClaveArea);
+            when(pDAO.buscarPorId(pruebaClaveAreaPregunta.getIdPregunta().getIdPregunta())).thenReturn(pruebaClaveAreaPregunta.getIdPregunta());
+            when(pCAPDAO.validarPorcentajePrueba(pruebaClave, pruebaClaveAreaPregunta)).thenReturn(true);
+
+            Response response = resource.actualizar(idPruebaClave, idArea, pruebaClaveAreaPregunta);
+
+            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+            verify(pCAPDAO).actualizar(any(PruebaClaveAreaPregunta.class));
+        }
+
+        @Test
+        @DisplayName("Debe retornar 404 si pruebaClaveArea no existe")
+        void actualizarPruebaClaveAreaNoEncontrada() {
+            PruebaClaveAreaPK pk = new PruebaClaveAreaPK(idPruebaClave, idArea);
+            when(pCADAO.buscarPorId(pk)).thenReturn(null);
+
+            Response response = resource.actualizar(idPruebaClave, idArea, pruebaClaveAreaPregunta);
+
+            assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+            verify(pCAPDAO, never()).crear(any());
+        }
+        @Test
+        @DisplayName("Debe retornar 404 si la pregunta no existe")
+        void actualizarPreguntaNoEncontrada() {
+            PruebaClaveAreaPK pk = new PruebaClaveAreaPK(idPruebaClave, idArea);
+            pruebaClaveArea.setIdPruebaClave(pruebaClave);
+            when(pCADAO.buscarPorId(pk)).thenReturn(pruebaClaveArea);
+            when(pDAO.buscarPorId(pruebaClaveAreaPregunta.getIdPregunta().getIdPregunta())).thenReturn(null);
+            Response response = resource.actualizar(idPruebaClave, idArea, pruebaClaveAreaPregunta);
+            assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+            verify(pCAPDAO, never()).crear(any());
+        }
+
+        @Test
+        @DisplayName("Debe retornar 400 si idPruebaClave es nulo")
+        void actualizarIdPruebaClaveNulo() {
+            Response response = resource.actualizar(null, idArea, pruebaClaveAreaPregunta);
+
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        }
+
+        @Test
+        @DisplayName("Debe retornar 400 si idArea es nulo")
+        void actualizarIdAreaNulo() {
+            Response response = resource.actualizar(idPruebaClave, null, pruebaClaveAreaPregunta);
+
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        }
+
+        @Test
+        @DisplayName("Debe retornar 400 si pruebaClaveAreaPregunta es nulo")
+        void actualizarPruebaClaveAreaPreguntaNulo() {
+            Response response = resource.actualizar(idPruebaClave, idArea, null);
+
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        }
+
+        @Test
+        @DisplayName("Debe retornar 409 CONFLICT si se excede el porcentaje máximo")
+        void actualizarPorcentajeExcedido() {
+            PruebaClaveAreaPK pk = new PruebaClaveAreaPK(idPruebaClave, idArea);
+            when(pCADAO.buscarPorId(pk)).thenReturn(pruebaClaveArea);
+            when(pDAO.buscarPorId(pruebaClaveAreaPregunta.getIdPregunta().getIdPregunta())).thenReturn(pruebaClaveAreaPregunta.getIdPregunta());
+            when(pCAPDAO.validarPorcentajePrueba(pruebaClave, pruebaClaveAreaPregunta)).thenReturn(false);
+
+            Response response = resource.actualizar(idPruebaClave, idArea, pruebaClaveAreaPregunta);
+
+            assertEquals(Response.Status.CONFLICT.getStatusCode(), response.getStatus());
+            verify(pCAPDAO, never()).crear(any(PruebaClaveAreaPregunta.class));
+        }
+
+        @Test
+        @DisplayName("Debe retornar 500 si ocurre una excepción")
+        void actualizarExcepcion() {
+            PruebaClaveAreaPK pk = new PruebaClaveAreaPK(idPruebaClave, idArea);
+            when(pCADAO.buscarPorId(pk)).thenThrow(new RuntimeException("Error de BD"));
+
+            Response response = resource.actualizar(idPruebaClave, idArea, pruebaClaveAreaPregunta);
+
+            assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+        }
+    }
+
+
+
 }
