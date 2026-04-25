@@ -6,11 +6,20 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 
+@NamedQueries({
+        @NamedQuery(
+                name = "Aspirante.buscarPorApellidos",
+                query = "SELECT a FROM Aspirante a WHERE a.apellidos = :apellidos"
+        )
+})
 @Entity
 @Table(name = "aspirante")
 public class Aspirante implements Serializable {

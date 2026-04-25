@@ -15,7 +15,14 @@ import org.mockito.Mockito;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriInfo;
-import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.*;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.AspiranteDAO;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.ExamenDefaultStrategy;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.ExamenResultadosEnum;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.IngresoUniversitarioPrimeraRondaStrategy;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.IngresoUniversitarioSegundaRondaStrategy;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PruebaDAO;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PruebaJornadaAulaAspiranteOpcionExamenDAO;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.TipoPruebaEnum;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Aspirante;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Prueba;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornadaAulaAspiranteOpcionExamen;
@@ -198,6 +205,63 @@ public class AspiranteResourceTest {
     }
 
     @Test
+    public void buscarPorApellidosExitosoTest() {
+        System.out.println("Ejecutando test: buscarPorApellidosExitosoTest en AspiranteResource");
+        Mockito.when(mockAD.buscarPorApellidos("Lopez"))
+                .thenReturn(List.of(new Aspirante(UUID.randomUUID()), new Aspirante(UUID.randomUUID())));
+
+        Response resultado = cut.buscarPorApellidos("Lopez");
+
+        assertEquals(200, resultado.getStatus());
+        assertNotNull(resultado.getEntity());
+        Mockito.verify(mockAD).buscarPorApellidos("Lopez");
+    }
+
+    @Test
+    public void buscarPorApellidosNoEncontradoTest() {
+        System.out.println("Ejecutando test: buscarPorApellidosNoEncontradoTest en AspiranteResource");
+        Mockito.when(mockAD.buscarPorApellidos("NoExiste")).thenReturn(Collections.emptyList());
+
+        Response resultado = cut.buscarPorApellidos("NoExiste");
+
+        assertEquals(404, resultado.getStatus());
+        Mockito.verify(mockAD).buscarPorApellidos("NoExiste");
+    }
+
+    @Test
+    public void buscarPorApellidosResultadoNullTest() {
+        System.out.println("Ejecutando test: buscarPorApellidosResultadoNullTest en AspiranteResource");
+        Mockito.when(mockAD.buscarPorApellidos("NoExisteNull")).thenReturn(null);
+
+        Response resultado = cut.buscarPorApellidos("NoExisteNull");
+
+        assertEquals(404, resultado.getStatus());
+        Mockito.verify(mockAD).buscarPorApellidos("NoExisteNull");
+    }
+
+    @Test
+    public void buscarPorApellidosParametroInvalidoTest() {
+        System.out.println("Ejecutando test: buscarPorApellidosParametroInvalidoTest en AspiranteResource");
+        Response resultadoNull = cut.buscarPorApellidos(null);
+        Response resultadoBlank = cut.buscarPorApellidos("   ");
+
+        assertEquals(400, resultadoNull.getStatus());
+        assertEquals(400, resultadoBlank.getStatus());
+        Mockito.verifyNoInteractions(mockAD);
+    }
+
+    @Test
+    public void buscarPorApellidosConExcepcionTest() {
+        System.out.println("Ejecutando test: buscarPorApellidosConExcepcionTest en AspiranteResource");
+        Mockito.when(mockAD.buscarPorApellidos("Lopez")).thenThrow(new RuntimeException("Error en base de datos"));
+
+        Response resultado = cut.buscarPorApellidos("Lopez");
+
+        assertEquals(500, resultado.getStatus());
+        Mockito.verify(mockAD).buscarPorApellidos("Lopez");
+    }
+
+    @Test
     public void buscarPorIdExitosoTest(){
         System.out.println("Ejecutando test: buscarPorIdExitosoTest en AspiranteResource");
         Aspirante encontrado = new Aspirante(UUID.randomUUID());
@@ -320,9 +384,27 @@ public class AspiranteResourceTest {
     }
 
     @Test
+    public void listarResultadoExamenIdPruebaNullTest() {
+        Response res = cut.listarResultadoExamen(UUID.randomUUID(), null);
+        assertEquals(400, res.getStatus());
+    }
+
+    @Test
     public void listarResultadoExamenNoEncontradoTest() {
         UUID id = UUID.randomUUID();
         Mockito.when(mockPJAOED.obtenerResultadoExamenPorAspiranteYPrueba(id, id)).thenReturn(null);
+        Response res = cut.listarResultadoExamen(id, id);
+        assertEquals(404, res.getStatus());
+    }
+
+    @Test
+    public void listarResultadoExamenSinPruebaEnResultadoTest() {
+        UUID id = UUID.randomUUID();
+        PruebaJornadaAulaAspiranteOpcionExamen ex = new PruebaJornadaAulaAspiranteOpcionExamen();
+        ex.setIdPrueba(null);
+
+        Mockito.when(mockPJAOED.obtenerResultadoExamenPorAspiranteYPrueba(id, id)).thenReturn(ex);
+
         Response res = cut.listarResultadoExamen(id, id);
         assertEquals(404, res.getStatus());
     }
@@ -357,11 +439,35 @@ public class AspiranteResourceTest {
     }
 
     @Test
+    public void listarPruebasPorAspiranteNullResultadoTest() {
+        UUID id = UUID.randomUUID();
+        Mockito.when(mockPD.findByIdAspirante(id)).thenReturn(null);
+        Response res = cut.listarPruebasPorAspirante(id);
+        assertEquals(404, res.getStatus());
+    }
+
+    @Test
     public void listarPruebasPorAspiranteErrorTest() {
         UUID id = UUID.randomUUID();
         Mockito.when(mockPD.findByIdAspirante(id)).thenThrow(new RuntimeException());
         Response res = cut.listarPruebasPorAspirante(id);
         assertEquals(500, res.getStatus());
+    }
+
+    @Test
+    public void inicializarTest() {
+        AspiranteResource resource = new AspiranteResource();
+        resource.ingresoUniversitarioPrimeraRondaStrategy = Mockito.mock(IngresoUniversitarioPrimeraRondaStrategy.class);
+        resource.ingresoUniversitarioSegundaRondaStrategy = Mockito.mock(IngresoUniversitarioSegundaRondaStrategy.class);
+
+        resource.inicializar();
+
+        assertNotNull(resource.estrategiasEstado);
+        assertEquals(2, resource.estrategiasEstado.size());
+        assertEquals(resource.ingresoUniversitarioPrimeraRondaStrategy,
+                resource.estrategiasEstado.get(TipoPruebaEnum.INGRESO_UNIVERSITARIO_PRIMERA_RONDA.name()));
+        assertEquals(resource.ingresoUniversitarioSegundaRondaStrategy,
+                resource.estrategiasEstado.get(TipoPruebaEnum.INGRESO_UNIVERSITARIO_SEGUNDA_RONDA.name()));
     }
 
 }

@@ -22,7 +22,15 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriInfo;
-import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.*;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.AspiranteDAO;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.ExamenDefaultStrategy;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.ExamenResultadosEnum;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.ExamenStrategy;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.IngresoUniversitarioPrimeraRondaStrategy;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.IngresoUniversitarioSegundaRondaStrategy;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PruebaDAO;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.PruebaJornadaAulaAspiranteOpcionExamenDAO;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.TipoPruebaEnum;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Aspirante;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Prueba;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornadaAulaAspiranteOpcionExamen;
@@ -92,6 +100,30 @@ public class AspiranteResource implements Serializable {
             }
         }
         return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "El ID no puede ser nulo").build();
+    }
+
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    @Path("buscar")
+    public Response buscarPorApellidos(@QueryParam("apellidos") String apellidos) {
+        if (apellidos == null || apellidos.isBlank()) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .header(ResponseHeaders.WRONG_PARAMETER.toString(), "El parámetro 'apellidos' no puede ser nulo o vacío")
+                    .build();
+        }
+        try {
+            List<Aspirante> aspirantes = aspiranteDAO.buscarPorApellidos(apellidos);
+            if (aspirantes == null || aspirantes.isEmpty()) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .header(ResponseHeaders.NOT_FOUND.toString(), "No se encontraron aspirantes con los apellidos especificados")
+                        .build();
+            }
+            return Response.ok(aspirantes).type(MediaType.APPLICATION_JSON).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage())
+                    .build();
+        }
     }
 
     @GET

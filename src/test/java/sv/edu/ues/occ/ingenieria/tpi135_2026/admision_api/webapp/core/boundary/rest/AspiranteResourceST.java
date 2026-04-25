@@ -205,4 +205,34 @@ public class AspiranteResourceST extends AbstractIntegrationTest {
 
         Assertions.assertEquals(404, buscar.getStatus());
     }
+
+        @Order(9)
+        @Test
+        public void buscarPorApellidosTest() {
+                System.out.println("buscarPorApellidos en AspiranteResource");
+
+                String apellidos = "APELLIDOS-ST-BUSCAR-" + UUID.randomUUID().toString().substring(0, 8);
+                Aspirante nuevo = new Aspirante();
+                nuevo.setNombres("NOMBRES-ST-" + UUID.randomUUID());
+                nuevo.setApellidos(apellidos);
+                nuevo.setFechaNacimiento(LocalDate.of(2004, 5, 5));
+                nuevo.setDocumentoIdentidad("DOC-ST-" + UUID.randomUUID().toString().substring(0, 8));
+                nuevo.setCorreo("aspirante" + UUID.randomUUID().toString().substring(0, 8) + "@test.com");
+                nuevo.setFechaCreacion(OffsetDateTime.now().withNano(0));
+
+                Response crear = target.request(MediaType.APPLICATION_JSON)
+                                .post(Entity.json(nuevo));
+                Assertions.assertEquals(201, crear.getStatus());
+
+                Response buscar = target.path("buscar")
+                                .queryParam("apellidos", apellidos)
+                                .request(MediaType.APPLICATION_JSON)
+                                .get();
+
+                Assertions.assertEquals(200, buscar.getStatus());
+                List<Aspirante> encontrados = buscar.readEntity(new GenericType<List<Aspirante>>() {});
+                Assertions.assertNotNull(encontrados);
+                Assertions.assertFalse(encontrados.isEmpty());
+                Assertions.assertTrue(encontrados.stream().anyMatch(a -> apellidos.equals(a.getApellidos())));
+        }
 }

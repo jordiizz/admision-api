@@ -1,16 +1,24 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control;
 
-import jakarta.persistence.EntityManager;
-import org.junit.jupiter.api.*;
-import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Aspirante;
-import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.AspiranteOpcion;
-
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
+
+import jakarta.persistence.EntityManager;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Aspirante;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -265,6 +273,53 @@ public class AspiranteDAOIT extends AbstractIntengrationDAOTest{
         cut.em = null;
         assertThrows(IllegalStateException.class, () -> {cut.buscarPorRango(0, 50);});
         //fail("Esta prueba falló");
+    }
+
+    @Order(20)
+    @Test
+    public void testBuscarPorApellidosExitoso() {
+        System.out.println("buscarPorApellidos aspirante exitoso");
+        String apellidos = "APELLIDO-BUSQUEDA-" + UUID.randomUUID().toString().substring(0, 8);
+
+        Aspirante aspirante1 = new Aspirante(UUID.randomUUID());
+        aspirante1.setNombres("Aspirante A");
+        aspirante1.setApellidos(apellidos);
+        aspirante1.setCorreo("aspirante.apellido.a." + UUID.randomUUID().toString().substring(0, 6) + "@gmail.com");
+        aspirante1.setFechaNacimiento(LocalDate.of(2001, 5, 5));
+        aspirante1.setFechaCreacion(OffsetDateTime.now());
+
+        Aspirante aspirante2 = new Aspirante(UUID.randomUUID());
+        aspirante2.setNombres("Aspirante B");
+        aspirante2.setApellidos(apellidos);
+        aspirante2.setCorreo("aspirante.apellido.b." + UUID.randomUUID().toString().substring(0, 6) + "@gmail.com");
+        aspirante2.setFechaNacimiento(LocalDate.of(2002, 6, 6));
+        aspirante2.setFechaCreacion(OffsetDateTime.now());
+
+        cut.em.getTransaction().begin();
+        cut.crear(aspirante1);
+        cut.crear(aspirante2);
+        cut.em.getTransaction().commit();
+
+        List<Aspirante> encontrados = cut.buscarPorApellidos(apellidos);
+        assertNotNull(encontrados);
+        assertTrue(encontrados.size() >= 2);
+        assertTrue(encontrados.stream().allMatch(a -> apellidos.equals(a.getApellidos())));
+    }
+
+    @Order(21)
+    @Test
+    public void testBuscarPorApellidosParametrosInvalidos() {
+        System.out.println("buscarPorApellidos aspirante parametros invalidos");
+        assertThrows(IllegalArgumentException.class, () -> cut.buscarPorApellidos(null));
+        assertThrows(IllegalArgumentException.class, () -> cut.buscarPorApellidos("   "));
+    }
+
+    @Order(22)
+    @Test
+    public void testBuscarPorApellidosEmNull() {
+        System.out.println("buscarPorApellidos aspirante em nulo");
+        cut.em = null;
+        assertThrows(IllegalStateException.class, () -> cut.buscarPorApellidos("Lopez"));
     }
 
 }
