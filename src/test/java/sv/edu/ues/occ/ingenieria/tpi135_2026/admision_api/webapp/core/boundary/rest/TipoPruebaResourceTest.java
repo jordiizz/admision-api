@@ -144,11 +144,20 @@ public class TipoPruebaResourceTest {
     } 
 
     @Test 
-    public void actualizar_TipoPrueba_BadRequest(){
+    public void actualizar_TipoPrueba_BadRequest_IdTipoPrueba(){
+        System.out.println("actualizar_TipoPrueba_BadRequest");
+        UUID idTipoPrueba = UUID.randomUUID();
+        Response response = cut.actualizar(new TipoPrueba(), null);
+        // Verificar que la respuesta sea BAD_REQUEST
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void actualizar_TipoPrueba_BadRequest_Tp(){
         System.out.println("actualizar_TipoPrueba_BadRequest");
         // Llamar al método actualizar con un TipoPrueba nulo
         UUID idTipoPrueba = UUID.randomUUID();
-        Response response = cut.actualizar(null, idTipoPrueba); 
+        Response response = cut.actualizar(null, idTipoPrueba);
         // Verificar que la respuesta sea BAD_REQUEST
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
@@ -175,11 +184,24 @@ public class TipoPruebaResourceTest {
     }
 
     @Test 
-    public void buscarPorRango_TipoPrueba_ParametrosInvalidos(){
+    public void buscarPorRango_TipoPrueba_ParametrosInvalidos_Min(){
         System.out.println("buscarPorRango_TipoPrueba_ParametrosInvalidos");
         // Llamar al método buscarPorRango con parámetros inválidos
         int first = -1;
-        int max = 0;
+        int max = 10;
+        Response response = cut.buscarPorRango(first, max);
+
+        // Verificar que la respuesta sea BAD_REQUEST
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+    }
+
+
+    @Test
+    public void buscarPorRango_TipoPrueba_ParametrosInvalidos_Max(){
+        System.out.println("buscarPorRango_TipoPrueba_ParametrosInvalidos");
+        // Llamar al método buscarPorRango con parámetros inválidos
+        int first = 1;
+        int max = -6;
         Response response = cut.buscarPorRango(first, max);
 
         // Verificar que la respuesta sea BAD_REQUEST

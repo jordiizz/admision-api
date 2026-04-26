@@ -2,6 +2,8 @@ package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.boundary.
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import jakarta.ws.rs.core.Response;
@@ -53,7 +55,7 @@ public class PruebaJornadaResourceTest {
     }
 
     @Test
-    public void crear_PruebaJornada_Exitoso() {
+    public void crearExitoso() {
         System.out.println("EjecutandoTest: crear_PruebaJornada_Exitoso");
         UUID idPrueba = UUID.randomUUID();
         UUID idJornada = UUID.randomUUID();
@@ -68,16 +70,15 @@ public class PruebaJornadaResourceTest {
 
         Response respuesta = cut.crear(idPrueba, idJornada, uriInfo);
         assertEquals(Response.Status.CREATED.getStatusCode(), respuesta.getStatus());
-        // assertEquals("http://localhost/v1/prueba/" + prueba.getIdPrueba() + "/jornada/" + jornada.getIdJornada() , respuesta.getLocation().toString());
     }
 
     @Test
-    public void crear_PruebaJornada_NotFound() {
-        System.out.println("EjecutandoTest: crear_PruebaJornada_NotFound");
+    public void crearNotFoundJornada() {
+        System.out.println("EjecutandoTest: crearNotFound");
         UUID idPrueba = UUID.randomUUID();
         UUID idJornada = UUID.randomUUID();
 
-        Mockito.when(pDAO.buscarPorId(idPrueba)).thenReturn(null); // Simula que no se encuentra la prueba
+        Mockito.when(pDAO.buscarPorId(idPrueba)).thenReturn(new Prueba(UUID.randomUUID())); // Simula que no se encuentra la prueba
         Mockito.when(jDAO.buscarPorId(idJornada)).thenReturn(null); // Simula que no se encuentra la jornada
 
         Response respuesta = cut.crear(idPrueba, idJornada, uriInfo);
@@ -85,28 +86,77 @@ public class PruebaJornadaResourceTest {
     }
 
     @Test
-    public void crear_PruebaJornada_BadRequest() {
-        System.out.println("EjecutandoTest: crear_PruebaJornada_BadRequest");
-        Response respuesta = cut.crear(null, null, uriInfo);
+    public void crearNotFoundPrueba() {
+        System.out.println("EjecutandoTest: crearNotFound");
+        UUID idPrueba = UUID.randomUUID();
+        UUID idJornada = UUID.randomUUID();
+
+        Mockito.when(pDAO.buscarPorId(idPrueba)).thenReturn(null); // Simula que no se encuentra la prueba
+        Mockito.when(jDAO.buscarPorId(idJornada)).thenReturn(new Jornada(UUID.randomUUID())); // Simula que no se encuentra la jornada
+
+        Response respuesta = cut.crear(idPrueba, idJornada, uriInfo);
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), respuesta.getStatus());
+    }
+
+
+    @Test
+    public void crearBadRequestIdPrueba() {
+        System.out.println("EjecutandoTest: crearBadRequest");
+        Response respuesta = cut.crear(null, UUID.randomUUID(), uriInfo);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), respuesta.getStatus());
     }
 
     @Test
-    public void crear_PruebaJornada_ErrorInterno() {
-        System.out.println("EjecutandoTest: crear_PruebaJornada_ErrorInterno");
-        UUID idPrueba = UUID.randomUUID();
-        UUID idJornada = UUID.randomUUID();
-        p = new Prueba(idPrueba);
-        j = new Jornada(idJornada);
-
-        cut.jDAO = null;
-        Response respuesta = cut.crear(idPrueba, idJornada, uriInfo);
-        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), respuesta.getStatus());
+    public void crearBadRequestIdJornada() {
+        System.out.println("EjecutandoTest: crearBadRequest");
+        Response respuesta = cut.crear(UUID.randomUUID(), null, uriInfo);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), respuesta.getStatus());
     }
 
+     @Test
+     public void crearPruebaNull() {
+         System.out.println("EjecutandoTest: crearPruebaNull");
+         UUID idPrueba = UUID.randomUUID();
+         UUID idJornada = UUID.randomUUID();
+         j = new Jornada(idJornada);
+
+         Mockito.when(pDAO.buscarPorId(idPrueba)).thenReturn(null); // Prueba no encontrada
+         Mockito.when(jDAO.buscarPorId(idJornada)).thenReturn(j);
+
+         Response respuesta = cut.crear(idPrueba, idJornada, uriInfo);
+         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), respuesta.getStatus());
+     }
+
+     @Test
+     public void crearJornadaNull() {
+         System.out.println("EjecutandoTest: crearJornadaNull");
+         UUID idPrueba = UUID.randomUUID();
+         UUID idJornada = UUID.randomUUID();
+         p = new Prueba(idPrueba);
+
+         Mockito.when(pDAO.buscarPorId(idPrueba)).thenReturn(p);
+         Mockito.when(jDAO.buscarPorId(idJornada)).thenReturn(null); // Jornada no encontrada
+
+         Response respuesta = cut.crear(idPrueba, idJornada, uriInfo);
+         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), respuesta.getStatus());
+     }
+
+     @Test
+     public void crearErrorInterno() {
+         System.out.println("EjecutandoTest: crearErrorInterno");
+         UUID idPrueba = UUID.randomUUID();
+         UUID idJornada = UUID.randomUUID();
+         p = new Prueba(idPrueba);
+         j = new Jornada(idJornada);
+
+         cut.jDAO = null;
+         Response respuesta = cut.crear(idPrueba, idJornada, uriInfo);
+         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), respuesta.getStatus());
+     }
+
     @Test
-    public void eliminar_PruebaJornada_Exitoso() {
-        System.out.println("EjecutandoTest: eliminar_PruebaJornada_Exitoso");
+    public void eliminarExitoso() {
+        System.out.println("EjecutandoTest: eliminarExitoso");
         UUID idPrueba = UUID.randomUUID();
         UUID idJornada = UUID.randomUUID();
         p = new Prueba(idPrueba);
@@ -122,29 +172,80 @@ public class PruebaJornadaResourceTest {
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), respuesta.getStatus());
     }
 
-    @Test
-    public void eliminar_PruebaJornada_NotFound() {
-        System.out.println("EjecutandoTest: eliminar_PruebaJornada_NotFound");
-        UUID idPrueba = UUID.randomUUID();
-        UUID idJornada = UUID.randomUUID();
+     @Test
+     public void eliminarNotFound() {
+         System.out.println("EjecutandoTest: eliminarNotFound");
+         UUID idPrueba = UUID.randomUUID();
+         UUID idJornada = UUID.randomUUID();
 
-        Mockito.when(pDAO.buscarPorId(idPrueba)).thenReturn(null);
-        Mockito.when(jDAO.buscarPorId(idJornada)).thenReturn(null);
+         Mockito.when(pDAO.buscarPorId(idPrueba)).thenReturn(null);
+         Mockito.when(jDAO.buscarPorId(idJornada)).thenReturn(null);
 
-        Response respuesta = cut.eliminar(idPrueba, idJornada);
-        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), respuesta.getStatus());
+         Response respuesta = cut.eliminar(idPrueba, idJornada);
+         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), respuesta.getStatus());
+     }
+
+     @Test
+     public void eliminarPruebaNull() {
+         System.out.println("EjecutandoTest: eliminarPruebaNull");
+         UUID idPrueba = UUID.randomUUID();
+         UUID idJornada = UUID.randomUUID();
+         j = new Jornada(idJornada);
+
+         Mockito.when(pDAO.buscarPorId(idPrueba)).thenReturn(null); // Prueba no encontrada
+         Mockito.when(jDAO.buscarPorId(idJornada)).thenReturn(j);
+
+         Response respuesta = cut.eliminar(idPrueba, idJornada);
+         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), respuesta.getStatus());
+     }
+
+     @Test
+     public void eliminarJornadaNull() {
+         System.out.println("EjecutandoTest: eliminarJornadaNull");
+         UUID idPrueba = UUID.randomUUID();
+         UUID idJornada = UUID.randomUUID();
+         p = new Prueba(idPrueba);
+
+         Mockito.when(pDAO.buscarPorId(idPrueba)).thenReturn(p);
+         Mockito.when(jDAO.buscarPorId(idJornada)).thenReturn(null); // Jornada no encontrada
+
+         Response respuesta = cut.eliminar(idPrueba, idJornada);
+         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), respuesta.getStatus());
+     }
+
+     @Test
+     public void eliminarPruebaJornadaExistenteNull() {
+         System.out.println("EjecutandoTest: eliminarPruebaJornadaExistenteNull");
+         UUID idPrueba = UUID.randomUUID();
+         UUID idJornada = UUID.randomUUID();
+         p = new Prueba(idPrueba);
+         j = new Jornada(idJornada);
+
+         Mockito.when(pDAO.buscarPorId(idPrueba)).thenReturn(p);
+         Mockito.when(jDAO.buscarPorId(idJornada)).thenReturn(j);
+         Mockito.when(pJDAO.buscarPorId(Mockito.any(PruebaJornadaPK.class))).thenReturn(null); // No existe la relación
+
+         Response respuesta = cut.eliminar(idPrueba, idJornada);
+         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), respuesta.getStatus());
+     }
+
+     @Test
+     public void eliminarBadRequestIdPrueba() {
+        System.out.println("EjecutandoTest: eliminarBadRequest");
+        Response respuesta = cut.eliminar(UUID.randomUUID(), null);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), respuesta.getStatus());
     }
 
-    @Test 
-    public void eliminar_PruebaJornada_BadRequest() {
-        System.out.println("EjecutandoTest: eliminar_PruebaJornada_BadRequest");
-        Response respuesta = cut.eliminar(null, null);
+    @Test
+    public void eliminarBadRequestIdJornada() {
+        System.out.println("EjecutandoTest: eliminarBadRequest");
+        Response respuesta = cut.eliminar(null, UUID.randomUUID());
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), respuesta.getStatus());
     }
 
      @Test
-    public void eliminar_PruebaJornada_ErrorInterno() {
-        System.out.println("EjecutandoTest: eliminar_PruebaJornada_ErrorInterno");
+    public void eliminarErrorInterno() {
+        System.out.println("EjecutandoTest: eliminarErrorInterno");
         UUID idPrueba = UUID.randomUUID();
         UUID idJornada = UUID.randomUUID();
         p = new Prueba(idPrueba);
@@ -154,6 +255,55 @@ public class PruebaJornadaResourceTest {
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), respuesta.getStatus());
     }
 
-   
+     @Test
+     public void listarJornadasExitoso(){
+         System.out.println("EjecutandoTest: listarJornadasExitoso");
+         UUID idPrueba = UUID.randomUUID();
+         Mockito.when(jDAO.listarPorIdPrueba(idPrueba, 0, 10)).thenReturn(List.of(new Jornada(UUID.randomUUID()), new Jornada(UUID.randomUUID())));
+         Response respuesta = cut.listarJornadas(idPrueba, 0, 10);
+         assertEquals(Response.Status.OK.getStatusCode(), respuesta.getStatus());
+     }
 
-}
+     @Test
+     public void listarJornadasNotFound(){
+         System.out.println("EjecutandoTest: listarJornadasNotFound");
+         UUID idPrueba = UUID.randomUUID();
+         Mockito.when(jDAO.listarPorIdPrueba(idPrueba, 0, 10)).thenReturn(null);
+         Response respuesta = cut.listarJornadas(idPrueba, 0, 10);
+         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), respuesta.getStatus());
+     }
+
+     @Test
+     public void listarJornadasBadRequestNullId(){
+         System.out.println("EjecutandoTest: listarJornadasBadRequestNullId");
+         Response respuesta = cut.listarJornadas(null, 0, 10);
+         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), respuesta.getStatus());
+     }
+
+
+     @Test
+     public void listarJornadasBadRequestFirstNegativo(){
+         System.out.println("EjecutandoTest: listarJornadasBadRequestFirstNegativo");
+         UUID idPrueba = UUID.randomUUID();
+         Response respuesta = cut.listarJornadas(idPrueba, -1, 10);
+         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), respuesta.getStatus());
+     }
+
+     @Test
+     public void listarJornadasBadRequestMaxInvalido(){
+         System.out.println("EjecutandoTest: listarJornadasBadRequestMaxInvalido");
+         UUID idPrueba = UUID.randomUUID();
+         Response respuesta = cut.listarJornadas(idPrueba, 0, 0);
+         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), respuesta.getStatus());
+     }
+
+     @Test
+     public void listarJornadasErrorInterno(){
+         System.out.println("EjecutandoTest: listarJornadasErrorInterno");
+         UUID idPrueba = UUID.randomUUID();
+         cut.jDAO = null;
+         Response respuesta = cut.listarJornadas(idPrueba, 0, 10);
+         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), respuesta.getStatus());
+     }
+
+ }

@@ -37,12 +37,12 @@ public class PreguntaDistractorResource implements Serializable {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/{id_distractor}")
     public Response crear(@PathParam("id_pregunta") UUID idPregunta, @PathParam("id_distractor") UUID idDistractor, PreguntaDistractor pD){ 
-        if(idPregunta != null && idDistractor != null){    
+        if(idPregunta != null && idDistractor != null && pD != null){
             try {
                 Pregunta p = pDAO.buscarPorId(idPregunta);
                 Distractor d = dDAO.buscarPorId(idDistractor);
 
-                if(p != null && d != null && pD != null){
+                if(p != null && d != null ){
                     pD.setIdPregunta(p);
                     pD.setIdDistractor(d);
                     pDDAO.crear(pD);
@@ -83,7 +83,7 @@ public class PreguntaDistractorResource implements Serializable {
                 Pregunta p = pDAO.buscarPorId(idPregunta);
                 if(p != null){
                     List<PreguntaDistractor> preguntaDistractores = pDDAO.buscarPorIdPregunta(idPregunta);
-                    if(!preguntaDistractores.isEmpty() && preguntaDistractores != null){
+                    if(preguntaDistractores != null && !preguntaDistractores.isEmpty() ){
                         return Response.status(Response.Status.OK).entity(preguntaDistractores).build();
                     }
                 }

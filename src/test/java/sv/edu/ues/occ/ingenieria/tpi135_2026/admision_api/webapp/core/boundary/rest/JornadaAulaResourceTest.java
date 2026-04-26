@@ -70,18 +70,34 @@ public class JornadaAulaResourceTest {
     }
 
     @Test
-    public void crear_JornadaAula_BadRequest() {
+    public void crear_JornadaAula_BadRequest_IdJornada() {
         System.out.println("Ejecutando test: crear_JornadaAula_BadRequest");
-        Response respuesta = cut.crear(null, null);
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), respuesta.getStatus());
-    }   
-
-    @Test
-    public void eliminar_JornadaAula_BadRequest() {
-        System.out.println("Ejecutando test: eliminar_JornadaAula_BadRequest");
-        Response respuesta = cut.eliminar(null, null);
+        Response respuesta = cut.crear(null, UUID.randomUUID().toString());
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), respuesta.getStatus());
     }
+
+
+    @Test
+    public void crear_JornadaAula_BadRequest_IdAula() {
+        System.out.println("Ejecutando test: crear_JornadaAula_BadRequest");
+        Response respuesta = cut.crear(UUID.randomUUID(), null);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), respuesta.getStatus());
+    }
+
+
+    @Test
+    public void eliminar_JornadaAula_BadRequest_IdAula() {
+        System.out.println("Ejecutando test: eliminar_JornadaAula_BadRequest");
+        Response respuesta = cut.eliminar(UUID.randomUUID(), null);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), respuesta.getStatus());
+    }
+    @Test
+    public void eliminar_JornadaAula_BadRequest_IdJornada() {
+        System.out.println("Ejecutando test: eliminar_JornadaAula_BadRequest");
+        Response respuesta = cut.eliminar(null, UUID.randomUUID().toString());
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), respuesta.getStatus());
+    }
+
 
     @Test
     public void eliminar_JornadaAula_JornadaNoEncontrada() {
@@ -134,11 +150,22 @@ public class JornadaAulaResourceTest {
     }
 
     @Test 
-    public void listar_JornadaAula_NoEncontrado() {
+    public void listar_JornadaAula_NoEncontrado_EmptyList() {
         System.out.println("Ejecutando test: listar_JornadaAula_NoEncontrado");
         cut.listarAulaJornadas(idJornada);
 
         Mockito.when(jADAO.listarPorJornada(idJornada)).thenReturn(List.of());
+        Mockito.verify(jADAO).listarPorJornada(idJornada);
+        Response respuesta = cut.listarAulaJornadas(idJornada);
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), respuesta.getStatus());
+    }
+
+    @Test
+    public void listar_JornadaAula_NoEncontrado_ListNull() {
+        System.out.println("Ejecutando test: listar_JornadaAula_NoEncontrado");
+        cut.listarAulaJornadas(idJornada);
+
+        Mockito.when(jADAO.listarPorJornada(idJornada)).thenReturn(null);
         Mockito.verify(jADAO).listarPorJornada(idJornada);
         Response respuesta = cut.listarAulaJornadas(idJornada);
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), respuesta.getStatus());

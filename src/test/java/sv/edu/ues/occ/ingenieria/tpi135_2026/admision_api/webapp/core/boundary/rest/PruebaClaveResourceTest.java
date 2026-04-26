@@ -73,13 +73,26 @@ public class PruebaClaveResourceTest {
         assertEquals(respuesta.getStatus(), Response.Status.NOT_FOUND.getStatusCode());
     }
 
-     @Test
-     public void test_PruebaClave_asignarClave_badRequest() {
-         Response respuesta = cut.asignarClave(null, null, mockUriInfo);
-         assertEquals(respuesta.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
-    }
+      @Test
+      public void test_PruebaClave_asignarClave_badRequest() {
+          Response respuesta = cut.asignarClave(null, null, mockUriInfo);
+          assertEquals(respuesta.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
+     }
 
-     @Test 
+     @Test
+     public void test_PruebaClave_asignarClave_idPruebaNullBadRequest() {
+         PruebaClave pC = new PruebaClave();
+         Response respuesta = cut.asignarClave(null, pC, mockUriInfo);
+         assertEquals(respuesta.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
+     }
+
+     @Test
+     public void test_PruebaClave_asignarClave_pCNullBadRequest() {
+         Response respuesta = cut.asignarClave(UUID.randomUUID(), null, mockUriInfo);
+         assertEquals(respuesta.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
+     }
+
+     @Test
      public void test_PruebaClave_asignarClave_internalServerError() {
          Prueba p = new Prueba(UUID.randomUUID());
          PruebaClave pC = new PruebaClave();
@@ -102,14 +115,30 @@ public class PruebaClaveResourceTest {
         assertEquals(respuesta.getStatus(), Response.Status.OK.getStatusCode());
     }
 
-    @Test
-    public void test_PruebaClave_listarClaves_NoEncontrado() {
-        Prueba p = new Prueba(UUID.randomUUID());
-        Mockito.when(pDAO.buscarPorId(p.getIdPrueba())).thenReturn(p);
-        Mockito.when(pCDAO.listarClavesPorPrueba(Mockito.any(UUID.class))).thenReturn(null);
-        Response respuesta = cut.listarClaves(p.getIdPrueba());
-        assertEquals(respuesta.getStatus(), Response.Status.NOT_FOUND.getStatusCode());
-    }
+     @Test
+     public void test_PruebaClave_listarClaves_NoEncontrado() {
+         Prueba p = new Prueba(UUID.randomUUID());
+         Mockito.when(pDAO.buscarPorId(p.getIdPrueba())).thenReturn(p);
+         Mockito.when(pCDAO.listarClavesPorPrueba(Mockito.any(UUID.class))).thenReturn(null);
+         Response respuesta = cut.listarClaves(p.getIdPrueba());
+         assertEquals(respuesta.getStatus(), Response.Status.NOT_FOUND.getStatusCode());
+     }
+
+     @Test
+     public void test_PruebaClave_listarClaves_ListaVacia() {
+         Prueba p = new Prueba(UUID.randomUUID());
+         Mockito.when(pDAO.buscarPorId(p.getIdPrueba())).thenReturn(p);
+         Mockito.when(pCDAO.listarClavesPorPrueba(Mockito.any(UUID.class))).thenReturn(List.of());
+         Response respuesta = cut.listarClaves(p.getIdPrueba());
+         assertEquals(respuesta.getStatus(), Response.Status.NOT_FOUND.getStatusCode());
+     }
+
+     @Test
+     public void test_PruebaClave_listarClaves_PruebaNoEncontrada() {
+         Mockito.when(pDAO.buscarPorId(Mockito.any(UUID.class))).thenReturn(null);
+         Response respuesta = cut.listarClaves(UUID.randomUUID());
+         assertEquals(respuesta.getStatus(), Response.Status.NOT_FOUND.getStatusCode());
+     }
 
      @Test
      public void test_PruebaClave_listarClaves_BadRequest() {
@@ -138,16 +167,40 @@ public class PruebaClaveResourceTest {
             assertEquals(respuesta.getStatus(), Response.Status.NO_CONTENT.getStatusCode());
     }
 
-    @Test
-    public void test_PruebaClave_eliminarClave_ClaveNoEncontrada() {
-        Prueba p = new Prueba(UUID.randomUUID());
-        Mockito.when(pDAO.buscarPorId(p.getIdPrueba())).thenReturn(p);
-        Mockito.when(pCDAO.buscarPorId(Mockito.any(UUID.class))).thenReturn(null);
-        Response respuesta = cut.eliminarClave(p.getIdPrueba(), UUID.randomUUID());
-        assertEquals(respuesta.getStatus(), Response.Status.NOT_FOUND.getStatusCode());
-    }
+     @Test
+     public void test_PruebaClave_eliminarClave_ClaveNoEncontrada() {
+         Prueba p = new Prueba(UUID.randomUUID());
+         Mockito.when(pDAO.buscarPorId(p.getIdPrueba())).thenReturn(p);
+         Mockito.when(pCDAO.buscarPorId(Mockito.any(UUID.class))).thenReturn(null);
+         Response respuesta = cut.eliminarClave(p.getIdPrueba(), UUID.randomUUID());
+         assertEquals(respuesta.getStatus(), Response.Status.NOT_FOUND.getStatusCode());
+     }
 
-    @Test 
+     @Test
+     public void test_PruebaClave_eliminarClave_IdsPruebaNoConcuerdan() {
+         Prueba p = new Prueba(UUID.randomUUID());
+         Prueba p2 = new Prueba(UUID.randomUUID());
+         PruebaClave pC = new PruebaClave();
+         pC.setIdPrueba(p2);
+         Mockito.when(pDAO.buscarPorId(p.getIdPrueba())).thenReturn(p);
+         Mockito.when(pCDAO.buscarPorId(Mockito.any(UUID.class))).thenReturn(pC);
+         Response respuesta = cut.eliminarClave(p.getIdPrueba(), UUID.randomUUID());
+         assertEquals(respuesta.getStatus(), Response.Status.NOT_FOUND.getStatusCode());
+     }
+
+     @Test
+     public void test_PruebaClave_eliminarClave_IdPruebaNull() {
+         Response respuesta = cut.eliminarClave(null, UUID.randomUUID());
+         assertEquals(respuesta.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
+     }
+
+     @Test
+     public void test_PruebaClave_eliminarClave_IdClaveNull() {
+         Response respuesta = cut.eliminarClave(UUID.randomUUID(), null);
+         assertEquals(respuesta.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
+     }
+
+    @Test
     public void test_PruebaClave_eliminarClave_BadRequest() {
         Response respuesta = cut.eliminarClave(null, null);
         assertEquals(respuesta.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
@@ -172,14 +225,46 @@ public class PruebaClaveResourceTest {
         assertEquals(respuesta.getStatus(), Response.Status.NOT_FOUND.getStatusCode());
     }
 
-    @Test
-    public void test_PruebaClave_buscarPorId(){
+     @Test
+     public void test_PruebaClave_buscarPorId(){
 
-        PruebaClave pC = new PruebaClave(UUID.randomUUID());
-        Mockito.when(pCDAO.buscarPorId(pC.getIdPruebaClave())).thenReturn(pC);
-        Response respuesta = cut.buscarPorId(UUID.randomUUID(), pC.getIdPruebaClave());
-        assertEquals(respuesta.getStatus(), Response.Status.OK.getStatusCode());
+         PruebaClave pC = new PruebaClave(UUID.randomUUID());
+         Mockito.when(pCDAO.buscarPorId(pC.getIdPruebaClave())).thenReturn(pC);
+         Response respuesta = cut.buscarPorId(UUID.randomUUID(), pC.getIdPruebaClave());
+         assertEquals(respuesta.getStatus(), Response.Status.OK.getStatusCode());
 
-    }
+     }
 
-}
+     @Test
+     public void test_PruebaClave_buscarPorId_NoEncontrada(){
+         Mockito.when(pCDAO.buscarPorId(Mockito.any(UUID.class))).thenReturn(null);
+         Response respuesta = cut.buscarPorId(UUID.randomUUID(), UUID.randomUUID());
+         assertEquals(respuesta.getStatus(), Response.Status.NOT_FOUND.getStatusCode());
+     }
+
+     @Test
+     public void test_PruebaClave_buscarPorId_BadRequest_IdPruebaNull(){
+         Response respuesta = cut.buscarPorId(null, UUID.randomUUID());
+         assertEquals(respuesta.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
+     }
+
+     @Test
+     public void test_PruebaClave_buscarPorId_BadRequest_IdClaveNull(){
+         Response respuesta = cut.buscarPorId(UUID.randomUUID(), null);
+         assertEquals(respuesta.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
+     }
+
+     @Test
+     public void test_PruebaClave_buscarPorId_BadRequest_AmbosNull(){
+         Response respuesta = cut.buscarPorId(null, null);
+         assertEquals(respuesta.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
+     }
+
+     @Test
+     public void test_PruebaClave_buscarPorId_ErrorInterno(){
+         Mockito.when(pCDAO.buscarPorId(Mockito.any(UUID.class))).thenThrow(new RuntimeException("Error al buscar la clave"));
+         Response respuesta = cut.buscarPorId(UUID.randomUUID(), UUID.randomUUID());
+         assertEquals(respuesta.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+     }
+
+ }

@@ -95,65 +95,114 @@ public class PreguntaDistractorResourceTest {
         Assertions.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
     }
 
-    @Test 
-    public void crear_PreguntaDistractor_BadRequest(){
-        Response response = cut.crear(null, null, null);
+     @Test
+     public void crear_PreguntaDistractor_BadRequestIdPregunta(){
+         Response response = cut.crear(null, UUID.randomUUID(), new PreguntaDistractor());
+         Assertions.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+     }
+    @Test
+    public void crear_PreguntaDistractor_BadRequestIdDistractor(){
+        Response response = cut.crear(UUID.randomUUID(), null, new PreguntaDistractor());
+        Assertions.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+    }
+    @Test
+    public void crear_PreguntaDistractor_BadRequestBody(){
+        Response response = cut.crear(UUID.randomUUID(), UUID.randomUUID(), null);
         Assertions.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
 
 
 
+      @Test
+      public void eliminar_PreguntaDistractor_ErrorInterno(){
+          PreguntaDistractor pD = new PreguntaDistractor();
+          PreguntaDistractorPK pk = new PreguntaDistractorPK(p.getIdPregunta(), d.getIdDistractor());
+          Mockito.when(pDDAO.buscarPorId(pk)).thenReturn(pD);
+          Mockito.doThrow(new RuntimeException("Error de prueba")).when(pDDAO).eliminar(pD);
+          Response response = cut.eliminar(p.getIdPregunta(), d.getIdDistractor());
+          Mockito.verify(pDDAO).buscarPorId(pk);
+          Mockito.verify(pDDAO).eliminar(pD);
+          Assertions.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+      }
 
+     @Test
+     public void eliminar_PreguntaDistractor_BadRequestIdDistractor(){
+         Response response = cut.eliminar(null, UUID.randomUUID());
+         Assertions.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+     }
 
-    public void eliminar_PreguntaDistractor_ErrorInterno(){
-
-        Mockito.doThrow(new RuntimeException("Error de prueba")).when(pDDAO).eliminar(Mockito.any(PreguntaDistractor.class));
-        PreguntaDistractorPK pk = new PreguntaDistractorPK(p.getIdPregunta(), d.getIdDistractor());
-        Mockito.when(pDDAO.buscarPorId(pk)).thenReturn(null);
-        Response response = cut.eliminar(p.getIdPregunta(), d.getIdDistractor());
-        Mockito.verify(pDDAO).eliminar(Mockito.any(PreguntaDistractor.class));
-        Assertions.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-    }
-
-    @Test 
-    public void eliminar_PreguntaDistractor_BadRequest(){
-        Response response = cut.eliminar(null, null);
+    @Test
+    public void eliminar_PreguntaDistractor_BadRequestIdPregunta(){
+        Response response = cut.eliminar(UUID.randomUUID(), null);
         Assertions.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
 
+     @Test
+     public void eliminar_PreguntaDistractor_Exitoso(){
+         PreguntaDistractor pD = new PreguntaDistractor();
+         PreguntaDistractorPK pk = new PreguntaDistractorPK(p.getIdPregunta(), d.getIdDistractor());
+         Mockito.when(pDDAO.buscarPorId(pk)).thenReturn(pD);
+         Mockito.doNothing().when(pDDAO).eliminar(pD);
+         Response response = cut.eliminar(p.getIdPregunta(), d.getIdDistractor());
+         Mockito.verify(pDDAO).buscarPorId(pk);
+         Mockito.verify(pDDAO).eliminar(pD);
+         Assertions.assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+     }
 
-    public void eliminar_PreguntaDistractor_Exitoso(){
-        Mockito.doNothing().when(pDDAO).eliminar(Mockito.any(PreguntaDistractor.class));
-        Response response = cut.eliminar(p.getIdPregunta(), d.getIdDistractor());
-        Mockito.verify(pDDAO).eliminar(Mockito.any(PreguntaDistractor.class));
-        Assertions.assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-    }
+     @Test
+     public void eliminar_PreguntaDistractor_NotFound(){
+         PreguntaDistractorPK pk = new PreguntaDistractorPK(p.getIdPregunta(), d.getIdDistractor());
+         Mockito.when(pDDAO.buscarPorId(pk)).thenReturn(null);
+         Response response = cut.eliminar(p.getIdPregunta(), d.getIdDistractor());
+         Mockito.verify(pDDAO).buscarPorId(pk);
+         Assertions.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+     }
 
-    @Test 
-    public void listar_PreguntaDistractor_Exitoso(){
-        PreguntaDistractor pD = new PreguntaDistractor();
-        pD.setIdPregunta(p);
-        pD.setIdDistractor(d);
-        pD.setCorrecto(true);
+     @Test
+     public void listar_PreguntaDistractor_Exitoso(){
+         PreguntaDistractor pD = new PreguntaDistractor();
+         pD.setIdPregunta(p);
+         pD.setIdDistractor(d);
+         pD.setCorrecto(true);
 
+         Mockito.when(pDAO.buscarPorId(p.getIdPregunta())).thenReturn(p);
+         Mockito.when(pDDAO.buscarPorIdPregunta(p.getIdPregunta())).thenReturn(List.of(pD, pD));
+
+         Response response = cut.listar(p.getIdPregunta());
+         Mockito.verify(pDDAO).buscarPorIdPregunta(p.getIdPregunta());
+         Assertions.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+         Assertions.assertEquals(List.of(pD, pD), response.getEntity());
+     }
+
+     @Test
+     public void listar_PreguntaDistractor_PreguntaNoEncontrada(){
+         Mockito.when(pDAO.buscarPorId(p.getIdPregunta())).thenReturn(null);
+
+         Response response = cut.listar(p.getIdPregunta());
+         Mockito.verify(pDAO).buscarPorId(p.getIdPregunta());
+         Assertions.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+     }
+
+     @Test
+     public void listar_PreguntaDistractor_NoEncontrado(){
+         Mockito.when(pDAO.buscarPorId(p.getIdPregunta())).thenReturn(p);
+         Mockito.when(pDDAO.buscarPorIdPregunta(p.getIdPregunta())).thenReturn(List.of());
+
+         Response response = cut.listar(p.getIdPregunta());
+         Mockito.verify(pDDAO).buscarPorIdPregunta(p.getIdPregunta());
+         Assertions.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+     }
+
+    @Test
+    public void listar_PreguntaDistractor_Null(){
         Mockito.when(pDAO.buscarPorId(p.getIdPregunta())).thenReturn(p);
-        Mockito.when(pDDAO.buscarPorIdPregunta(p.getIdPregunta())).thenReturn(List.of(pD, pD));
-
-        Response response = cut.listar(p.getIdPregunta());
-        Mockito.verify(pDDAO).buscarPorIdPregunta(p.getIdPregunta());
-        Assertions.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        Assertions.assertEquals(List.of(pD, pD), response.getEntity());
-    }
-
-    @Test 
-    public void listar_PreguntaDistractor_NoEncontrado(){
-        Mockito.when(pDAO.buscarPorId(p.getIdPregunta())).thenReturn(p);
-        Mockito.when(pDDAO.buscarPorIdPregunta(p.getIdPregunta())).thenReturn(List.of());
+        Mockito.when(pDDAO.buscarPorIdPregunta(p.getIdPregunta())).thenReturn(null);
 
         Response response = cut.listar(p.getIdPregunta());
         Mockito.verify(pDDAO).buscarPorIdPregunta(p.getIdPregunta());
         Assertions.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }
+
 
     @Test 
     public void listar_PreguntaDistractor_ErrorInterno(){
