@@ -37,6 +37,9 @@ public class JornadaAula implements Serializable {
     @Column(name = "id_aula", nullable = false, length = 100)
     private String idAula;
 
+    @Column(name = "id_docente", nullable = true, length = 100)
+    private String idDocente;
+
     public JornadaAula() {}
 
     public JornadaAula(UUID idJornadaAula) {

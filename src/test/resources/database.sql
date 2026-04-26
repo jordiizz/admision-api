@@ -68,8 +68,10 @@ CREATE TABLE IF NOT EXISTS public.jornada_aula
     id_jornada_aula uuid NOT NULL,
     id_jornada uuid NOT NULL,
     id_aula character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    id_docente character varying(100) COLLATE pg_catalog."default",
     CONSTRAINT jornada_aula_pkey PRIMARY KEY (id_jornada_aula),
-    CONSTRAINT uq_jornada_aula UNIQUE (id_jornada, id_aula)
+    CONSTRAINT uq_jornada_aula UNIQUE (id_jornada, id_aula),
+    CONSTRAINT uq_jornada_docente UNIQUE (id_jornada, id_docente)
 );
 
 CREATE TABLE IF NOT EXISTS public.pregunta
