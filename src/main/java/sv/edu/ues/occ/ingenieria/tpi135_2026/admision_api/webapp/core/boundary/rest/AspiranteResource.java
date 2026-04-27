@@ -195,7 +195,7 @@ public class AspiranteResource implements Serializable {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id_aspirante}/prueba/{id_prueba}")
-    public Response listarResultadoExamen(@PathParam("id_aspirante") UUID idAspirante, @PathParam("id_prueba") UUID idPrueba) {
+    public Response buscarResultadoExamen(@PathParam("id_aspirante") UUID idAspirante, @PathParam("id_prueba") UUID idPrueba) {
         if (idAspirante == null || idPrueba == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .header(ResponseHeaders.WRONG_PARAMETER.toString(), "Los IDs de aspirante y prueba no pueden ser nulos")

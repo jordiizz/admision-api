@@ -373,19 +373,19 @@ public class AspiranteResourceTest {
         Mockito.when(mockPJAOED.obtenerResultadoExamenPorAspiranteYPrueba(idA, idP)).thenReturn(ex);
         Mockito.when(mockStrategy.obtenerEstado(Mockito.any(), Mockito.any())).thenReturn(ExamenResultadosEnum.APROBADO);
 
-        Response res = cut.listarResultadoExamen(idA, idP);
+        Response res = cut.buscarResultadoExamen(idA, idP);
         assertEquals(200, res.getStatus());
     }
 
     @Test
     public void listarResultadoExamenNullTest() {
-        Response res = cut.listarResultadoExamen(null, null);
+        Response res = cut.buscarResultadoExamen(null, null);
         assertEquals(400, res.getStatus());
     }
 
     @Test
     public void listarResultadoExamenIdPruebaNullTest() {
-        Response res = cut.listarResultadoExamen(UUID.randomUUID(), null);
+        Response res = cut.buscarResultadoExamen(UUID.randomUUID(), null);
         assertEquals(400, res.getStatus());
     }
 
@@ -393,7 +393,7 @@ public class AspiranteResourceTest {
     public void listarResultadoExamenNoEncontradoTest() {
         UUID id = UUID.randomUUID();
         Mockito.when(mockPJAOED.obtenerResultadoExamenPorAspiranteYPrueba(id, id)).thenReturn(null);
-        Response res = cut.listarResultadoExamen(id, id);
+        Response res = cut.buscarResultadoExamen(id, id);
         assertEquals(404, res.getStatus());
     }
 
@@ -405,14 +405,14 @@ public class AspiranteResourceTest {
 
         Mockito.when(mockPJAOED.obtenerResultadoExamenPorAspiranteYPrueba(id, id)).thenReturn(ex);
 
-        Response res = cut.listarResultadoExamen(id, id);
+        Response res = cut.buscarResultadoExamen(id, id);
         assertEquals(404, res.getStatus());
     }
 
     @Test
     public void listarResultadoExamenErrorTest() {
         Mockito.when(mockPJAOED.obtenerResultadoExamenPorAspiranteYPrueba(Mockito.any(), Mockito.any())).thenThrow(new RuntimeException());
-        Response res = cut.listarResultadoExamen(UUID.randomUUID(), UUID.randomUUID());
+        Response res = cut.buscarResultadoExamen(UUID.randomUUID(), UUID.randomUUID());
         assertEquals(500, res.getStatus());
     }
 
