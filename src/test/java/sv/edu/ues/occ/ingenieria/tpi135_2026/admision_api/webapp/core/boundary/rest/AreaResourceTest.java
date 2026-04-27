@@ -235,4 +235,50 @@ public class AreaResourceTest {
         Mockito.verifyNoInteractions(mockAD);
     }
 
+    @Test
+    public void actualizar(){
+        Area area = new Area(UUID.randomUUID());
+        Mockito.when(mockAD.buscarPorId(area.getIdArea())).thenReturn(area);
+        Mockito.when(mockAD.actualizar(area)).thenReturn(area);
+        Response respuesta = cut.actualizar(area.getIdArea(), area);
+        assertEquals(200, respuesta.getStatus());
+
+    }
+
+
+    @Test
+    public void actualizarBadRequestIdArea(){
+        Area area = new Area(UUID.randomUUID());
+        Response respuesta = cut.actualizar(null, area);
+        assertEquals(400, respuesta.getStatus());
+
+    }
+
+    @Test
+    public void actualizarBadRequestArea(){
+        Area area = new Area(UUID.randomUUID());
+        Response respuesta = cut.actualizar(area.getIdArea(), null);
+        assertEquals(400, respuesta.getStatus());
+
+    }
+
+    @Test
+    public void actualizarErrorInterno(){
+        Area area = new Area(UUID.randomUUID());
+        Mockito.when(mockAD.buscarPorId(area.getIdArea())).thenThrow(new RuntimeException("Error en base de datos"));;
+        Response respuesta = cut.actualizar(area.getIdArea(), area);
+        assertEquals(500, respuesta.getStatus());
+    }
+
+
+    @Test
+    public void actualizarNoEncontrado(){
+        Area area = new Area(UUID.randomUUID());
+        Mockito.when(mockAD.buscarPorId(area.getIdArea())).thenReturn(null);
+        Mockito.when(mockAD.actualizar(area)).thenReturn(null);
+        Response respuesta = cut.actualizar(area.getIdArea(), area);
+        assertEquals(404, respuesta.getStatus());
+
+    }
+
 }

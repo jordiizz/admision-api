@@ -104,4 +104,25 @@ public class AreaResourceST extends AbstractIntegrationTest{
 
         Assertions.assertEquals(404, respuesta.getStatus());
     }
+
+    @Order(5)
+    @Test
+    public void actualizar(){
+        System.out.println("buscarPorIdNoEncontrado");
+        Area area = new Area();
+        area.setNombre("NOMBRE_ACTUALIZADO");
+        Response respuesta = target.path(idCreado.toString())
+                .request(MediaType.APPLICATION_JSON)
+                .put(Entity.json(area));
+        Assertions.assertEquals(200, respuesta.getStatus());
+    }
+
+    @Order(6)
+    @Test
+    public void eliminar(){
+        Response respuesta = target.path(idCreado.toString())
+                .request(MediaType.APPLICATION_JSON)
+                .delete();
+        Assertions.assertEquals(204, respuesta.getStatus());
+    }
 }

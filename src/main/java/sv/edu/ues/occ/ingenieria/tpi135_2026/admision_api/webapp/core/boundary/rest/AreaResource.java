@@ -5,15 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.DefaultValue;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -108,6 +100,27 @@ public class AreaResource  implements Serializable {
             }
         }
         return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "id: " + id).build();
+    }
+
+    @PUT
+    @Path("{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response actualizar(@PathParam("id") UUID idArea, Area area){
+        if(idArea != null && area != null){
+            try {
+                Area existente = areaDAO.buscarPorId(idArea);
+                if(existente != null){
+                    area.setIdArea(idArea);
+                    areaDAO.actualizar(area);
+                    return Response.status(Response.Status.OK).build();
+                }
+                return Response.status(Response.Status.NOT_FOUND).header(ResponseHeaders.NOT_FOUND.toString(), "Recurso no encontrado").build();
+            }catch (Exception e){
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage()).build();
+            }
+
+        }
+        return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "id: " + idArea).build();
     }
 
 }
