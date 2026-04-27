@@ -13,6 +13,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.*;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control.ExamenResultadosEnum;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,12 +26,14 @@ public class AspiranteResourceST extends AbstractIntegrationTest {
     private final String RESOURCE_NAME_ASPIRANTE = "aspirante";
     private final String RESOURCE_NAME_TIPO_PRUEBA = "tipo_prueba";
     private final String RESORUCE_NAME_PRUEBA = "prueba";
+    private final String RESORUCE_NAME_PRUEBAS = "pruebas";
     private final String  RESOURCE_NAME_JORNADA = "jornada";
     private final String RESOURCE_NAME_AULA = "aula";
     private final String RESOURCE_NAME_ASPIRANTE_OPCION = "aspirante_opcion";
     private final String RESORCE_NAME_OPCION = "opcion";
     private final String RESOURCE_NAME_EXAMEN = "examen";
     private final String RESOURCE_NAME_CLAVE = "clave";
+
 
     TipoPrueba tipoPrueba = new TipoPrueba();
     UUID idTipoPrueba;
@@ -425,8 +428,28 @@ public class AspiranteResourceST extends AbstractIntegrationTest {
 
         @Order(10)
         @Test
-    public void listarPruebasPorAspirante(){
-        crearContextoExamen();
+        public void buscarResultadoExamen(){
+            crearContextoExamen();
+            //("{id_aspirante}/prueba/{id_prueba}")
+            Response respuesta = target.path(RESOURCE_NAME_ASPIRANTE)
+                    .path(idAspirante.toString())
+                    .path(RESORUCE_NAME_PRUEBA)
+                    .path(idPrueba.toString())
+                    .request(MediaType.APPLICATION_JSON)
+                    .get();
+            assertEquals(Response.Status.OK.getStatusCode(), respuesta.getStatus());
+            assertEquals(ExamenResultadosEnum.SELECCIONADO, respuesta.readEntity(ExamenResultadosEnum.class));
+        }
 
+        @Order(11)
+        @Test
+        public void listarPruebasPorAspirante(){
+            Response respuesta = target.path(RESOURCE_NAME_ASPIRANTE)
+                    .path(idAspirante.toString())
+                    .path(RESORUCE_NAME_PRUEBA)
+                    .path(idPrueba.toString())
+                    .request(MediaType.APPLICATION_JSON)
+                    .get();
+            assertEquals(Response.Status.OK.getStatusCode(), respuesta.getStatus());
         }
 }
