@@ -338,4 +338,17 @@ public class JornadaAulaDAOIT extends AbstractIntengrationDAOTest{
         assertNull(encontrado);
     }
 
+    @Order(26) // Siguiendo tu secuencia
+    @Test
+    public void testBuscarPorJornadaYAula_NoEncontrado() {
+        cut.em = em;
+        // Usamos un UUID aleatorio y un ID de aula que no existe en los registros creados
+        UUID idInexistente = UUID.randomUUID();
+        String aulaInexistente = "AULA-999";
+
+        JornadaAula resultado = cut.buscarPorJornadaYAula(idInexistente, aulaInexistente);
+
+        // Aquí validamos que la lógica del ternario devuelva null correctamente
+        assertNull(resultado, "Debería retornar null cuando no existen registros coincidentes");
+    }
 }

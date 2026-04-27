@@ -1,5 +1,6 @@
 package sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.control;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -17,35 +18,89 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 import jakarta.persistence.EntityManager;
 import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Jornada;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.Prueba;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.PruebaJornada;
+import sv.edu.ues.occ.ingenieria.tpi135_2026.admision_api.webapp.core.entity.TipoPrueba;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class JornadaDAOIT extends AbstractIntengrationDAOTest {
 
+    TipoPrueba tipoPrueba = new TipoPrueba(UUID.randomUUID());
+    Jornada jornada = new Jornada(UUID.randomUUID());
+    Jornada jornada2 = new Jornada(UUID.randomUUID());
+    PruebaJornada pruebaJornada = new PruebaJornada();
+    PruebaJornada pruebaJornada2 = new PruebaJornada();
+    Prueba prueba = new Prueba(UUID.randomUUID());
+
+    PruebaJornadaDAO pruebaJornadaDAO;
+    TipoPruebaDAO tipoPruebaDAO;;
     JornadaDAO cut; // Class under test
+    PruebaDAO pruebaDAO;
 
     @BeforeEach
     public void setup() {
         cut = new JornadaDAO();
         cut.em = em;
+        pruebaDAO = new PruebaDAO();
+        pruebaDAO.em = em;
+        pruebaJornadaDAO = new PruebaJornadaDAO();
+        pruebaJornadaDAO.em =em;
+        tipoPruebaDAO = new TipoPruebaDAO();
+        tipoPruebaDAO.em = em;
+
+        jornada.setNombre("Jornada 1");
+        jornada.setFechaInicio(OffsetDateTime.now());
+        jornada.setFechaFin(OffsetDateTime.now().plusDays(1));
+
+        jornada2.setNombre("VESPERTINA_PRIMERA_RONDA");
+        jornada2.setFechaInicio(OffsetDateTime.now().plusDays(1));
+        jornada2.setFechaFin(OffsetDateTime.now().plusDays(1).plusHours(8));
+
+        tipoPrueba.setValor("INGRESO_UNIVERSITARIO_PRIMERA_RONDA");
+        tipoPrueba.setActivo(true);
+
+        prueba.setNombre("NUEVO_INGRESO_2026");
+        prueba.setFechaCreacion(OffsetDateTime.now());
+        prueba.setPuntajeMaximo(new BigDecimal(100));
+        prueba.setDuracion(120);
+        prueba.setIndicaciones("Indicaciones");
+        prueba.setNotaAprobacion(new BigDecimal(50));
+
+
+    }
+
+    public void crearContexto(){
+        tipoPruebaDAO.crear(tipoPrueba);
+        prueba.setIdTipoPrueba(tipoPrueba);
+        pruebaDAO.crear(prueba);
+
+        pruebaJornada.setIdJornada(jornada);
+        pruebaJornada.setIdPrueba(prueba);
+
+        pruebaJornada2.setIdJornada(jornada2);
+        pruebaJornada2.setIdPrueba(prueba);
+
+        pruebaJornadaDAO.crear(pruebaJornada);
+        pruebaJornadaDAO.crear(pruebaJornada2);
     }
 
     @Order(1)
     @Test
     public void testCrearExitoso() {
         System.out.println("Crear jornada exitoso");
-        Jornada nuevo = new Jornada(UUID.randomUUID());
-        nuevo.setNombre("Jornada 1");
-        nuevo.setFechaInicio(OffsetDateTime.now());
-        nuevo.setFechaFin(OffsetDateTime.now().plusDays(1));
 
-        cut.em.getTransaction().begin();
-        cut.crear(nuevo);
-        cut.em.getTransaction().commit();
+        em.getTransaction().begin();
+        cut.crear(jornada);
+        cut.crear(jornada2);
 
         Long resultado = cut.contar();
-        assertEquals(1, resultado);
+        assertEquals(2, resultado);
         System.out.println("Resultado: " + resultado);
+
+        crearContexto();
+        em.getTransaction().commit();
+
     }
 
     @Order(2)
@@ -73,7 +128,7 @@ public class JornadaDAOIT extends AbstractIntengrationDAOTest {
     public void testCountExitoso() {
         System.out.println("Contar jornada exitoso");
         Long resultado = cut.contar();
-        assertEquals(resultado, 1);
+        assertEquals(2, resultado);
         System.out.println("Resultado: " + resultado);
     }
 
@@ -107,12 +162,12 @@ public class JornadaDAOIT extends AbstractIntengrationDAOTest {
         nuevo.setFechaFin(OffsetDateTime.now().plusDays(3));
 
         // Realizamos la transacción para guardar la nueva jornada
-        cut.em.getTransaction().begin();
+        em.getTransaction().begin();
         cut.crear(nuevo);
-        cut.em.getTransaction().commit();
-
+        em.getTransaction().commit();
         // Buscamos por el ID de la jornada recién creada
         Jornada encontrado = cut.buscarPorId(idBuscado);
+
         assertNotNull(encontrado);
         assertEquals(idBuscado, encontrado.getIdJornada());
         assertEquals(nuevo.getNombre(), encontrado.getNombre());
@@ -280,4 +335,37 @@ public class JornadaDAOIT extends AbstractIntengrationDAOTest {
             cut.buscarPorRango(0, 50);
         });
     }
+
+    @Order(20)
+    @Test
+    public void listarPorIdPrueba(){
+        System.out.println("listarPorIdPrueba exitoso");
+        List<Jornada> jornadas = cut.listarPorIdPrueba(prueba.getIdPrueba(), 0, 10);
+        assertNotNull(jornadas);
+        assertEquals(2, jornadas.size());
+    }
+
+    @Order(21)
+    @Test
+    public void listarPorIdPruebaParametrosNoValidos(){
+        System.out.println("listarPorIdPrueba parametros no validos");
+        assertThrows(IllegalArgumentException.class, () -> {
+            cut.listarPorIdPrueba(null, 0, 10);
+        });
+        assertThrows(IllegalArgumentException.class, () -> {
+            cut.listarPorIdPrueba(prueba.getIdPrueba(), -1, 10);
+        });
+        assertThrows(IllegalArgumentException.class, () -> {
+            cut.listarPorIdPrueba(prueba.getIdPrueba(), 0, -1);
+        });
+    }
+
+     @Order(22)
+     @Test
+    public void listarPorIdPruebaStateExcepcion(){
+        cut.em = null;
+         assertThrows(IllegalStateException.class, () -> {
+             cut.listarPorIdPrueba(prueba.getIdPrueba(), 0, 10);
+         });
+     }
 }
