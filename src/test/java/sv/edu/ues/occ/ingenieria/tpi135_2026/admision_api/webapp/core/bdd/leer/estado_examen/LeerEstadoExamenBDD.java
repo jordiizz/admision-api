@@ -33,7 +33,7 @@ public class LeerEstadoExamenBDD extends AbstractBDD {
     public void la_aspirante_consulta_las_pruebas_que_ha_realizado(String idAspirante) {
         this.idAspirante = idAspirante;
         Response respuesta = target.path("aspirante").path(idAspirante)
-                .path("pruebas")
+                .path("prueba")
                 .request(MediaType.APPLICATION_JSON).get();
         assertEquals(200, respuesta.getStatus());
     }

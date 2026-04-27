@@ -34,9 +34,6 @@ public class AspiranteResourceTest {
     private AspiranteDAO mockAD;
     private AspiranteResource cut;
 
-    PruebaDAO mockPD;
-    PruebaJornadaAulaAspiranteOpcionExamenDAO mockPJAOED;
-    ExamenDefaultStrategy mockStrategy;
 
     @BeforeEach
     public void setup(){
@@ -53,14 +50,9 @@ public class AspiranteResourceTest {
 
         cut = new AspiranteResource();
         cut.aspiranteDAO = mockAD;
-        mockPD = Mockito.mock(PruebaDAO.class);
-        mockPJAOED = Mockito.mock(PruebaJornadaAulaAspiranteOpcionExamenDAO.class);
-        mockStrategy = Mockito.mock(ExamenDefaultStrategy.class);
 
-        cut.pruebaDAO = mockPD;
-        cut.pruebaJornadaAulaAspiranteOpcionExamenDAO = mockPJAOED;
-        cut.estrategiasEstado = new HashMap<>();
-        cut.examenDefaultStrategy = mockStrategy;
+
+
     }
 
     @Test
@@ -359,115 +351,4 @@ public class AspiranteResourceTest {
         assertEquals(400, resultado.getStatus());
         Mockito.verifyNoInteractions(mockAD);
     }
-
-    @Test
-    public void listarResultadoExamenExitosoTest() {
-        UUID idA = UUID.randomUUID();
-        UUID idP = UUID.randomUUID();
-        Prueba p = new Prueba();
-        p.setIdPrueba(idP);
-        p.setIdTipoPrueba(new TipoPrueba(UUID.randomUUID()));
-        PruebaJornadaAulaAspiranteOpcionExamen ex = new PruebaJornadaAulaAspiranteOpcionExamen();
-        ex.setIdPrueba(p);
-
-        Mockito.when(mockPJAOED.obtenerResultadoExamenPorAspiranteYPrueba(idA, idP)).thenReturn(ex);
-        Mockito.when(mockStrategy.obtenerEstado(Mockito.any(), Mockito.any())).thenReturn(ExamenResultadosEnum.APROBADO);
-
-        Response res = cut.buscarResultadoExamen(idA, idP);
-        assertEquals(200, res.getStatus());
-    }
-
-    @Test
-    public void listarResultadoExamenNullTest() {
-        Response res = cut.buscarResultadoExamen(null, null);
-        assertEquals(400, res.getStatus());
-    }
-
-    @Test
-    public void listarResultadoExamenIdPruebaNullTest() {
-        Response res = cut.buscarResultadoExamen(UUID.randomUUID(), null);
-        assertEquals(400, res.getStatus());
-    }
-
-    @Test
-    public void listarResultadoExamenNoEncontradoTest() {
-        UUID id = UUID.randomUUID();
-        Mockito.when(mockPJAOED.obtenerResultadoExamenPorAspiranteYPrueba(id, id)).thenReturn(null);
-        Response res = cut.buscarResultadoExamen(id, id);
-        assertEquals(404, res.getStatus());
-    }
-
-    @Test
-    public void listarResultadoExamenSinPruebaEnResultadoTest() {
-        UUID id = UUID.randomUUID();
-        PruebaJornadaAulaAspiranteOpcionExamen ex = new PruebaJornadaAulaAspiranteOpcionExamen();
-        ex.setIdPrueba(null);
-
-        Mockito.when(mockPJAOED.obtenerResultadoExamenPorAspiranteYPrueba(id, id)).thenReturn(ex);
-
-        Response res = cut.buscarResultadoExamen(id, id);
-        assertEquals(404, res.getStatus());
-    }
-
-    @Test
-    public void listarResultadoExamenErrorTest() {
-        Mockito.when(mockPJAOED.obtenerResultadoExamenPorAspiranteYPrueba(Mockito.any(), Mockito.any())).thenThrow(new RuntimeException());
-        Response res = cut.buscarResultadoExamen(UUID.randomUUID(), UUID.randomUUID());
-        assertEquals(500, res.getStatus());
-    }
-
-    @Test
-    public void listarPruebasPorAspiranteExitosoTest() {
-        UUID id = UUID.randomUUID();
-        Mockito.when(mockPD.findByIdAspirante(id)).thenReturn(List.of(new Prueba()));
-        Response res = cut.listarPruebasPorAspirante(id);
-        assertEquals(200, res.getStatus());
-    }
-
-    @Test
-    public void listarPruebasPorAspiranteNullTest() {
-        Response res = cut.listarPruebasPorAspirante(null);
-        assertEquals(400, res.getStatus());
-    }
-
-    @Test
-    public void listarPruebasPorAspiranteVacioTest() {
-        UUID id = UUID.randomUUID();
-        Mockito.when(mockPD.findByIdAspirante(id)).thenReturn(Collections.emptyList());
-        Response res = cut.listarPruebasPorAspirante(id);
-        assertEquals(404, res.getStatus());
-    }
-
-    @Test
-    public void listarPruebasPorAspiranteNullResultadoTest() {
-        UUID id = UUID.randomUUID();
-        Mockito.when(mockPD.findByIdAspirante(id)).thenReturn(null);
-        Response res = cut.listarPruebasPorAspirante(id);
-        assertEquals(404, res.getStatus());
-    }
-
-    @Test
-    public void listarPruebasPorAspiranteErrorTest() {
-        UUID id = UUID.randomUUID();
-        Mockito.when(mockPD.findByIdAspirante(id)).thenThrow(new RuntimeException());
-        Response res = cut.listarPruebasPorAspirante(id);
-        assertEquals(500, res.getStatus());
-    }
-
-    @Test
-    public void inicializarTest() {
-        AspiranteResource resource = new AspiranteResource();
-        resource.ingresoUniversitarioPrimeraRondaStrategy = Mockito.mock(IngresoUniversitarioPrimeraRondaStrategy.class);
-        resource.ingresoUniversitarioSegundaRondaStrategy = Mockito.mock(IngresoUniversitarioSegundaRondaStrategy.class);
-
-        resource.inicializar();
-
-        assertNotNull(resource.estrategiasEstado);
-        assertEquals(2, resource.estrategiasEstado.size());
-        assertEquals(resource.ingresoUniversitarioPrimeraRondaStrategy,
-                resource.estrategiasEstado.get(TipoPruebaEnum.INGRESO_UNIVERSITARIO_PRIMERA_RONDA.name()));
-        assertEquals(resource.ingresoUniversitarioSegundaRondaStrategy,
-                resource.estrategiasEstado.get(TipoPruebaEnum.INGRESO_UNIVERSITARIO_SEGUNDA_RONDA.name()));
-    }
-
 }

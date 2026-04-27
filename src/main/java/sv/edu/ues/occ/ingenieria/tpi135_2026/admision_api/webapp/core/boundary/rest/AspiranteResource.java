@@ -41,30 +41,6 @@ public class AspiranteResource implements Serializable {
     @Inject
     AspiranteDAO aspiranteDAO;
 
-    @Inject
-    IngresoUniversitarioPrimeraRondaStrategy ingresoUniversitarioPrimeraRondaStrategy;
-
-    @Inject
-    IngresoUniversitarioSegundaRondaStrategy ingresoUniversitarioSegundaRondaStrategy;
-
-    @Inject
-    ExamenDefaultStrategy examenDefaultStrategy;
-
-    @Inject
-    PruebaJornadaAulaAspiranteOpcionExamenDAO pruebaJornadaAulaAspiranteOpcionExamenDAO;
-
-    @Inject
-    PruebaDAO pruebaDAO;
-
-    Map<String, ExamenStrategy> estrategiasEstado;
-
-    @PostConstruct
-    public void inicializar() {
-        estrategiasEstado = new HashMap<>();
-        estrategiasEstado.put(TipoPruebaEnum.INGRESO_UNIVERSITARIO_PRIMERA_RONDA.name(), ingresoUniversitarioPrimeraRondaStrategy);
-        estrategiasEstado.put(TipoPruebaEnum.INGRESO_UNIVERSITARIO_SEGUNDA_RONDA.name(), ingresoUniversitarioSegundaRondaStrategy);
-    }
-
     @POST
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
@@ -192,60 +168,7 @@ public class AspiranteResource implements Serializable {
         return Response.status(Response.Status.BAD_REQUEST).header(ResponseHeaders.WRONG_PARAMETER.toString(), "El recurso no puede ser nulo y debe tener un ID asignado").build();
     }
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("{id_aspirante}/prueba/{id_prueba}")
-    public Response buscarResultadoExamen(@PathParam("id_aspirante") UUID idAspirante, @PathParam("id_prueba") UUID idPrueba) {
-        if (idAspirante == null || idPrueba == null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .header(ResponseHeaders.WRONG_PARAMETER.toString(), "Los IDs de aspirante y prueba no pueden ser nulos")
-                    .build();
-        }
-        try {
-            PruebaJornadaAulaAspiranteOpcionExamen examen = pruebaJornadaAulaAspiranteOpcionExamenDAO
-                    .obtenerResultadoExamenPorAspiranteYPrueba(idAspirante, idPrueba);
-            if (examen == null || examen.getIdPrueba() == null) {
-                return Response.status(Response.Status.NOT_FOUND)
-                        .header(ResponseHeaders.NOT_FOUND.toString(), "Resultado no encontrado para el aspirante y prueba especificados")
-                        .build();
-            }
-            Prueba prueba = examen.getIdPrueba();
-            String tipoPruebaValor = prueba.getIdTipoPrueba().getValor();
-            ExamenStrategy estrategiaAplicar = estrategiasEstado.getOrDefault(tipoPruebaValor, examenDefaultStrategy);
-            ExamenResultadosEnum estadoExamen = estrategiaAplicar.obtenerEstado(prueba.getNotaAprobacion(), examen.getResultado());
-            return Response.ok(estadoExamen).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage())
-                    .build();
-        }
-    }
 
-
-    @GET
-    @Produces({MediaType.APPLICATION_JSON})
-    @Path("{id_aspirante}/pruebas")
-    public Response listarPruebasPorAspirante(@PathParam("id_aspirante") UUID idAspirante){
-        if(idAspirante == null){
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .header(ResponseHeaders.WRONG_PARAMETER.toString(), "El ID de aspirante no puede ser nulo")
-                    .build();
-        }
-        try{
-            List<Prueba> pruebas = pruebaDAO.findByIdAspirante(idAspirante);
-            if(pruebas == null || pruebas.isEmpty()){
-                return Response.status(Response.Status.NOT_FOUND)
-                        .header(ResponseHeaders.NOT_FOUND.toString(), "No se encontraron pruebas para el aspirante especificado")
-                        .build();
-            }
-            return Response.status(Response.Status.OK).entity(pruebas).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .header(ResponseHeaders.PROCESS_ERROR.toString(), e.getMessage())
-                    .build();
-        }
-
-    }
 
 
 
